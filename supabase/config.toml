@@ -1,0 +1,7 @@
+project_id = "spero"
+
+[api]
+enabled = true
+
+[functions.ai-response]
+verify_jwt = false

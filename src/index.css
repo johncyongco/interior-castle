@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --bg-dark: #0f0c09;
+    --bg-warm: #1a140f;
+    --gold-primary: #e7cba9;
+    --gold-secondary: #c6a47a;
+    --glow: rgba(255, 200, 120, 0.25);
+    background: radial-gradient(circle at center, var(--bg-warm), var(--bg-dark));
+  }
+
+  html {
+    height: 100%;
+    margin: 0;
+    background: radial-gradient(circle at center, var(--bg-warm), var(--bg-dark));
+  }
+
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    height: 100%;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, var(--bg-warm), var(--bg-dark));
+    color: var(--gold-primary);
+    font-family: 'Inter', sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+
+  ::selection {
+    background: rgba(214, 185, 140, 0.25);
+    color: white;
+  }
+}
+
+@layer components {
+  .serif {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .page-frame {
+    @apply relative mx-auto flex min-h-[100dvh] w-full max-w-[420px] flex-col overflow-hidden px-4 pb-6 pt-5;
+  }
+
+  .glass-panel {
+    @apply border border-white/10 bg-white/[0.06] backdrop-blur-xl shadow-soft;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl leading-tight tracking-wide text-gold;
+  }
+
+  .section-subtitle {
+    @apply text-sm leading-6 text-white/70;
+  }
+
+  .quiet-button {
+    @apply rounded-xl border border-white/10 bg-white/10 px-4 py-4 text-left text-white transition duration-500 ease-out;
+  }
+
+  .quiet-button:hover {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 28px rgba(214, 185, 140, 0.16);
+    transform: translateY(-1px);
+  }
+
+  .btn-gold {
+    background:
+      linear-gradient(180deg, rgba(230, 201, 171, 0.92), rgba(182, 148, 111, 0.9)),
+      linear-gradient(180deg, #f0d6b5, #c6a47a);
+    color: #18110c;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 18px rgba(164, 124, 84, 0.18);
+    transition: all 0.2s ease;
+  }
+
+  .btn-gold:active {
+    transform: scale(0.97);
+  }
+}
+
+.vignette {
+  position: relative;
+}
+
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.gate-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)),
+    url('/castle-gate.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.gate-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.9;
+  }
+}
+
+.flicker {
+  animation: flicker 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.985);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.7;
+    transform: scale(0.985);
+  }
+}
