@@ -63,14 +63,14 @@ function AppShell() {
             initial={{ opacity: 0, filter: 'blur(8px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, filter: 'blur(8px)' }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
+            transition={{ duration: 1.0, ease: 'easeOut' }}
             className="relative min-h-[100dvh]"
           >
             <motion.div
               key={`${location.pathname}-jesus-overlay`}
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1.2, times: [0, 0.35, 1], ease: 'easeOut' }}
+              transition={{ duration: 1.0, times: [0, 0.35, 1], ease: 'easeOut' }}
               className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
             >
               <div className="absolute inset-0 bg-[url('/Jesus.jpg')] bg-cover bg-center bg-no-repeat opacity-100" />
