@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
 export default function FriendsPrayerPage() {
+  const location = useLocation()
+  const backTo = location.state?.from === 'room' ? '/room' : '/community/friends-of-the-suffering'
+
   return (
     <ScreenContainer>
       <div
@@ -18,7 +21,7 @@ export default function FriendsPrayerPage() {
           className="flex min-h-full flex-col"
         >
           <div className="flex items-center justify-between">
-            <Link to="/community/friends-of-the-suffering" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
+            <Link to={backTo} className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
               Back
             </Link>
           </div>

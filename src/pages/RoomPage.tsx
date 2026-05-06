@@ -114,7 +114,7 @@ export default function RoomPage() {
       shortLabel: 'Candle',
       lon: -86.33,
       lat: -11.82,
-      onClick: () => navigate('/community/friends-of-the-suffering/souls', { state: { from: 'room' } }),
+      onClick: () => navigate('/community/friends-of-the-suffering', { state: { from: 'room' } }),
       point: sphericalToVector3(-86.33, -11.82),
     },
     {
