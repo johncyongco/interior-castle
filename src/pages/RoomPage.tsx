@@ -156,6 +156,14 @@ export default function RoomPage() {
         className="absolute left-1/2 top-[29%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
       />
 
+      <button
+        type="button"
+        onClick={() => navigate('/daily-gospel')}
+        aria-label="Bible hotspot"
+        title="Bible"
+        className="absolute left-[60%] top-[64%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
+      />
+
       <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
           initial={{ opacity: 0 }}

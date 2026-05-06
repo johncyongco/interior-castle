@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import LandingPage from './components/LandingPage'
 import HomePage from './pages/HomePage'
 import RoomPage from './pages/RoomPage'
+import DailyGospelPage from './pages/DailyGospelPage'
 import PrayerPage from './pages/PrayerPage'
 import ReflectionPage from './pages/ReflectionPage'
 import ReflectionHistoryPage from './pages/ReflectionHistoryPage'
@@ -56,6 +57,7 @@ function AppShell() {
               <Route path="/gate" element={<HomePage />} />
               <Route path="/home" element={<HomePage />} />
               <Route path="/room" element={<RoomPage />} />
+              <Route path="/daily-gospel" element={<DailyGospelPage />} />
               <Route path="/prayer" element={<PrayerPage />} />
               <Route path="/prayer/*" element={<PrayerPage />} />
               <Route path="/reflect" element={<ReflectionPage />} />
