@@ -83,12 +83,14 @@ export default function RoomPage() {
   const pictureFrame = {
     id: 'sample-frame',
     label: 'Sample Frame',
+    shortLabel: 'Frame',
     lon: 141.5,
     lat: 7.25,
     radius: 468,
     width: 42,
     height: 28,
     image: '/saint-teresa.png',
+    onClick: () => navigate('/saints'),
   }
   const rangeHotspots: RangeHotspot[] = [
     {
@@ -306,7 +308,8 @@ export default function RoomPage() {
 
         const frameHits = raycaster.intersectObjects(interactiveObjects, false)
         if (frameHits.length) {
-          setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Sample frame')
+          setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Frame hotspot')
+          pictureFrame.onClick()
           return
         }
 
@@ -453,24 +456,6 @@ export default function RoomPage() {
             </button>
           </div>
         ))}
-      </div>
-
-      <div className="pointer-events-none relative flex h-full flex-col px-4 py-6 pb-[max(7rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:py-10 sm:pb-28">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="flex h-full flex-col"
-        >
-          <div className="flex items-center justify-between">
-            <Link
-              to="/saints"
-              className="pointer-events-auto rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
-            >
-              Saints
-            </Link>
-          </div>
-        </motion.div>
       </div>
 
       <motion.div
