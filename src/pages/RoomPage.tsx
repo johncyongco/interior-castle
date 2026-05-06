@@ -551,13 +551,13 @@ export default function RoomPage() {
               }}
               aria-label={`${hotspot.label} hotspot`}
               title={hotspot.label}
-              className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
+              className={`pointer-events-auto absolute left-0 top-0 z-[60] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
                   : hotspot.id === 'first-mansion'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
-                    : hotspot.id === 'little-flower'
-                      ? 'h-[3.2rem] w-[3.2rem] sm:h-[3.8rem] sm:w-[3.8rem]'
+                  : hotspot.id === 'little-flower'
+                      ? 'h-[4.25rem] w-[4.25rem] sm:h-[4.75rem] sm:w-[4.75rem]'
                     : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
             >
@@ -582,7 +582,7 @@ export default function RoomPage() {
                 <svg
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  className="h-full w-full text-[#e7cba9]/22 transition hover:text-[#e7cba9]/38"
+                  className="h-full w-full text-[#e7cba9]/35 transition hover:text-[#e7cba9]/55"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.6"
