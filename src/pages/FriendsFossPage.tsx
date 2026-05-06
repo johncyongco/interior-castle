@@ -4,7 +4,8 @@ import ScreenContainer from '../components/ScreenContainer'
 
 export default function FriendsFossPage() {
   const location = useLocation()
-  const backTo = location.state?.from === 'room' ? '/room' : '/community/friends-of-the-suffering'
+  const cameFromRoom = location.state?.from === 'room' || window.sessionStorage.getItem('spero-room-entry') === 'door'
+  const backTo = cameFromRoom ? '/room' : '/community/friends-of-the-suffering'
 
   return (
     <ScreenContainer>

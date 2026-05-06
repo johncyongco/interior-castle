@@ -18,7 +18,8 @@ export default function SoulsDetailPage() {
   const [souls, setSouls] = useState<string[]>([])
   const [soulInput, setSoulInput] = useState('')
   const location = useLocation()
-  const backToCommunity = location.state?.from === 'room' ? '/room' : '/community/friends-of-the-suffering'
+  const cameFromRoom = location.state?.from === 'room' || window.sessionStorage.getItem('spero-room-entry') === 'door'
+  const backToCommunity = cameFromRoom ? '/room' : '/community/friends-of-the-suffering'
 
   useEffect(() => {
     try {

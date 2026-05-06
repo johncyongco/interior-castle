@@ -23,7 +23,8 @@ const cards = [
 export default function FriendsOfTheSufferingPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const backToCommunity = location.state?.from === 'room' ? '/room' : '/community'
+  const cameFromRoom = location.state?.from === 'room' || window.sessionStorage.getItem('spero-room-entry') === 'door'
+  const backToCommunity = cameFromRoom ? '/room' : '/community'
   const origin = location.state?.from ?? 'community'
 
   return (
