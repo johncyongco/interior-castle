@@ -15,7 +15,7 @@ export const teachings: Teaching[] = [
   {
     id: 'god-is-all-things',
     title: 'God is all things',
-    text: 'Look for God in the ordinary things we touch, carry, wear, and forget each day.',
+    text: 'Food, water, air, fire, sky, universe, earth, clothing, work, creation, man, body, head, arms, feet, walking, running, standing, sea, ocean, breath, time, rest, and light all point us back to God in ordinary life.',
     verses: [
       {
         reference: 'Genesis 1:1',
