@@ -6,8 +6,24 @@ import { SoftCard } from '../components/SoftCard'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { useInteriorStore } from '../store/interiorStore'
 
+function prayerIntroCopy(state: ReturnType<typeof useInteriorStore.getState>['state']) {
+  if (state === 'restless') return ['You are scattered.', 'Let us gather.']
+  if (state === 'distracted') return ['You are split by many things.', 'Let one thing remain.']
+  if (state === 'numb') return ['Stay still.', 'A small honest word is enough.']
+  if (state === 'peaceful') return ['Stay here.', 'You are in His presence.']
+  return ['Return.', 'Come back to the center.']
+}
+
 function PrayerIndex() {
   const navigate = useNavigate()
+  const state = useInteriorStore((store) => store.state)
+  const setRoomStep = useInteriorStore((store) => store.setRoomStep)
+  const [hasBegun, setHasBegun] = useState(false)
+  const introLines = useMemo(() => prayerIntroCopy(state), [state])
+
+  useEffect(() => {
+    setHasBegun(false)
+  }, [state])
 
   return (
     <ScreenContainer>
@@ -25,24 +41,48 @@ function PrayerIndex() {
             <p className="mx-auto max-w-xs text-sm leading-6 text-[#c6a47a]">Choose your mode</p>
           </div>
 
-          <SoftCard className="mt-8 space-y-3">
-            <button onClick={() => navigate('/prayer/silent')} className="quiet-button w-full">
-              <div className="font-medium">Silent Prayer</div>
-              <div className="mt-1 text-sm text-white/65">Set a timer and be still.</div>
-            </button>
-            <button onClick={() => navigate('/prayer/guided')} className="quiet-button w-full">
-              <div className="font-medium">Guided Recollection</div>
-              <div className="mt-1 text-sm text-white/65">Step-by-step interior gathering</div>
-            </button>
-            <button onClick={() => navigate('/prayer/presence')} className="quiet-button w-full">
-              <div className="font-medium">Presence Mode</div>
-              <div className="mt-1 text-sm text-white/65">Start and remain in God's presence.</div>
-            </button>
-            <button onClick={() => navigate('/prayer/time')} className="quiet-button w-full">
-              <div className="font-medium">Set Your Prayer Time</div>
-              <div className="mt-1 text-sm text-white/65">Mock for now. Choose a time for later.</div>
-            </button>
-          </SoftCard>
+          {!hasBegun ? (
+            <SoftCard className="mt-8 space-y-5 text-center">
+              <div className="space-y-2">
+                {introLines.map((line) => (
+                  <p key={line} className="serif text-2xl leading-snug text-white/95">
+                    {line}
+                  </p>
+                ))}
+              </div>
+              <p className="text-sm leading-6 text-white/65">
+                This is the pause before prayer begins.
+              </p>
+              <PrimaryButton
+                onClick={() => {
+                  setRoomStep(1)
+                  setHasBegun(true)
+                }}
+                className="w-full"
+              >
+                Begin
+              </PrimaryButton>
+            </SoftCard>
+          ) : (
+            <SoftCard className="mt-8 space-y-3">
+              <button onClick={() => navigate('/prayer/silent')} className="quiet-button w-full">
+                <div className="font-medium">Silent Prayer</div>
+                <div className="mt-1 text-sm text-white/65">Set a timer and be still.</div>
+              </button>
+              <button onClick={() => navigate('/prayer/guided')} className="quiet-button w-full">
+                <div className="font-medium">Guided Recollection</div>
+                <div className="mt-1 text-sm text-white/65">Step-by-step interior gathering</div>
+              </button>
+              <button onClick={() => navigate('/prayer/presence')} className="quiet-button w-full">
+                <div className="font-medium">Presence Mode</div>
+                <div className="mt-1 text-sm text-white/65">Start and remain in God's presence.</div>
+              </button>
+              <button onClick={() => navigate('/prayer/time')} className="quiet-button w-full">
+                <div className="font-medium">Set Your Prayer Time</div>
+                <div className="mt-1 text-sm text-white/65">Mock for now. Choose a time for later.</div>
+              </button>
+            </SoftCard>
+          )}
 
           <p className="mt-auto pt-6 text-center text-xs text-[#8c7a65]">You can return at any time.</p>
         </motion.div>

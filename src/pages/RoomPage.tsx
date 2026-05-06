@@ -1,10 +1,36 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
-import { SlowFade } from '../components/SlowFade'
-import { getGuidanceLevel, useInteriorStore } from '../store/interiorStore'
+import { useInteriorStore } from '../store/interiorStore'
+
+const ROOM_SCENES: RoomScene[] = [
+  {
+    id: 1,
+    label: 'Panorama',
+    src: '/chair-room.png',
+    subtitle: 'A quiet entry with a simple chair and stillness.',
+  },
+  {
+    id: 2,
+    label: 'Panorama',
+    src: '/room1.png',
+    subtitle: 'Warm light gathers across the walls.',
+  },
+  {
+    id: 3,
+    label: 'Panorama',
+    src: '/room2.png',
+    subtitle: 'A deeper, softer atmosphere begins.',
+  },
+  {
+    id: 4,
+    label: 'Panorama',
+    src: '/room3.png',
+    subtitle: 'The light turns quieter and more contemplative.',
+  },
+]
 
 type RoomScene = {
   id: number
@@ -13,77 +39,10 @@ type RoomScene = {
   subtitle: string
 }
 
-const ROOM_SCENES: RoomScene[] = [
-  {
-    id: 1,
-    label: 'Room',
-    src: '/chair-room.png',
-    subtitle: 'A quiet entry with a simple chair and stillness.',
-  },
-  {
-    id: 2,
-    label: 'Room',
-    src: '/room1.png',
-    subtitle: 'Warm light gathers across the walls.',
-  },
-  {
-    id: 3,
-    label: 'Room',
-    src: '/room2.png',
-    subtitle: 'A deeper, softer atmosphere begins.',
-  },
-  {
-    id: 4,
-    label: 'Room',
-    src: '/room3.png',
-    subtitle: 'The light turns quieter and more contemplative.',
-  },
-]
-
-function roomCopy(state: ReturnType<typeof useInteriorStore.getState>['state'], roomStep: number) {
-  const guidance = getGuidanceLevel(roomStep)
-
-  if (state === 'tempted') {
-    return ['You are being drawn outward. Return inward.']
-  }
-
-  if (state === 'distracted') {
-    if (guidance === 'silent') {
-      return ['Return.']
-    }
-
-    return ['You are split by many things. Let one thing remain.']
-  }
-
-  if (state === 'numb') {
-    if (guidance === 'silent') {
-      return ['Remain.']
-    }
-
-    return ['Stay still. A small honest word is enough.']
-  }
-
-  if (state === 'peaceful') {
-    if (roomStep < 3) {
-      return ['Stay here.', 'You are in His presence. Stay as you are.']
-    }
-
-    return ['Remain.', 'You are in His presence. Stay as you are.']
-  }
-
-  if (guidance === 'silent') {
-    return ['Return.']
-  }
-
-  return ['You are scattered. Let us gather.', 'Take a moment to come back to the here.']
-}
-
 export default function RoomPage() {
-  const mood = useInteriorStore((store) => store.mood)
   const roomStep = useInteriorStore((store) => store.roomStep)
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
   const advanceRoomStep = useInteriorStore((store) => store.advanceRoomStep)
-  const lines = useMemo(() => roomCopy(mood, roomStep), [mood, roomStep])
   const containerRef = useRef<HTMLDivElement | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -144,9 +103,7 @@ export default function RoomPage() {
     const onPointerDown = (event: PointerEvent) => {
       isDraggingRef.current = true
       lastPointerRef.current = { x: event.clientX, y: event.clientY }
-      if (event.target instanceof HTMLElement) {
-        event.target.setPointerCapture?.(event.pointerId)
-      }
+      container.setPointerCapture?.(event.pointerId)
     }
 
     const onPointerMove = (event: PointerEvent) => {
@@ -257,42 +214,23 @@ export default function RoomPage() {
             >
               Saints
             </Link>
-            <div className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-right backdrop-blur-xl">
-              <p className="text-[10px] uppercase tracking-[0.32em] text-white/45">360 Panorama</p>
-              <p className="text-xs text-white/70">{currentScene.label}</p>
-              <p className="max-w-[14rem] text-[10px] leading-4 text-white/45">{currentScene.subtitle}</p>
-            </div>
           </div>
 
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/25 px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-white/60 backdrop-blur-xl">
-            Drag to look around
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-black/25 text-[10px] font-medium tracking-[0.32em] text-white/60 backdrop-blur-xl">
+            360
           </div>
-
-          <div className="mt-auto grid gap-4">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
-              <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top,rgba(255,236,199,0.12),transparent_35%),radial-gradient(circle_at_bottom,rgba(214,185,140,0.08),transparent_48%)]" />
-              <div className="relative space-y-4 py-8 text-center">
-                {lines.map((line) => (
-                  <SlowFade key={line}>
-                    <p className="serif text-2xl leading-snug text-white/95">{line}</p>
-                  </SlowFade>
-                ))}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (!isFinalScene) {
-                  advanceRoomStep()
-                }
-              }}
-              className="btn-gold w-full disabled:opacity-60"
-              disabled={isFinalScene}
-            >
-              {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!isFinalScene) {
+                advanceRoomStep()
+              }
+            }}
+            className="mt-auto btn-gold w-full disabled:opacity-60"
+            disabled={isFinalScene}
+          >
+            {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
+          </button>
         </motion.div>
       </div>
     </ScreenContainer>
