@@ -35,7 +35,7 @@ export default function CommunityPage() {
                 >
                   <div className="space-y-1">
                     <h2 className="serif text-lg text-[#e7cba9]">{teaching.title}</h2>
-                    <p className="text-sm leading-5 text-white/70">{teaching.text}</p>
+                    {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
                   </div>
                 </button>
               ))}

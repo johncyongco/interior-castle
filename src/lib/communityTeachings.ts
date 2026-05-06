@@ -8,6 +8,7 @@ export type Teaching = {
   id: string
   title: string
   text: string
+  everydayThings?: string[]
   verses: VerseDetail[]
 }
 
@@ -15,7 +16,33 @@ export const teachings: Teaching[] = [
   {
     id: 'god-is-all-things',
     title: 'God is all things',
-    text: 'Food, water, air, fire, sky, universe, earth, clothing, work, creation, man, body, head, arms, feet, walking, running, standing, sea, ocean, breath, time, rest, and light all point us back to God in ordinary life.',
+    text: '',
+    everydayThings: [
+      'Food',
+      'Water',
+      'Air',
+      'Fire',
+      'Sky',
+      'Universe',
+      'Earth',
+      'Clothing',
+      'Work',
+      'Creation',
+      'Man',
+      'Body',
+      'Head',
+      'Arms',
+      'Feet',
+      'Walking',
+      'Running',
+      'Standing',
+      'Sea',
+      'Ocean',
+      'Breath',
+      'Time',
+      'Rest',
+      'Light',
+    ],
     verses: [
       {
         reference: 'Genesis 1:1',

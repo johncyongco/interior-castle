@@ -30,25 +30,40 @@ export default function TeachingDetailPage() {
           <div className="mt-4 space-y-2 text-center">
             <p className="text-xs uppercase tracking-[0.28em] text-white/45">USCCB NABRE</p>
             <h1 className="serif text-2xl text-[#e7cba9]">{teaching.title}</h1>
-            <p className="text-sm leading-5 text-white/70">{teaching.text}</p>
+            {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
           </div>
 
           <div className="mt-5 space-y-4 rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl shadow-soft">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/45">Verses</p>
-            {teaching.verses.map((verse) => (
-              <div key={verse.reference} className="space-y-1 border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
-                <p className="text-sm font-medium text-[#e7cba9]">{verse.reference}</p>
-                <p className="text-sm leading-7 text-white/70">{verse.excerpt}</p>
-                <a
-                  href={verse.sourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-block text-xs text-[#c6a47a] transition hover:text-[#e7cba9]"
-                >
-                  Read full chapter on USCCB
-                </a>
+            {teaching.everydayThings && teaching.everydayThings.length > 0 ? (
+              <div className="space-y-3 border-b border-white/8 pb-4">
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Everyday things</p>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3">
+                  {teaching.everydayThings.map((thing) => (
+                    <div key={thing} className="rounded-2xl border border-white/8 bg-black/10 px-3 py-2 text-sm text-[#e7cba9]">
+                      {thing}
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            ) : null}
+
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.28em] text-white/45">Verses</p>
+              {teaching.verses.map((verse) => (
+                <div key={verse.reference} className="space-y-1 border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
+                  <p className="text-sm font-medium text-[#e7cba9]">{verse.reference}</p>
+                  <p className="text-sm leading-7 text-white/70">{verse.excerpt}</p>
+                  <a
+                    href={verse.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block text-xs text-[#c6a47a] transition hover:text-[#e7cba9]"
+                  >
+                    Read full chapter on USCCB
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
