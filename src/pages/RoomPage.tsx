@@ -190,13 +190,14 @@ export default function RoomPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-    let lon = 0
-    let lat = 0
+      let lon = 0
+      let lat = 0
       const cameraDirection = new THREE.Vector3()
       const raycaster = new THREE.Raycaster()
       const pointer = new THREE.Vector2()
       let dragDistance = 0
-      const interactiveObjects: THREE.Object3D[] = []
+      const frameInteractiveObjects: THREE.Object3D[] = []
+      const guardianInteractiveObjects: THREE.Object3D[] = []
 
     try {
       const scene = new THREE.Scene()
@@ -254,7 +255,7 @@ export default function RoomPage() {
       framedImage.position.z = 0.2
       frameGroup.add(framedImage)
 
-      interactiveObjects.push(frameBorder, frameMatting, framedImage)
+      frameInteractiveObjects.push(frameBorder, frameMatting, framedImage)
 
       const framedImageTexture = loader.load(pictureFrame.image, (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace
@@ -276,7 +277,7 @@ export default function RoomPage() {
       guardianPlane.renderOrder = 2
       scene.add(guardianPlane)
 
-      interactiveObjects.push(guardianPlane)
+      guardianInteractiveObjects.push(guardianPlane)
 
       const guardianAngelTexture = loader.load(guardianAngel.image, (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace
@@ -347,7 +348,14 @@ export default function RoomPage() {
         pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
         raycaster.setFromCamera(pointer, camera)
 
-        const frameHits = raycaster.intersectObjects(interactiveObjects, false)
+        const guardianHits = raycaster.intersectObjects(guardianInteractiveObjects, false)
+        if (guardianHits.length) {
+          setPanelFromHit(guardianAngel.label, guardianAngel.lon, guardianAngel.lat, 'Guardian hotspot')
+          guardianAngel.onClick()
+          return
+        }
+
+        const frameHits = raycaster.intersectObjects(frameInteractiveObjects, false)
         if (frameHits.length) {
           setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Frame hotspot')
           pictureFrame.onClick()
@@ -495,9 +503,29 @@ export default function RoomPage() {
               className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
+                  : hotspot.id === 'first-mansion'
+                    ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
                   : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
             >
+              {hotspot.id === 'first-mansion' ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-full w-full text-[#e7cba9]/28 transition hover:text-[#e7cba9]/45"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 20V10h16v10" />
+                  <path d="M6 10V6h3v4" />
+                  <path d="M15 10V6h3v4" />
+                  <path d="M9 20v-5h6v5" />
+                  <path d="M7 20h10" />
+                </svg>
+              ) : null}
             </button>
           </div>
         ))}
