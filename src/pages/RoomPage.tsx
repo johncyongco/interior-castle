@@ -86,10 +86,10 @@ export default function RoomPage() {
       id: 'crucifix',
       label: 'Crucifix',
       shortLabel: 'Cross',
-      lon: 83,
+      lon: 86.16,
       lat: 18.41,
       onClick: () => navigate('/prayer'),
-      point: sphericalToVector3(83, 18.41),
+      point: sphericalToVector3(86.16, 18.41),
     },
     {
       id: 'bible',
@@ -418,7 +418,9 @@ export default function RoomPage() {
               onClick={hotspot.onClick}
               aria-label={`${hotspot.label} hotspot`}
               title={hotspot.label}
-              className="pointer-events-auto absolute left-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:h-7 sm:w-7 sm:text-[9px]"
+              className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:text-[9px] ${
+                hotspot.id === 'crucifix' || hotspot.id === 'bible' ? 'h-10 w-10 sm:h-12 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
+              }`}
             >
               <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
             </button>
