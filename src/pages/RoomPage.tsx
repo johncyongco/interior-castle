@@ -123,7 +123,7 @@ export default function RoomPage() {
       shortLabel: 'CC',
       lon: -113.17,
       lat: 9.4,
-      onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
+      onClick: () => navigate('/ccc'),
       point: sphericalToVector3(-113.17, 9.4),
     },
   ]
@@ -346,11 +346,10 @@ export default function RoomPage() {
               onClick={hotspot.onClick}
               aria-label={`${hotspot.label} hotspot`}
               title={hotspot.label}
-              className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:text-[9px] ${
+              className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible' ? 'h-10 w-10 sm:h-12 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
               }`}
             >
-              <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
             </button>
           </div>
         ))}

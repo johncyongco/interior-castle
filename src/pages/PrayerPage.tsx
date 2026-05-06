@@ -202,6 +202,7 @@ function SilentPrayerMode() {
 
 function GuidedRecollection() {
   const increaseDepth = useInteriorStore((store) => store.increaseDepth)
+  const navigate = useNavigate()
   const [step, setStep] = useState(0)
   const steps = ['Breathe slowly.', 'Notice what is present.', 'Return your attention inward.']
 
@@ -219,6 +220,12 @@ function GuidedRecollection() {
             <h1 className="serif text-2xl tracking-wide text-[#e7cba9]">Guided Recollection</h1>
           </div>
           <SoftCard className="space-y-4">
+            <button
+              onClick={() => navigate('/prayer')}
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70 transition hover:shadow-glow"
+            >
+              Back to Prayer
+            </button>
             <div className="space-y-3 text-sm leading-6 text-white/75">
               <p>Step-by-step interior gathering</p>
               <p>{steps[step]}</p>

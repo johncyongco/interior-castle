@@ -98,7 +98,7 @@ export default function RosaryPage() {
       <div className="absolute inset-0 bg-[url('/candle.png')] bg-cover bg-center opacity-[0.03]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,236,199,0.12),transparent_28%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.52))]" />
 
-      <div className="relative flex h-full flex-col px-6 py-10 pb-28">
+      <div className="relative flex h-full flex-col overflow-y-auto px-6 py-10 pb-32 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -221,16 +221,23 @@ export default function RosaryPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/45">Closing Prayers</p>
               <div className="space-y-2">
-                {CLOSING_PRAYERS.map((prayer) => (
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Closing Prayers</p>
+                <div className="space-y-2">
+                  {CLOSING_PRAYERS.map((prayer) => (
                   <div key={prayer} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/75">
                     {prayer}
                   </div>
                 ))}
               </div>
             </div>
+
+            <Link
+              to="/prayer"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:shadow-glow"
+            >
+              Back to Prayer
+            </Link>
           </div>
 
           <div className="mt-auto pt-6">
