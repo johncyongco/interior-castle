@@ -17,15 +17,6 @@ type HotspotPoint = Hotspot & {
   point: THREE.Vector3
 }
 
-const OFFSET = -120
-
-function fixLon(lon: number) {
-  let fixed = lon + OFFSET
-  if (fixed < -180) fixed += 360
-  if (fixed > 180) fixed -= 360
-  return fixed
-}
-
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
   const lat = THREE.MathUtils.degToRad(latDeg)
@@ -49,7 +40,7 @@ export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
-  const hotspotRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const hotspotRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const viewCoordRef = useRef<HTMLSpanElement | null>(null)
   const clickCoordRef = useRef<HTMLSpanElement | null>(null)
   const clickCountRef = useRef<HTMLSpanElement | null>(null)
@@ -58,28 +49,28 @@ export default function RoomPage() {
       id: 'crucifix',
       label: 'Crucifix',
       shortLabel: 'Cross',
-      lon: fixLon(-270),
-      lat: 7.87,
+      lon: 83,
+      lat: 18.41,
       onClick: () => navigate('/prayer'),
-      point: sphericalToVector3(fixLon(-270), 7.87),
+      point: sphericalToVector3(83, 18.41),
     },
     {
       id: 'bible',
       label: 'Bible',
       shortLabel: 'Bible',
-      lon: fixLon(-67),
-      lat: -8.88,
+      lon: -70.72,
+      lat: -13.18,
       onClick: () => navigate('/daily-gospel'),
-      point: sphericalToVector3(fixLon(-67), -8.88),
+      point: sphericalToVector3(-70.72, -13.18),
     },
     {
       id: 'cc',
       label: 'CC',
       shortLabel: 'CC',
-      lon: fixLon(-117),
-      lat: -1.2,
+      lon: -113.17,
+      lat: 9.4,
       onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
-      point: sphericalToVector3(fixLon(-117), -1.2),
+      point: sphericalToVector3(-113.17, 9.4),
     },
   ]
 
@@ -106,7 +97,6 @@ export default function RoomPage() {
     let lastClickLon = 0
     let lastClickLat = 0
     let clickCount = 0
-    const hotspotRadius = 8
 
     try {
       const scene = new THREE.Scene()
@@ -210,22 +200,12 @@ export default function RoomPage() {
         })
       }
 
-      const updateHotspotSizes = () => {
-        hotspotPoints.forEach((hotspot) => {
-          const element = hotspotRefs.current[hotspot.id]
-          if (!element) return
-          element.style.width = `${hotspotRadius * 2}px`
-          element.style.height = `${hotspotRadius * 2}px`
-        })
-      }
-
       mount.addEventListener('pointerdown', onPointerDown)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
       window.addEventListener('pointercancel', onPointerUp)
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
-      updateHotspotSizes()
 
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
@@ -268,7 +248,7 @@ export default function RoomPage() {
 
           element.style.opacity = '1'
           element.style.pointerEvents = 'auto'
-          element.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
+          element.style.transform = `translate(${x}px, ${y}px)`
         })
         renderer?.render(scene, camera)
       }
@@ -349,19 +329,26 @@ export default function RoomPage() {
 
       <div className="absolute inset-0 z-20 pointer-events-none">
         {hotspotPoints.map((hotspot) => (
-          <button
+          <div
             key={hotspot.id}
             ref={(element) => {
               hotspotRefs.current[hotspot.id] = element
             }}
-            type="button"
-            onClick={hotspot.onClick}
-            aria-label={`${hotspot.label} hotspot`}
-            title={hotspot.label}
-            className="pointer-events-auto absolute left-0 top-0 flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:h-5 sm:w-5 sm:text-[9px]"
+            className="pointer-events-none absolute left-0 top-0"
           >
-            <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
-          </button>
+            <button
+              type="button"
+              onClick={hotspot.onClick}
+              aria-label={`${hotspot.label} hotspot`}
+              title={hotspot.label}
+              className="pointer-events-auto absolute left-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:h-7 sm:w-7 sm:text-[9px]"
+            >
+              <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
+            </button>
+            <div className="pointer-events-none absolute left-0 top-0 -translate-y-[calc(100%+0.35rem)] rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[8px] uppercase tracking-[0.28em] text-white/80 backdrop-blur-xl sm:text-[9px]">
+              {hotspot.shortLabel}
+            </div>
+          </div>
         ))}
       </div>
 
