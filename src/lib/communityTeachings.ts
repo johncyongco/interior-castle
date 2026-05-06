@@ -137,8 +137,8 @@ export const teachings: Teaching[] = [
         name: 'Creation',
         verses: [
           {
-            reference: 'Genesis 1:27',
-            excerpt: 'Man and woman are made in the image of God.',
+            reference: 'Genesis 1:1',
+            excerpt: 'In the beginning, God created the heavens and the earth.',
             sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
           },
         ],
@@ -272,9 +272,9 @@ export const teachings: Teaching[] = [
         name: 'Rest',
         verses: [
           {
-            reference: 'Psalm 4:8',
-            excerpt: 'Sleep and rest are also places where the Lord keeps his people safe.',
-            sourceUrl: 'https://bible.usccb.org/bible/psalms/4',
+            reference: 'Genesis 2:2-3',
+            excerpt: 'On the seventh day God rested from all the work he had done.',
+            sourceUrl: 'https://bible.usccb.org/bible/genesis/2',
           },
         ],
       },
