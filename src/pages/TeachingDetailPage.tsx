@@ -8,51 +8,17 @@ export default function TeachingDetailPage() {
   const { teachingId } = useParams()
   const teaching = getTeachingById(teachingId)
   const [isPreviewing, setIsPreviewing] = useState(false)
-  const [souls, setSouls] = useState<string[]>([])
-  const [soulInput, setSoulInput] = useState('')
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const longPressTimerRef = useRef<number | null>(null)
   const fossLink = 'https://fossnovena.org/'
-  const soulsToPrayFor = [
-    'Deceased family members',
-    'Forgotten souls in Purgatory',
-    'Souls with no one to pray for them',
-    'Souls of priests and religious',
-    'Souls who died suddenly',
-    'Friends and benefactors',
-  ]
-  const savedSoulsKey = 'spero-friends-of-the-suffering-souls'
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const raw = window.localStorage.getItem(savedSoulsKey)
-        if (raw) {
-          const parsed = JSON.parse(raw) as string[]
-          if (Array.isArray(parsed)) {
-            setSouls(parsed.filter((name) => typeof name === 'string' && name.trim().length > 0))
-          }
-        }
-      } catch {
-        setSouls([])
-      }
-    }
-
     return () => {
       if (longPressTimerRef.current !== null) {
         window.clearTimeout(longPressTimerRef.current)
       }
     }
   }, [])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    try {
-      window.localStorage.setItem(savedSoulsKey, JSON.stringify(souls))
-    } catch {
-      return
-    }
-  }, [souls])
 
   function startPreview() {
     if (longPressTimerRef.current !== null) {
@@ -85,18 +51,6 @@ export default function TeachingDetailPage() {
 
     setIsPreviewing(true)
     void videoRef.current?.play().catch(() => undefined)
-  }
-
-  function addSoul() {
-    const nextSoul = soulInput.trim()
-    if (!nextSoul) return
-
-    setSouls((current) => (current.includes(nextSoul) ? current : [...current, nextSoul]))
-    setSoulInput('')
-  }
-
-  function removeSoul(name: string) {
-    setSouls((current) => current.filter((soul) => soul !== name))
   }
 
   const isFriendsOfTheSuffering = teaching.id === 'friends-of-the-suffering'
@@ -159,91 +113,25 @@ export default function TeachingDetailPage() {
           </div>
 
           <div className="mt-4 space-y-2 text-center">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/45">USCCB NABRE</p>
             <h1 className="serif text-2xl text-[#e7cba9]">{teaching.title}</h1>
             {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
           </div>
 
-          {isFriendsOfTheSuffering && !isPreviewing ? (
-            <div className="mt-4 flex justify-center">
-              <button
-                type="button"
-                onClick={triggerPreview}
-                className="rounded-full border border-white/15 bg-black/15 px-4 py-3 text-[10px] uppercase tracking-[0.3em] text-white/60 backdrop-blur-md shadow-soft transition hover:bg-black/20"
-                aria-label="Play Purgatory video"
-              >
-                Play
-              </button>
-            </div>
-          ) : null}
-
           {isFriendsOfTheSuffering ? (
             <div className="mt-5 space-y-3">
               <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
-                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Prayer</p>
-                <h2 className="mt-2 serif text-xl text-[#e7cba9]">
+                <h2 className="serif text-xl text-[#e7cba9]">
                   The Importance of Praying for Souls
                 </h2>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
+              <Link
+                to="/community/friends-of-the-suffering/souls"
+                className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
+              >
                 <p className="text-xs uppercase tracking-[0.28em] text-white/45">Souls</p>
-                <div className="mt-3 space-y-3">
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {soulsToPrayFor.map((soul) => (
-                      <div
-                        key={soul}
-                        className="rounded-2xl border border-white/10 bg-black/15 px-4 py-3 text-sm text-white/75"
-                      >
-                        {soul}
-                      </div>
-                    ))}
-                    {souls.map((soul) => (
-                      <div
-                        key={soul}
-                        className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/85"
-                      >
-                        <span>{soul}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeSoul(soul)}
-                          className="text-[10px] uppercase tracking-[0.2em] text-white/45 transition hover:text-white"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-[0.22em] text-white/45" htmlFor="soul-name">
-                      Add a name
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        id="soul-name"
-                        value={soulInput}
-                        onChange={(event) => setSoulInput(event.target.value)}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter') {
-                            event.preventDefault()
-                            addSoul()
-                          }
-                        }}
-                        className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-gold/50"
-                        placeholder="Enter a soul name"
-                      />
-                      <button
-                        type="button"
-                        onClick={addSoul}
-                        className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.2em] text-white/70 transition hover:bg-white/15 hover:text-white"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <p className="mt-2 serif text-xl text-[#e7cba9]">Open Souls Detail Page</p>
+              </Link>
 
               <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
                 <p className="text-xs uppercase tracking-[0.28em] text-white/45">Become Friends of the Suffering</p>
@@ -273,25 +161,6 @@ export default function TeachingDetailPage() {
                   </a>
                   .
                 </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {[
-                    'ENROL YOURSELF',
-                    'ENROL SOMEONE ELSE',
-                    'DONATION',
-                    'ARRANGE MASS',
-                    'CONFIRM MASS',
-                  ].map((label) => (
-                    <a
-                      key={label}
-                      href={fossLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-white/10 bg-black/15 px-4 py-2 text-[10px] uppercase tracking-[0.18em] text-white/70 transition hover:bg-black/25 hover:text-white"
-                    >
-                      {label}
-                    </a>
-                  ))}
-                </div>
               </div>
             </div>
           ) : teaching.everydayThings && teaching.everydayThings.length > 0 ? (

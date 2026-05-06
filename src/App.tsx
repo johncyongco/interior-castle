@@ -7,8 +7,12 @@ import RoomPage from './pages/RoomPage'
 import PrayerPage from './pages/PrayerPage'
 import ReflectionPage from './pages/ReflectionPage'
 import ReflectionHistoryPage from './pages/ReflectionHistoryPage'
+import SoulsDetailPage from './pages/SoulsDetailPage'
 import TemptationPage from './pages/TemptationPage'
 import CommunityPage from './pages/CommunityPage'
+import FriendsOfTheSufferingPage from './pages/FriendsOfTheSufferingPage'
+import FriendsPrayerPage from './pages/FriendsPrayerPage'
+import FriendsFossPage from './pages/FriendsFossPage'
 import TeachingDetailPage from './pages/TeachingDetailPage'
 import CompanionPage from './pages/CompanionPage'
 import SaintsPage from './pages/SaintsPage'
@@ -57,6 +61,10 @@ function AppShell() {
               <Route path="/reflect" element={<ReflectionPage />} />
               <Route path="/reflection" element={<ReflectionPage />} />
               <Route path="/reflection/history" element={<ReflectionHistoryPage />} />
+              <Route path="/community/friends-of-the-suffering" element={<FriendsOfTheSufferingPage />} />
+              <Route path="/community/friends-of-the-suffering/prayer" element={<FriendsPrayerPage />} />
+              <Route path="/community/friends-of-the-suffering/souls" element={<SoulsDetailPage />} />
+              <Route path="/community/friends-of-the-suffering/foss" element={<FriendsFossPage />} />
               <Route path="/temptation" element={<TemptationPage />} />
               <Route path="/temptation/*" element={<TemptationPage />} />
               <Route path="/community" element={<CommunityPage />} />
