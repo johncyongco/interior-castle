@@ -166,12 +166,10 @@ export default function DevelopingVirtuesPage() {
 
   return (
     <ScreenContainer>
-      <div className="absolute inset-0 bg-[#080604]" />
       <div
-        className="absolute inset-0 z-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat opacity-95"
+        className="absolute inset-0 z-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat opacity-100"
         style={{ backgroundPosition: 'center center' }}
       />
-      <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_14%,rgba(255,236,199,0.14),transparent_26%),linear-gradient(180deg,rgba(15,12,9,0.02),rgba(15,12,9,0.34))]" />
 
       <div className="relative z-20 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
         <motion.div
@@ -211,15 +209,15 @@ export default function DevelopingVirtuesPage() {
                   {section.cards.map((card) => (
                     <article
                       key={card.title}
-                      className="rounded-3xl border border-white/10 bg-black/24 p-4 shadow-[0_18px_50px_rgba(0,0,0,0.2)] backdrop-blur-xl"
+                      className="rounded-3xl border border-white/12 bg-white/[0.05] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl"
                     >
                       <div className="mb-3 flex items-center justify-between gap-4">
                         <h3 className="serif text-xl tracking-wide text-[#f3dcc0]">{card.title}</h3>
-                        <span className="rounded-full border border-[#e7cba9]/18 px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-[#e7cba9]/58">
+                        <span className="rounded-full border border-[#e7cba9]/16 bg-black/10 px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-[#e7cba9]/60">
                           {card.phase}
                         </span>
                       </div>
-                      <p className="text-sm leading-6 text-white/72">{card.description}</p>
+                      <p className="text-sm leading-6 text-white/74">{card.description}</p>
                     </article>
                   ))}
                 </div>
