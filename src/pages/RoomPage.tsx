@@ -4,10 +4,31 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
+type Hotspot = {
+  id: string
+  label: string
+  shortLabel: string
+  lon: number
+  lat: number
+  onClick: () => void
+}
+
+function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
+  const lon = THREE.MathUtils.degToRad(lonDeg)
+  const lat = THREE.MathUtils.degToRad(latDeg)
+
+  return new THREE.Vector3(
+    radius * Math.cos(lat) * Math.cos(lon),
+    radius * Math.sin(lat),
+    radius * Math.cos(lat) * Math.sin(lon),
+  )
+}
+
 export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
+  const hotspotRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -25,6 +46,36 @@ export default function RoomPage() {
     let startY = 0
     let lon = 0
     let lat = 0
+    const cameraDirection = new THREE.Vector3()
+    const hotspotPoints: Array<Hotspot & { point: THREE.Vector3 }> = [
+      {
+        id: 'crucifix',
+        label: 'Crucifix',
+        shortLabel: 'Cross',
+        lon: -58,
+        lat: 12,
+        onClick: () => navigate('/prayer'),
+        point: sphericalToVector3(-58, 12),
+      },
+      {
+        id: 'bible',
+        label: 'Bible',
+        shortLabel: 'Bible',
+        lon: 18,
+        lat: -8,
+        onClick: () => navigate('/daily-gospel'),
+        point: sphericalToVector3(18, -8),
+      },
+      {
+        id: 'cc',
+        label: 'CC',
+        shortLabel: 'CC',
+        lon: 52,
+        lat: 14,
+        onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
+        point: sphericalToVector3(52, 14),
+      },
+    ]
 
     try {
       const scene = new THREE.Scene()
@@ -110,6 +161,29 @@ export default function RoomPage() {
           500 * Math.cos(phi),
           500 * Math.sin(phi) * Math.sin(theta),
         )
+        camera.getWorldDirection(cameraDirection)
+
+        hotspotPoints.forEach((hotspot) => {
+          const element = hotspotRefs.current[hotspot.id]
+          if (!element) return
+
+          const relative = hotspot.point.clone()
+          const visible = relative.dot(cameraDirection) > 0
+
+          if (!visible) {
+            element.style.opacity = '0'
+            element.style.pointerEvents = 'none'
+            return
+          }
+
+          const projected = hotspot.point.clone().project(camera)
+          const x = (projected.x * 0.5 + 0.5) * window.innerWidth
+          const y = (-projected.y * 0.5 + 0.5) * window.innerHeight
+
+          element.style.opacity = '1'
+          element.style.pointerEvents = 'auto'
+          element.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
+        })
         renderer?.render(scene, camera)
       }
 
@@ -144,53 +218,31 @@ export default function RoomPage() {
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="rounded-full border border-white/15 bg-black/30 px-5 py-3 text-[10px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl">
+        <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
           360
         </div>
       </div>
 
-      <div className="pointer-events-none absolute left-[24%] top-[32%] z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
-          Crucifix
-        </div>
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {hotspotPoints.map((hotspot) => (
+          <button
+            key={hotspot.id}
+            ref={(element) => {
+              hotspotRefs.current[hotspot.id] = element
+            }}
+            type="button"
+            onClick={hotspot.onClick}
+            aria-label={`${hotspot.label} hotspot`}
+            title={hotspot.label}
+            className="pointer-events-auto absolute left-0 top-0 flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/15 bg-black/45 px-2.5 py-1.5 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:min-h-0 sm:min-w-0 sm:px-3 sm:py-2 sm:text-[9px] sm:tracking-[0.3em]"
+          >
+            <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
+            <span className="whitespace-nowrap">{hotspot.shortLabel}</span>
+          </button>
+        ))}
       </div>
-      <button
-        type="button"
-        onClick={() => navigate('/prayer')}
-        aria-label="Crucifix hotspot"
-        title="Crucifix"
-        className="absolute left-[24%] top-[37%] z-20 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
-      />
 
-      <div className="pointer-events-none absolute left-[62%] top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
-          Bible
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={() => navigate('/daily-gospel')}
-        aria-label="Bible hotspot"
-        title="Bible"
-        className="absolute left-[62%] top-[64%] z-20 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
-      />
-
-      <div className="pointer-events-none absolute left-[72%] top-[33%] z-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
-          CC
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={() => window.open(catechismUrl, '_blank', 'noopener,noreferrer')}
-        aria-label="Catechism of the Catholic Church hotspot"
-        title="Catechism of the Catholic Church"
-        className="absolute left-[72%] top-[39%] z-20 h-24 w-12 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-transparent"
-      >
-        <span className="sr-only">Catechism of the Catholic Church</span>
-      </button>
-
-      <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
+      <div className="pointer-events-none relative flex h-full flex-col px-4 py-6 pb-[max(7rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:py-10 sm:pb-28">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
