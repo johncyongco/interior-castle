@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 import { SoftCard } from '../components/SoftCard'
 import { PrimaryButton } from '../components/PrimaryButton'
@@ -6,6 +7,7 @@ import { useInteriorStore } from '../store/interiorStore'
 
 export default function SaintsPage() {
   const increaseDepth = useInteriorStore((store) => store.increaseDepth)
+  const navigate = useNavigate()
 
   return (
     <ScreenContainer>
@@ -21,6 +23,19 @@ export default function SaintsPage() {
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="space-y-4"
         >
+          <div className="flex items-center justify-start">
+            <button
+              type="button"
+              onClick={() => {
+                window.sessionStorage.setItem('spero-room-entry', 'door')
+                navigate('/room')
+              }}
+              className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]"
+            >
+              Back to Room
+            </button>
+          </div>
+
           <div className="space-y-2 text-center">
             <p className="text-xs uppercase tracking-[0.28em] text-white/45">Saints</p>
             <h1 className="serif text-3xl tracking-wide text-[#e7cba9]">St. Teresa of Ávila</h1>
