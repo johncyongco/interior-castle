@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
 export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -146,6 +147,14 @@ export default function RoomPage() {
           360
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => navigate('/prayer')}
+        aria-label="Cross hotspot"
+        title="Cross"
+        className="absolute left-1/2 top-[29%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
+      />
 
       <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
