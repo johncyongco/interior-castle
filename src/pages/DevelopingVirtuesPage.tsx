@@ -166,14 +166,14 @@ export default function DevelopingVirtuesPage() {
 
   return (
     <ScreenContainer>
-      <div className="absolute inset-0 bg-black" />
+      <div className="absolute inset-0 bg-[#080604]" />
       <div
-        className="absolute inset-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 z-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat opacity-95"
         style={{ backgroundPosition: 'center center' }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(255,236,199,0.11),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.02),rgba(15,12,9,0.6))]" />
+      <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_14%,rgba(255,236,199,0.14),transparent_26%),linear-gradient(180deg,rgba(15,12,9,0.02),rgba(15,12,9,0.34))]" />
 
-      <div className="relative flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
+      <div className="relative z-20 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
