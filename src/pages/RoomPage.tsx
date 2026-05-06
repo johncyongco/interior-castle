@@ -286,7 +286,7 @@ export default function RoomPage() {
       })
 
       const stThereseGroup = new THREE.Group()
-      stThereseGroup.position.copy(sphericalToVector3(129.75, -19.03, 496.2))
+      stThereseGroup.position.copy(sphericalToVector3(127, -16, 496.2))
       stThereseGroup.lookAt(0, 0, 0)
       scene.add(stThereseGroup)
 
@@ -302,7 +302,7 @@ export default function RoomPage() {
       stThereseShadow.scale.set(1.18, 0.75, 1)
       stThereseGroup.add(stThereseShadow)
 
-      const stTheresePlaneGeometry = new THREE.PlaneGeometry(52, 65)
+      const stTheresePlaneGeometry = new THREE.PlaneGeometry(68, 85)
       const stTheresePlaneMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
@@ -310,7 +310,7 @@ export default function RoomPage() {
         depthWrite: false,
       })
       const stTheresePlane = new THREE.Mesh(stTheresePlaneGeometry, stTheresePlaneMaterial)
-      stTheresePlane.position.set(0, -8, 0.06)
+      stTheresePlane.position.set(0, -10, 0.06)
       stThereseGroup.add(stTheresePlane)
 
       const stThereseTexture = loader.load('/St. Therese.png', (texture) => {
