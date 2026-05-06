@@ -110,6 +110,15 @@ export default function RoomPage() {
     onClick: () => navigate('/first-mansion'),
     point: sphericalToVector3(0.14, 4.15),
   }
+  const littleFlowerHotspot = {
+    id: 'little-flower',
+    label: 'Little Flower',
+    shortLabel: 'Site',
+    lon: 123,
+    lat: -13,
+    onClick: () => window.location.assign('https://www.littleflower.org/st-therese/'),
+    point: sphericalToVector3(123, -13),
+  }
   const rangeHotspots: RangeHotspot[] = [
     {
       id: 'door',
@@ -170,6 +179,7 @@ export default function RoomPage() {
       point: sphericalToVector3(-113.17, 9.4),
     },
     firstMansion,
+    littleFlowerHotspot,
   ]
 
   useEffect(() => {
@@ -546,7 +556,9 @@ export default function RoomPage() {
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
                   : hotspot.id === 'first-mansion'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
-                  : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
+                    : hotspot.id === 'little-flower'
+                      ? 'h-[3.2rem] w-[3.2rem] sm:h-[3.8rem] sm:w-[3.8rem]'
+                    : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
             >
               {hotspot.id === 'first-mansion' ? (
@@ -566,6 +578,21 @@ export default function RoomPage() {
                   <path d="M9 20v-5h6v5" />
                   <path d="M7 20h10" />
                   </svg>
+              ) : hotspot.id === 'little-flower' ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-full w-full text-[#e7cba9]/22 transition hover:text-[#e7cba9]/38"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 4v16" />
+                  <path d="M6 8l6 4 6-4" />
+                  <path d="M6 16l6-4 6 4" />
+                </svg>
               ) : null}
             </button>
           </div>
