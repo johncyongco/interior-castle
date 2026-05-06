@@ -26,35 +26,37 @@ function AppShell() {
     <div className="relative min-h-[100dvh] overflow-hidden bg-castle text-white">
       <AmbientField />
       <div className="pointer-events-none absolute inset-0 vignette" />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, filter: 'blur(8px)' }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-          className="relative min-h-[100dvh]"
+      <div className="relative mx-auto min-h-[100dvh] w-full max-w-[375px] overflow-hidden px-2 sm:px-0">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, filter: 'blur(8px)' }}
+            transition={{ duration: 1.5, ease: 'easeOut' }}
+            className="relative min-h-[100dvh]"
           >
-          <Routes location={location}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/gate" element={<HomePage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/room" element={<RoomPage />} />
-            <Route path="/prayer" element={<PrayerPage />} />
-            <Route path="/prayer/*" element={<PrayerPage />} />
-            <Route path="/reflect" element={<ReflectionPage />} />
-            <Route path="/reflection" element={<ReflectionPage />} />
-            <Route path="/temptation" element={<TemptationPage />} />
-            <Route path="/temptation/*" element={<TemptationPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/community/:teachingId" element={<TeachingDetailPage />} />
-            <Route path="/companion" element={<CompanionPage />} />
-            <Route path="/saints" element={<SaintsPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </motion.div>
-        <BottomNav />
-      </AnimatePresence>
+            <Routes location={location}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/gate" element={<HomePage />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/room" element={<RoomPage />} />
+              <Route path="/prayer" element={<PrayerPage />} />
+              <Route path="/prayer/*" element={<PrayerPage />} />
+              <Route path="/reflect" element={<ReflectionPage />} />
+              <Route path="/reflection" element={<ReflectionPage />} />
+              <Route path="/temptation" element={<TemptationPage />} />
+              <Route path="/temptation/*" element={<TemptationPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/community/:teachingId" element={<TeachingDetailPage />} />
+              <Route path="/companion" element={<CompanionPage />} />
+              <Route path="/saints" element={<SaintsPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </motion.div>
+          <BottomNav />
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
