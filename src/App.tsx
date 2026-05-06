@@ -22,6 +22,7 @@ import FriendsFossPage from './pages/FriendsFossPage'
 import TeachingDetailPage from './pages/TeachingDetailPage'
 import CompanionPage from './pages/CompanionPage'
 import SaintsPage from './pages/SaintsPage'
+import GuardianAngelPage from './pages/GuardianAngelPage'
 import { AmbientField } from './components/AmbientField'
 import { ensureSperoUser } from './lib/speroIdentity'
 import BottomNav from './components/BottomNav'
@@ -100,6 +101,7 @@ function AppShell() {
               <Route path="/community/:teachingId" element={<TeachingDetailPage />} />
               <Route path="/companion" element={<CompanionPage />} />
               <Route path="/saints" element={<SaintsPage />} />
+              <Route path="/guardian-angel" element={<GuardianAngelPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>
