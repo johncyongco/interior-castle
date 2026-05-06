@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useParams } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
@@ -6,6 +7,45 @@ import { getTeachingById } from '../lib/communityTeachings'
 export default function TeachingDetailPage() {
   const { teachingId } = useParams()
   const teaching = getTeachingById(teachingId)
+  const [isPreviewing, setIsPreviewing] = useState(false)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const longPressTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (longPressTimerRef.current !== null) {
+        window.clearTimeout(longPressTimerRef.current)
+      }
+    }
+  }, [])
+
+  function startPreview() {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current)
+    }
+
+    longPressTimerRef.current = window.setTimeout(() => {
+      setIsPreviewing(true)
+      void videoRef.current?.play().catch(() => undefined)
+    }, 450)
+  }
+
+  function stopPreview() {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current)
+      longPressTimerRef.current = null
+    }
+
+    if (isPreviewing) {
+      videoRef.current?.pause()
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0
+      }
+      setIsPreviewing(false)
+    }
+  }
+
+  const isFriendsOfTheSuffering = teaching.id === 'friends-of-the-suffering'
 
   return (
     <ScreenContainer>
@@ -32,6 +72,41 @@ export default function TeachingDetailPage() {
             <h1 className="serif text-2xl text-[#e7cba9]">{teaching.title}</h1>
             {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
           </div>
+
+          {isFriendsOfTheSuffering ? (
+            <div
+              className="relative mt-5 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl shadow-soft"
+              onPointerDown={startPreview}
+              onPointerUp={stopPreview}
+              onPointerCancel={stopPreview}
+              onPointerLeave={stopPreview}
+              onContextMenu={(event) => event.preventDefault()}
+            >
+              <div className="relative h-72 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+                <img
+                  src="/Purgatory.png"
+                  alt="Purgatory"
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                    isPreviewing ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+                <video
+                  ref={videoRef}
+                  src="/Purgatory-video.mp4"
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                    isPreviewing ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-hidden="true"
+                />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+            </div>
+          ) : null}
 
           {teaching.everydayThings && teaching.everydayThings.length > 0 ? (
             <div className="mt-5 space-y-3">
