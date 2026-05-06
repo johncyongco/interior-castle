@@ -7,6 +7,7 @@ import ScreenContainer from '../components/ScreenContainer'
 export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
+  const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -163,6 +164,16 @@ export default function RoomPage() {
         title="Bible"
         className="absolute left-[60%] top-[64%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
       />
+
+      <button
+        type="button"
+        onClick={() => window.open(catechismUrl, '_blank', 'noopener,noreferrer')}
+        aria-label="Catechism of the Catholic Church hotspot"
+        title="Catechism of the Catholic Church"
+        className="absolute left-[78%] top-[39%] z-20 h-36 w-24 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-transparent"
+      >
+        <span className="sr-only">Catechism of the Catholic Church</span>
+      </button>
 
       <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div

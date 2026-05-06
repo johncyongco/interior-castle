@@ -29,12 +29,12 @@ function PrayerIndex() {
     <ScreenContainer>
       <div className="absolute inset-0 bg-[url('/candle.png')] bg-cover bg-center opacity-[0.03]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,236,199,0.12),transparent_28%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.5))]" />
-      <div className="relative flex h-full flex-col px-6 py-10">
+      <div className="relative flex h-full flex-col overflow-y-auto px-6 py-10 pb-32">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="flex h-full flex-col"
+          className="flex min-h-full flex-col"
         >
           <div className="space-y-2 text-center pt-2">
             <h1 className="serif text-2xl tracking-wide text-[#e7cba9]">Prayer</h1>
@@ -97,7 +97,7 @@ function PrayerIndex() {
             </SoftCard>
           )}
 
-          <p className="mt-auto pt-6 text-center text-xs text-[#8c7a65]">You can return at any time.</p>
+          <p className="mt-8 pb-4 text-center text-xs text-[#8c7a65]">You can return at any time.</p>
         </motion.div>
       </div>
     </ScreenContainer>
