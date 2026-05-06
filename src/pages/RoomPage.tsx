@@ -1,28 +1,18 @@
-import type { MouseEvent, TouchEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import type { PointerEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
-type DragEventLike = {
-  clientX?: number
-  touches?: Array<{ clientX: number }>
-  changedTouches?: Array<{ clientX: number }>
-}
-
-function getClientX(event: DragEventLike) {
-  return event.clientX ?? event.touches?.[0]?.clientX ?? event.changedTouches?.[0]?.clientX ?? 0
-}
-
 export default function RoomPage() {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const imageRef = useRef<HTMLDivElement | null>(null)
+  const panoramaRef = useRef<HTMLDivElement | null>(null)
   const isDraggingRef = useRef(false)
   const startXRef = useRef(0)
   const startYRef = useRef(0)
   const offsetXRef = useRef(0)
   const offsetYRef = useRef(0)
-  const [isEntered, setIsEntered] = useState(true)
+  const [dragStyle, setDragStyle] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -36,64 +26,76 @@ export default function RoomPage() {
     }
   }, [])
 
-  function handleDown(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    isDraggingRef.current = true
-    startXRef.current = getClientX(event)
-    startYRef.current = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
+  function getClientPoint(event: PointerEvent<HTMLDivElement>) {
+    return { x: event.clientX, y: event.clientY }
   }
 
-  function handleMove(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    if (!isDraggingRef.current || !imageRef.current) return
-
-    const clientX = getClientX(event)
-    const clientY = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
-    const delta = clientX - startXRef.current
-    const deltaY = clientY - startYRef.current
-
-    offsetXRef.current += delta * 0.2
+  function updateDrag(deltaX: number, deltaY: number) {
+    offsetXRef.current += deltaX * 0.3
     offsetYRef.current += deltaY * 0.12
-    startXRef.current = clientX
-    startYRef.current = clientY
-    imageRef.current.style.setProperty('--drag-x', `${offsetXRef.current}px`)
-    imageRef.current.style.setProperty('--drag-y', `${offsetYRef.current}px`)
-  }
-
-  function handleUp() {
-    isDraggingRef.current = false
+    setDragStyle({ x: offsetXRef.current, y: offsetYRef.current })
   }
 
   return (
     <ScreenContainer>
-      <div className="absolute inset-0 bg-black" />
       <div
-        ref={containerRef}
-        className="absolute inset-0 overflow-hidden touch-none cursor-grab active:cursor-grabbing select-none"
-        onMouseDown={handleDown}
-        onMouseMove={handleMove}
-        onMouseUp={handleUp}
-        onMouseLeave={handleUp}
-        onTouchStart={handleDown}
-        onTouchMove={(event) => {
-          handleMove(event)
-          event.preventDefault()
+        ref={panoramaRef}
+        className="absolute inset-0 overflow-hidden select-none touch-none bg-black"
+        style={{ perspective: '1400px', touchAction: 'none' }}
+        onPointerDown={(event) => {
+          setIsDragging(true)
+          isDraggingRef.current = true
+          const { x, y } = getClientPoint(event)
+          startXRef.current = x
+          startYRef.current = y
+          event.currentTarget.setPointerCapture(event.pointerId)
         }}
-        onTouchEnd={handleUp}
-        onTouchCancel={handleUp}
+        onPointerMove={(event) => {
+          if (!isDraggingRef.current) return
+          const { x, y } = getClientPoint(event)
+          const deltaX = x - startXRef.current
+          const deltaY = y - startYRef.current
+          startXRef.current = x
+          startYRef.current = y
+          updateDrag(deltaX, deltaY)
+        }}
+        onPointerUp={() => {
+          isDraggingRef.current = false
+          setIsDragging(false)
+        }}
+        onPointerCancel={() => {
+          isDraggingRef.current = false
+          setIsDragging(false)
+        }}
+        onLostPointerCapture={() => {
+          isDraggingRef.current = false
+          setIsDragging(false)
+        }}
       >
         <div
-          ref={imageRef}
-          className="absolute inset-0 scale-[1.14] transition-transform duration-700"
+          className="absolute left-1/2 top-1/2 h-[130%] w-[130%] max-w-none"
           style={{
-            backgroundImage: `url('/room1.png')`,
+            backgroundImage: "url('/room1.png')",
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: '0px center',
+            backgroundPosition: 'center center',
+            transform: `translate3d(calc(-50% + ${dragStyle.x}px), calc(-50% + ${dragStyle.y}px), 0)
+              rotateY(${dragStyle.x * 0.02}deg)
+              rotateX(${dragStyle.y * -0.015}deg)
+              scale(1.15)`,
             transformOrigin: 'center center',
-            transform:
-              'perspective(1400px) translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotateY(calc(var(--drag-x, 0px) * 0.02)) rotateX(calc(var(--drag-y, 0px) * -0.015)) scale(1.14)',
+            transition: isDragging ? 'none' : 'transform 180ms ease-out',
+            willChange: 'transform',
           }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="rounded-full border border-white/15 bg-black/30 px-5 py-3 text-[10px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl">
+            360
+          </div>
+        </div>
       </div>
 
       <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
@@ -110,10 +112,6 @@ export default function RoomPage() {
             >
               Saints
             </Link>
-          </div>
-
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-black/25 text-[10px] font-medium tracking-[0.32em] text-white/60 backdrop-blur-xl">
-            360
           </div>
         </motion.div>
       </div>
