@@ -1,15 +1,28 @@
-import { useEffect, useRef } from 'react'
+import type { MouseEvent, TouchEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
-import type { MouseEvent, TouchEvent } from 'react'
+
+type DragEventLike = {
+  clientX?: number
+  touches?: Array<{ clientX: number }>
+  changedTouches?: Array<{ clientX: number }>
+}
+
+function getClientX(event: DragEventLike) {
+  return event.clientX ?? event.touches?.[0]?.clientX ?? event.changedTouches?.[0]?.clientX ?? 0
+}
 
 export default function RoomPage() {
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const imageRef = useRef<HTMLDivElement | null>(null)
   const isDraggingRef = useRef(false)
   const startXRef = useRef(0)
+  const startYRef = useRef(0)
   const offsetXRef = useRef(0)
-  const activeImageRef = useRef<HTMLDivElement | null>(null)
+  const offsetYRef = useRef(0)
+  const [isEntered, setIsEntered] = useState(false)
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -23,28 +36,31 @@ export default function RoomPage() {
     }
   }, [])
 
-  function getClientX(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    if ('touches' in event) {
-      return event.touches[0]?.clientX ?? event.changedTouches[0]?.clientX ?? 0
+  function handleDown(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
+    if (!isEntered) {
+      setIsEntered(true)
+      return
     }
 
-    return event.clientX
-  }
-
-  function handleDown(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
     isDraggingRef.current = true
     startXRef.current = getClientX(event)
+    startYRef.current = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
   }
 
   function handleMove(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    if (!isDraggingRef.current || !activeImageRef.current) return
+    if (!isEntered || !isDraggingRef.current || !imageRef.current) return
 
     const clientX = getClientX(event)
+    const clientY = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
     const delta = clientX - startXRef.current
+    const deltaY = clientY - startYRef.current
 
     offsetXRef.current += delta * 0.2
+    offsetYRef.current += deltaY * 0.12
     startXRef.current = clientX
-    activeImageRef.current.style.backgroundPosition = `${offsetXRef.current}px center`
+    startYRef.current = clientY
+    imageRef.current.style.setProperty('--drag-x', `${offsetXRef.current}px`)
+    imageRef.current.style.setProperty('--drag-y', `${offsetYRef.current}px`)
   }
 
   function handleUp() {
@@ -70,16 +86,30 @@ export default function RoomPage() {
         onTouchCancel={handleUp}
       >
         <div
-          ref={activeImageRef}
-          className="absolute inset-0"
+          ref={imageRef}
+          className={`absolute inset-0 transition-transform duration-700 ${
+            isEntered ? 'scale-[1.14]' : 'scale-100'
+          }`}
           style={{
             backgroundImage: `url('/room1.png')`,
             backgroundSize: 'cover',
-            backgroundRepeat: 'repeat-x',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: '0px center',
+            transformOrigin: 'center center',
+            transform: isEntered
+              ? 'perspective(1400px) translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotateY(calc(var(--drag-x, 0px) * 0.02)) rotateX(calc(var(--drag-y, 0px) * -0.015)) scale(1.14)'
+              : 'scale(1)',
           }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+
+        {!isEntered ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="rounded-full border border-white/15 bg-black/30 px-5 py-3 text-[10px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl">
+              Tap to enter
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="relative flex h-full flex-col px-6 py-10 pb-28">
