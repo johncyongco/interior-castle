@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
@@ -26,6 +26,13 @@ type RangeHotspot = {
   latMin: number
   latMax: number
   onClick: () => void
+}
+
+type CoordinatePanel = {
+  label: string
+  source: string
+  lon: number | null
+  lat: number | null
 }
 
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
@@ -67,6 +74,22 @@ export default function RoomPage() {
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
   const hotspotRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({
+    label: 'Room Inspector',
+    source: 'Tap the panorama or the frame',
+    lon: null,
+    lat: null,
+  })
+  const pictureFrame = {
+    id: 'sample-frame',
+    label: 'Sample Frame',
+    lon: 141.5,
+    lat: 7.25,
+    radius: 468,
+    width: 42,
+    height: 28,
+    image: '/saint-teresa.png',
+  }
   const rangeHotspots: RangeHotspot[] = [
     {
       id: 'door',
@@ -148,10 +171,11 @@ export default function RoomPage() {
     let startY = 0
     let lon = 0
     let lat = 0
-    const cameraDirection = new THREE.Vector3()
-    const raycaster = new THREE.Raycaster()
-    const pointer = new THREE.Vector2()
-    let dragDistance = 0
+      const cameraDirection = new THREE.Vector3()
+      const raycaster = new THREE.Raycaster()
+      const pointer = new THREE.Vector2()
+      let dragDistance = 0
+      const interactiveObjects: THREE.Object3D[] = []
 
     try {
       const scene = new THREE.Scene()
@@ -177,6 +201,44 @@ export default function RoomPage() {
         texture.colorSpace = THREE.SRGBColorSpace
         material.map = texture
         material.needsUpdate = true
+      })
+
+      const frameGroup = new THREE.Group()
+      frameGroup.position.copy(sphericalToVector3(pictureFrame.lon, pictureFrame.lat, pictureFrame.radius))
+      frameGroup.lookAt(0, 0, 0)
+      scene.add(frameGroup)
+
+      const frameBorderGeometry = new THREE.PlaneGeometry(pictureFrame.width, pictureFrame.height)
+      const frameBorderMaterial = new THREE.MeshBasicMaterial({
+        color: 0x6a4b2f,
+        transparent: true,
+        opacity: 0.96,
+      })
+      const frameBorder = new THREE.Mesh(frameBorderGeometry, frameBorderMaterial)
+      frameGroup.add(frameBorder)
+
+      const frameMattingGeometry = new THREE.PlaneGeometry(pictureFrame.width - 4, pictureFrame.height - 4)
+      const frameMattingMaterial = new THREE.MeshBasicMaterial({
+        color: 0x17120f,
+        transparent: true,
+        opacity: 0.96,
+      })
+      const frameMatting = new THREE.Mesh(frameMattingGeometry, frameMattingMaterial)
+      frameMatting.position.z = 0.12
+      frameGroup.add(frameMatting)
+
+      const framedImageGeometry = new THREE.PlaneGeometry(pictureFrame.width - 7, pictureFrame.height - 7)
+      const framedImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+      const framedImage = new THREE.Mesh(framedImageGeometry, framedImageMaterial)
+      framedImage.position.z = 0.2
+      frameGroup.add(framedImage)
+
+      interactiveObjects.push(frameBorder, frameMatting, framedImage)
+
+      const framedImageTexture = loader.load(pictureFrame.image, (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        framedImageMaterial.map = texture
+        framedImageMaterial.needsUpdate = true
       })
 
       const updateSize = () => {
@@ -223,6 +285,15 @@ export default function RoomPage() {
         isDragging = false
       }
 
+      const setPanelFromHit = (label: string, lonValue: number, latValue: number, source: string) => {
+        setCoordinatePanel({
+          label,
+          source,
+          lon: Number(lonValue.toFixed(2)),
+          lat: Number(latValue.toFixed(2)),
+        })
+      }
+
       const onCanvasClick = (event: MouseEvent) => {
         if (dragDistance > 6) return
 
@@ -232,6 +303,12 @@ export default function RoomPage() {
         pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
         raycaster.setFromCamera(pointer, camera)
+
+        const frameHits = raycaster.intersectObjects(interactiveObjects, false)
+        if (frameHits.length) {
+          setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Sample frame')
+          return
+        }
 
         const intersections = raycaster.intersectObject(mesh, false)
         if (!intersections.length) return
@@ -245,11 +322,13 @@ export default function RoomPage() {
             hitLat >= rangeHotspot.latMin &&
             hitLat <= rangeHotspot.latMax
           ) {
+            setPanelFromHit(rangeHotspot.label, hitLon, hitLat, 'Wall hotspot')
             rangeHotspot.onClick()
             return
           }
         }
 
+        setPanelFromHit('Panorama', hitLon, hitLat, 'Wall click')
         console.log('Panorama coordinate', {
           lon: Number(hitLon.toFixed(2)),
           lat: Number(hitLat.toFixed(2)),
@@ -315,6 +394,13 @@ export default function RoomPage() {
         if (renderer?.domElement.parentElement === mount) {
           mount.removeChild(renderer.domElement)
         }
+        framedImageTexture.dispose()
+        framedImageMaterial.dispose()
+        framedImageGeometry.dispose()
+        frameMattingMaterial.dispose()
+        frameMattingGeometry.dispose()
+        frameBorderMaterial.dispose()
+        frameBorderGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
       }
@@ -347,7 +433,15 @@ export default function RoomPage() {
           >
             <button
               type="button"
-              onClick={hotspot.onClick}
+              onClick={() => {
+                setCoordinatePanel({
+                  label: hotspot.label,
+                  source: 'Hotspot',
+                  lon: Number(hotspot.lon.toFixed(2)),
+                  lat: Number(hotspot.lat.toFixed(2)),
+                })
+                hotspot.onClick()
+              }}
               aria-label={`${hotspot.label} hotspot`}
               title={hotspot.label}
               className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
@@ -378,6 +472,31 @@ export default function RoomPage() {
           </div>
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
+        className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6"
+      >
+        <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
+          <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
+          <div className="mb-1 text-[11px] tracking-[0.2em] text-white/90">{coordinatePanel.label}</div>
+          <div className="mb-2 text-[9px] tracking-[0.22em] text-amber-100/70">{coordinatePanel.source}</div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-white/45">Lon</span>
+            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">
+              {coordinatePanel.lon === null ? '--' : coordinatePanel.lon.toFixed(2)}
+            </span>
+          </div>
+          <div className="mt-1 flex items-center justify-between gap-4">
+            <span className="text-white/45">Lat</span>
+            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">
+              {coordinatePanel.lat === null ? '--' : coordinatePanel.lat.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      </motion.div>
     </ScreenContainer>
   )
 }
