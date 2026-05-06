@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -16,27 +16,27 @@ type RoomScene = {
 const ROOM_SCENES: RoomScene[] = [
   {
     id: 1,
-    label: 'Entry Room',
+    label: 'Room',
     src: '/chair-room.png',
-    subtitle: 'Begin here. Look around and continue inward.',
+    subtitle: 'A quiet entry with a simple chair and stillness.',
   },
   {
     id: 2,
-    label: 'Room 1',
+    label: 'Room',
     src: '/room1.png',
-    subtitle: 'The first interior room opens quietly.',
+    subtitle: 'Warm light gathers across the walls.',
   },
   {
     id: 3,
-    label: 'Room 2',
+    label: 'Room',
     src: '/room2.png',
-    subtitle: 'The space deepens as you advance.',
+    subtitle: 'A deeper, softer atmosphere begins.',
   },
   {
     id: 4,
-    label: 'Room 3',
+    label: 'Room',
     src: '/room3.png',
-    subtitle: 'A deeper chamber waits beyond the door.',
+    subtitle: 'The light turns quieter and more contemplative.',
   },
 ]
 
@@ -84,7 +84,6 @@ export default function RoomPage() {
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
   const advanceRoomStep = useInteriorStore((store) => store.advanceRoomStep)
   const lines = useMemo(() => roomCopy(mood, roomStep), [mood, roomStep])
-  const [isLookingAtDoor, setIsLookingAtDoor] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -142,11 +141,6 @@ export default function RoomPage() {
       renderer.setSize(nextWidth, nextHeight)
     }
 
-    const updateDoorFocus = () => {
-      const centered = lonRef.current > -10 && lonRef.current < 10 && latRef.current > -10 && latRef.current < 10
-      setIsLookingAtDoor(centered)
-    }
-
     const onPointerDown = (event: PointerEvent) => {
       isDraggingRef.current = true
       lastPointerRef.current = { x: event.clientX, y: event.clientY }
@@ -164,7 +158,6 @@ export default function RoomPage() {
 
       lonRef.current += deltaX * 0.1
       latRef.current -= deltaY * 0.1
-      updateDoorFocus()
     }
 
     const onPointerUp = () => {
@@ -198,7 +191,6 @@ export default function RoomPage() {
     }
 
     animate()
-    updateDoorFocus()
 
     return () => {
       if (frameRef.current !== null) {
@@ -249,7 +241,7 @@ export default function RoomPage() {
 
   return (
     <ScreenContainer>
-      <div ref={containerRef} className="absolute inset-0 bg-black" />
+      <div ref={containerRef} className="absolute inset-0 bg-black touch-none cursor-grab active:cursor-grabbing" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
@@ -265,9 +257,15 @@ export default function RoomPage() {
             >
               Saints
             </Link>
-            <p className="text-xs uppercase tracking-[0.28em] text-white/50">
-              {currentScene.label}
-            </p>
+            <div className="rounded-full border border-white/10 bg-black/25 px-3 py-2 text-right backdrop-blur-xl">
+              <p className="text-[10px] uppercase tracking-[0.32em] text-white/45">360 Panorama</p>
+              <p className="text-xs text-white/70">{currentScene.label}</p>
+              <p className="max-w-[14rem] text-[10px] leading-4 text-white/45">{currentScene.subtitle}</p>
+            </div>
+          </div>
+
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/25 px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-white/60 backdrop-blur-xl">
+            Drag to look around
           </div>
 
           <div className="mt-auto grid gap-4">
@@ -282,36 +280,18 @@ export default function RoomPage() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <button
-                type="button"
-                onClick={() => {
-                  if (!isFinalScene) {
-                    advanceRoomStep()
-                  }
-                }}
-                className="btn-gold w-full disabled:opacity-60"
-                disabled={isFinalScene}
-              >
-                {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (isLookingAtDoor && !isFinalScene) {
-                    advanceRoomStep()
-                  }
-                }}
-                className={`rounded-xl border px-4 py-3 text-sm transition ${
-                  isLookingAtDoor && !isFinalScene
-                    ? 'border-[#e7cba9]/40 bg-[#e7cba9]/10 text-[#e7cba9]'
-                    : 'pointer-events-none border-white/10 bg-white/5 text-white/45'
-                }`}
-              >
-                {isLookingAtDoor && !isFinalScene ? 'Door' : 'Look to door'}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (!isFinalScene) {
+                  advanceRoomStep()
+                }
+              }}
+              className="btn-gold w-full disabled:opacity-60"
+              disabled={isFinalScene}
+            >
+              {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
+            </button>
           </div>
         </motion.div>
       </div>

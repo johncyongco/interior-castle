@@ -53,11 +53,10 @@ export default function HomePage() {
                   void logInteriorState(option)
                   if (option === 'tempted') {
                     setTemptationStep(0)
-                    setRoomStep(1)
                     navigate('/temptation')
                   } else {
                     setRoomStep(1)
-                    navigate('/room')
+                    navigate('/prayer')
                   }
                 }}
               >
