@@ -286,7 +286,7 @@ export default function RoomPage() {
       })
 
       const stThereseGroup = new THREE.Group()
-      stThereseGroup.position.copy(sphericalToVector3(127, -16, 496.2))
+      stThereseGroup.position.copy(sphericalToVector3(127, -10, 496.2))
       stThereseGroup.lookAt(0, 0, 0)
       scene.add(stThereseGroup)
 
