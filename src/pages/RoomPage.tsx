@@ -349,7 +349,8 @@ export default function RoomPage() {
 
         const frameHits = raycaster.intersectObjects(interactiveObjects, false)
         if (frameHits.length) {
-          guardianAngel.onClick()
+          setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Frame hotspot')
+          pictureFrame.onClick()
           return
         }
 
