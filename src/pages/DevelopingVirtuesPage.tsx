@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import ScreenContainer from '../components/ScreenContainer'
 
 type VirtueCard = {
   title: string
@@ -165,13 +164,13 @@ export default function DevelopingVirtuesPage() {
   const navigate = useNavigate()
 
   return (
-    <ScreenContainer>
+    <div className="relative h-screen w-full overflow-hidden">
       <div
         className="absolute inset-0 z-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat opacity-100"
         style={{ backgroundPosition: 'center center' }}
       />
 
-      <div className="relative z-20 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
+      <div className="relative z-10 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -226,6 +225,6 @@ export default function DevelopingVirtuesPage() {
           </div>
         </motion.div>
       </div>
-    </ScreenContainer>
+    </div>
   )
 }
