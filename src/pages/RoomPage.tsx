@@ -37,6 +37,14 @@ function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   )
 }
 
+function vector3ToSpherical(point: THREE.Vector3) {
+  const radius = point.length()
+  const lon = THREE.MathUtils.radToDeg(Math.atan2(point.z, point.x))
+  const lat = THREE.MathUtils.radToDeg(Math.asin(point.y / radius))
+
+  return { lon, lat }
+}
+
 export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
@@ -89,6 +97,9 @@ export default function RoomPage() {
     let lon = 0
     let lat = 0
     const cameraDirection = new THREE.Vector3()
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
+    let dragDistance = 0
 
     try {
       const scene = new THREE.Scene()
@@ -135,6 +146,7 @@ export default function RoomPage() {
 
       const onPointerDown = (event: PointerEvent) => {
         isDragging = true
+        dragDistance = 0
         const point = getPoint(event)
         startX = point.x
         startY = point.y
@@ -147,6 +159,7 @@ export default function RoomPage() {
         const point = getPoint(event)
         const deltaX = point.x - startX
         const deltaY = point.y - startY
+        dragDistance += Math.hypot(deltaX, deltaY)
         startX = point.x
         startY = point.y
 
@@ -158,11 +171,34 @@ export default function RoomPage() {
         isDragging = false
       }
 
+      const onCanvasClick = (event: MouseEvent) => {
+        if (dragDistance > 6) return
+
+        const rect = renderer?.domElement.getBoundingClientRect()
+        if (!renderer || !rect) return
+
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
+        raycaster.setFromCamera(pointer, camera)
+
+        const intersections = raycaster.intersectObject(mesh, false)
+        if (!intersections.length) return
+
+        const hit = intersections[0].point
+        const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
+
+        console.log('Panorama coordinate', {
+          lon: Number(hitLon.toFixed(2)),
+          lat: Number(hitLat.toFixed(2)),
+        })
+      }
+
       mount.addEventListener('pointerdown', onPointerDown)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
       window.addEventListener('pointercancel', onPointerUp)
       window.addEventListener('resize', updateSize)
+      renderer.domElement.addEventListener('click', onCanvasClick)
 
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
@@ -209,6 +245,7 @@ export default function RoomPage() {
         window.removeEventListener('pointerup', onPointerUp)
         window.removeEventListener('pointercancel', onPointerUp)
         window.removeEventListener('resize', updateSize)
+        renderer?.domElement.removeEventListener('click', onCanvasClick)
         material.dispose()
         geometry.dispose()
         renderer?.dispose()
