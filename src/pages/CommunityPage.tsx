@@ -67,14 +67,14 @@ export default function CommunityPage() {
           <div className="mt-4 space-y-2">
             <div className="space-y-2">
               {teachings.map((teaching) => {
-                const isPurgatoryCard = teaching.id === 'friends-of-the-suffering'
+                const isFriendsOfTheSufferingCard = teaching.id === 'friends-of-the-suffering'
 
                 return (
                 <button
                   key={teaching.id}
                   type="button"
                   onClick={() => {
-                    if (isPurgatoryCard && suppressNextClickRef.current) {
+                    if (isFriendsOfTheSufferingCard && suppressNextClickRef.current) {
                       suppressNextClickRef.current = false
                       return
                     }
@@ -82,10 +82,15 @@ export default function CommunityPage() {
                     navigate(`/community/${teaching.id}`)
                   }}
                   className={`relative w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-4 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08] ${
-                    isPurgatoryCard ? 'min-h-32' : ''
+                    isFriendsOfTheSufferingCard ? 'min-h-32' : ''
                   }`}
+                  onPointerDown={isFriendsOfTheSufferingCard ? startPurgatoryPreview : undefined}
+                  onPointerUp={isFriendsOfTheSufferingCard ? stopPurgatoryPreview : undefined}
+                  onPointerCancel={isFriendsOfTheSufferingCard ? stopPurgatoryPreview : undefined}
+                  onPointerLeave={isFriendsOfTheSufferingCard ? stopPurgatoryPreview : undefined}
+                  onContextMenu={isFriendsOfTheSufferingCard ? (event) => event.preventDefault() : undefined}
                   style={
-                    isPurgatoryCard
+                    isFriendsOfTheSufferingCard
                       ? {
                           backgroundImage:
                             "linear-gradient(180deg, rgba(18, 13, 11, 0.24), rgba(18, 13, 11, 0.82)), url('/Purgatory.png')",
@@ -95,11 +100,8 @@ export default function CommunityPage() {
                       : undefined
                   }
                 >
-                  {isPurgatoryCard ? (
+                  {isFriendsOfTheSufferingCard ? (
                     <>
-                      <div
-                        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)]"
-                      />
                       <video
                         ref={purgatoryVideoRef}
                         src="/Purgatory-video.mp4"
@@ -112,21 +114,16 @@ export default function CommunityPage() {
                         preload="metadata"
                         aria-hidden="true"
                       />
-                      <div
-                        className="absolute inset-0 z-10"
-                        onPointerDown={startPurgatoryPreview}
-                        onPointerUp={stopPurgatoryPreview}
-                        onPointerCancel={stopPurgatoryPreview}
-                        onPointerLeave={stopPurgatoryPreview}
-                        onContextMenu={(event) => event.preventDefault()}
-                      />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)]" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     </>
                   ) : null}
                   <div className="relative z-10 space-y-1">
                     <h2
                       className={`serif text-lg ${
-                        isPurgatoryCard ? 'text-[#f3dfc0] drop-shadow-[0_1px_1px_rgba(0,0,0,0.55)]' : 'text-[#e7cba9]'
+                        isFriendsOfTheSufferingCard
+                          ? 'text-[#f3dfc0] drop-shadow-[0_1px_1px_rgba(0,0,0,0.55)]'
+                          : 'text-[#e7cba9]'
                       }`}
                     >
                       {teaching.title}
