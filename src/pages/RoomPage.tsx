@@ -111,6 +111,15 @@ export default function RoomPage() {
     onClick: () => navigate('/first-mansion'),
     point: sphericalToVector3(0.14, 4.15),
   }
+  const developingVirtues = {
+    id: 'developing-virtues',
+    label: 'Developing Virtues',
+    shortLabel: 'Virtues',
+    lon: 56.27,
+    lat: -23.27,
+    onClick: () => navigate('/developing-virtues'),
+    point: sphericalToVector3(56.27, -23.27),
+  }
   const rangeHotspots: RangeHotspot[] = [
     {
       id: 'door',
@@ -171,6 +180,7 @@ export default function RoomPage() {
       point: sphericalToVector3(-113.17, 9.4),
     },
     firstMansion,
+    developingVirtues,
   ]
 
   useEffect(() => {
@@ -605,7 +615,7 @@ export default function RoomPage() {
               className={`pointer-events-auto absolute left-0 top-0 z-[60] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
-                  : hotspot.id === 'first-mansion'
+                  : hotspot.id === 'first-mansion' || hotspot.id === 'developing-virtues'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
                     : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
@@ -627,6 +637,22 @@ export default function RoomPage() {
                   <path d="M9 20v-5h6v5" />
                   <path d="M7 20h10" />
                   </svg>
+              ) : hotspot.id === 'developing-virtues' ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-full w-full text-[#e7cba9]/22 transition hover:text-[#e7cba9]/42"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 3v18" />
+                  <path d="M6.5 8.5h11" />
+                  <path d="M7.5 15.5h9" />
+                  <path d="M12 6.5c-1.9 0-3.5 1.4-3.5 3.1 0 2.7 3.5 4.2 3.5 7.4 0-3.2 3.5-4.7 3.5-7.4 0-1.7-1.6-3.1-3.5-3.1Z" />
+                </svg>
               ) : null}
             </button>
           </div>
