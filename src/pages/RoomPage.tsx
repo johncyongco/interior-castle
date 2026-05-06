@@ -149,28 +149,43 @@ export default function RoomPage() {
         </div>
       </div>
 
+      <div className="pointer-events-none absolute left-[24%] top-[32%] z-20 -translate-x-1/2 -translate-y-1/2">
+        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
+          Crucifix
+        </div>
+      </div>
       <button
         type="button"
         onClick={() => navigate('/prayer')}
-        aria-label="Cross hotspot"
-        title="Cross"
-        className="absolute left-1/2 top-[29%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
+        aria-label="Crucifix hotspot"
+        title="Crucifix"
+        className="absolute left-[24%] top-[37%] z-20 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
       />
 
+      <div className="pointer-events-none absolute left-[62%] top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
+        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
+          Bible
+        </div>
+      </div>
       <button
         type="button"
         onClick={() => navigate('/daily-gospel')}
         aria-label="Bible hotspot"
         title="Bible"
-        className="absolute left-[60%] top-[64%] z-20 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
+        className="absolute left-[62%] top-[64%] z-20 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent"
       />
 
+      <div className="pointer-events-none absolute left-[72%] top-[33%] z-20 -translate-x-1/2 -translate-y-1/2">
+        <div className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[9px] uppercase tracking-[0.3em] text-white/75 backdrop-blur-xl">
+          CC
+        </div>
+      </div>
       <button
         type="button"
         onClick={() => window.open(catechismUrl, '_blank', 'noopener,noreferrer')}
         aria-label="Catechism of the Catholic Church hotspot"
         title="Catechism of the Catholic Church"
-        className="absolute left-[78%] top-[39%] z-20 h-36 w-24 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-transparent"
+        className="absolute left-[72%] top-[39%] z-20 h-24 w-12 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-transparent"
       >
         <span className="sr-only">Catechism of the Catholic Church</span>
       </button>
