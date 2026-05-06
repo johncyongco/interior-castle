@@ -89,15 +89,22 @@ export default function TeachingDetailPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,236,199,0.1),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.06),rgba(15,12,9,0.48))]" />
         </>
       )}
-      <div className="relative flex h-full flex-col px-6 py-10 pb-40 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div className={`relative flex h-full flex-col px-6 py-10 pb-40 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+        isFriendsOfTheSuffering ? 'select-none' : ''
+      }`}>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, ease: 'easeOut' }}
-          className="flex min-h-full flex-col"
+          className={`flex min-h-full flex-col ${isFriendsOfTheSuffering ? 'pointer-events-none' : ''}`}
         >
           <div className="flex items-center justify-between">
-            <Link to="/community" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
+            <Link
+              to="/community"
+              className={`text-xs text-[#c6a47a] transition hover:text-[#e7cba9] ${
+                isFriendsOfTheSuffering ? 'pointer-events-auto' : ''
+              }`}
+            >
               Back
             </Link>
           </div>
