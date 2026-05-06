@@ -15,8 +15,8 @@ export type Teaching = {
 export const teachings: Teaching[] = [
   {
     id: 'god-is-all-things',
-    title: 'God is all things',
-    text: '',
+    title: 'God is in All Things',
+    text: 'The ordinary things of daily life can become signs of God’s presence, care, and wisdom.',
     everydayThings: [
       'Food',
       'Water',
