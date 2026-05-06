@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
 const cards = [
@@ -21,6 +21,11 @@ const cards = [
 ] as const
 
 export default function FriendsOfTheSufferingPage() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const backToCommunity = location.state?.from === 'room' ? '/room' : '/community'
+  const origin = location.state?.from ?? 'community'
+
   return (
     <ScreenContainer>
       <div
@@ -36,7 +41,7 @@ export default function FriendsOfTheSufferingPage() {
           className="flex min-h-full flex-col"
         >
           <div className="flex items-center justify-between">
-            <Link to="/community" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
+            <Link to={backToCommunity} className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
               Back
             </Link>
           </div>
@@ -48,14 +53,15 @@ export default function FriendsOfTheSufferingPage() {
 
           <div className="mt-5 space-y-3">
             {cards.map((card) => (
-              <Link
+              <button
                 key={card.title}
-                to={card.href}
-                className="block rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
+                type="button"
+                onClick={() => navigate(card.href, { state: { from: origin } })}
+                className="block rounded-3xl border border-white/10 bg-white/[0.05] p-5 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
               >
                 <h2 className="serif text-xl text-[#e7cba9]">{card.title}</h2>
                 <p className="mt-2 text-sm leading-6 text-white/65">{card.description}</p>
-              </Link>
+              </button>
             ))}
           </div>
         </motion.div>

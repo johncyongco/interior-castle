@@ -6,7 +6,6 @@ import HomePage from './pages/HomePage'
 import RoomEntryPage from './pages/RoomEntryPage'
 import RoomPage from './pages/RoomPage'
 import DailyGospelPage from './pages/DailyGospelPage'
-import CccPage from './pages/CccPage'
 import PrayerPage from './pages/PrayerPage'
 import RosaryPage from './pages/RosaryPage'
 import DivineMercyPage from './pages/DivineMercyPage'
@@ -27,10 +26,20 @@ import { AmbientField } from './components/AmbientField'
 import { ensureSperoUser } from './lib/speroIdentity'
 import BottomNav from './components/BottomNav'
 
+const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
+
 function RoomAccessGate() {
   const hasDoorEntry = typeof window !== 'undefined' && window.sessionStorage.getItem('spero-room-entry') === 'door'
 
   return hasDoorEntry ? <RoomPage /> : <Navigate to="/gate" replace />
+}
+
+function CatechismRedirect() {
+  useEffect(() => {
+    window.location.replace(catechismUrl)
+  }, [])
+
+  return null
 }
 
 function AppShell() {
@@ -71,7 +80,7 @@ function AppShell() {
               <Route path="/room-entry" element={<RoomEntryPage />} />
               <Route path="/room" element={<RoomAccessGate />} />
               <Route path="/daily-gospel" element={<DailyGospelPage />} />
-              <Route path="/ccc" element={<CccPage />} />
+              <Route path="/ccc" element={<CatechismRedirect />} />
               <Route path="/prayer" element={<PrayerPage />} />
               <Route path="/prayer/*" element={<PrayerPage />} />
               <Route path="/prayer/rosary" element={<RosaryPage />} />

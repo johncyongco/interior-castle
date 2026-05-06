@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 import { teachings } from '../lib/communityTeachings'
 
 export default function CommunityPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const origin = location.state?.from ?? 'community'
 
   return (
     <ScreenContainer>
@@ -30,7 +32,7 @@ export default function CommunityPage() {
                 <button
                   key={teaching.id}
                   type="button"
-                  onClick={() => navigate(`/community/${teaching.id}`)}
+                  onClick={() => navigate(`/community/${teaching.id}`, { state: { from: origin } })}
                   className="w-full rounded-3xl border border-white/10 bg-white/[0.05] p-4 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
                 >
                   <div className="space-y-1">

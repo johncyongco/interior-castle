@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 import { getTeachingById } from '../lib/communityTeachings'
 
@@ -11,6 +11,8 @@ export default function TeachingDetailPage() {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const longPressTimerRef = useRef<number | null>(null)
   const fossLink = 'https://fossnovena.org/'
+  const location = useLocation()
+  const backToCommunity = location.state?.from === 'room' ? '/room' : '/community'
 
   useEffect(() => {
     return () => {
@@ -107,7 +109,7 @@ export default function TeachingDetailPage() {
           className="relative z-20 flex min-h-full flex-col"
         >
           <div className="flex items-center justify-between">
-            <Link to="/community" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
+            <Link to={backToCommunity} className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
               Back
             </Link>
           </div>
@@ -127,6 +129,7 @@ export default function TeachingDetailPage() {
 
               <Link
                 to="/community/friends-of-the-suffering/souls"
+                state={{ from: location.state?.from }}
                 className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
               >
                 <p className="text-xs uppercase tracking-[0.28em] text-white/45">Souls</p>

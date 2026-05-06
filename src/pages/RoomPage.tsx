@@ -86,7 +86,7 @@ export default function RoomPage() {
       lonMax: -114,
       latMin: -25.78,
       latMax: -6.82,
-      onClick: () => navigate('/reflection'),
+      onClick: () => navigate('/reflection', { state: { from: 'room' } }),
     },
   ]
   const hotspotPoints: HotspotPoint[] = [
@@ -114,7 +114,7 @@ export default function RoomPage() {
       shortLabel: 'Candle',
       lon: -86.33,
       lat: -11.82,
-      onClick: () => navigate('/community/friends-of-the-suffering/souls'),
+      onClick: () => navigate('/community/friends-of-the-suffering/souls', { state: { from: 'room' } }),
       point: sphericalToVector3(-86.33, -11.82),
     },
     {
@@ -123,7 +123,7 @@ export default function RoomPage() {
       shortLabel: 'CC',
       lon: -113.17,
       lat: 9.4,
-      onClick: () => navigate('/ccc'),
+      onClick: () => window.location.assign(catechismUrl),
       point: sphericalToVector3(-113.17, 9.4),
     },
   ]

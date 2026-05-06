@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScreenContainer from '../components/ScreenContainer'
 import ChoiceButton from '../components/ChoiceButton'
@@ -25,6 +25,7 @@ const questions = [
 
 export default function ReflectionPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null)
   const [input, setInput] = useState('')
   const [response, setResponse] = useState<{
@@ -36,6 +37,7 @@ export default function ReflectionPage() {
   const [history, setHistory] = useState<ReflectionEntry[]>([])
   const increaseDepth = useInteriorStore((store) => store.increaseDepth)
   const mood = useInteriorStore((store) => store.mood)
+  const backToRoom = location.state?.from === 'room'
 
   useEffect(() => {
     const draft = loadReflectionDraft()
@@ -101,6 +103,21 @@ export default function ReflectionPage() {
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
+          {backToRoom ? (
+            <div className="flex items-center justify-start">
+              <button
+                type="button"
+                onClick={() => {
+                  window.sessionStorage.setItem('spero-room-entry', 'door')
+                  navigate('/room')
+                }}
+                className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]"
+              >
+                Back to Room
+              </button>
+            </div>
+          ) : null}
+
           <div className="space-y-2 text-center">
             <h1 className="serif text-2xl text-center mb-3 text-[#e7cba9]">Reflection</h1>
             <p className="text-center text-sm text-[#c6a47a] mb-8">

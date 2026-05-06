@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
 function formatLocalDate(date: Date) {
@@ -13,6 +13,11 @@ function formatLocalDate(date: Date) {
 export default function DailyGospelPage() {
   const dateString = useMemo(() => formatLocalDate(new Date()), [])
   const readingUrl = `https://living-bread.com/?date=${dateString}`
+  const navigate = useNavigate()
+  const backToRoom = () => {
+    window.sessionStorage.setItem('spero-room-entry', 'door')
+    navigate('/room')
+  }
 
   return (
     <ScreenContainer>
@@ -27,12 +32,13 @@ export default function DailyGospelPage() {
           className="flex h-full flex-col gap-4"
         >
           <div className="flex items-center justify-between">
-            <Link
-              to="/room"
+            <button
+              type="button"
+              onClick={backToRoom}
               className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
             >
               Back to Room
-            </Link>
+            </button>
             <p className="text-xs uppercase tracking-[0.28em] text-[#c6a47a]">{dateString}</p>
           </div>
 

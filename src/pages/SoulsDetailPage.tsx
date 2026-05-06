@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 
 const DEFAULT_SOULS = [
@@ -17,6 +17,8 @@ const STORAGE_KEY = 'spero-friends-of-the-suffering-souls'
 export default function SoulsDetailPage() {
   const [souls, setSouls] = useState<string[]>([])
   const [soulInput, setSoulInput] = useState('')
+  const location = useLocation()
+  const backToCommunity = location.state?.from === 'room' ? '/room' : '/community/friends-of-the-suffering'
 
   useEffect(() => {
     try {
@@ -67,7 +69,7 @@ export default function SoulsDetailPage() {
           className="flex min-h-full flex-col"
         >
           <div className="flex items-center justify-between">
-            <Link to="/community/friends-of-the-suffering" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
+            <Link to={backToCommunity} className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
               Back
             </Link>
           </div>
