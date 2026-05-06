@@ -18,9 +18,9 @@ import {
 } from '../lib/reflectionJournal'
 
 const questions = [
-  'Where did you seek yourself today?',
+  'Where did you seek the Lord today?',
   'What disturbed your peace?',
-  'Where did you resist grace?',
+  'Did you resist grace?',
 ]
 
 export default function ReflectionPage() {
