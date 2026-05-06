@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScreenContainer from '../components/ScreenContainer'
 import ChoiceButton from '../components/ChoiceButton'
@@ -23,6 +24,7 @@ const questions = [
 ]
 
 export default function ReflectionPage() {
+  const navigate = useNavigate()
   const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null)
   const [input, setInput] = useState('')
   const [response, setResponse] = useState<{
@@ -32,7 +34,6 @@ export default function ReflectionPage() {
   } | null>(null)
   const [savedNotice, setSavedNotice] = useState('')
   const [history, setHistory] = useState<ReflectionEntry[]>([])
-  const [showHistory, setShowHistory] = useState(false)
   const increaseDepth = useInteriorStore((store) => store.increaseDepth)
   const mood = useInteriorStore((store) => store.mood)
 
@@ -160,7 +161,7 @@ export default function ReflectionPage() {
           <div className="mt-5 space-y-4 rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
             <button
               type="button"
-              onClick={() => setShowHistory(true)}
+              onClick={() => navigate('/reflection/history')}
               className="w-full space-y-3 rounded-3xl border border-white/8 bg-white/[0.04] p-5 text-left transition hover:bg-white/[0.07]"
             >
               <div className="space-y-1">
@@ -171,55 +172,6 @@ export default function ReflectionPage() {
               </div>
             </button>
           </div>
-
-          {showHistory ? (
-            <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/55 px-4 pb-6 backdrop-blur-sm sm:items-center">
-              <div className="w-full max-w-[390px] rounded-[28px] border border-white/10 bg-[#16100c]/95 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs uppercase tracking-[0.28em] text-white/45">Your Reflections</p>
-                  <button
-                    type="button"
-                    onClick={() => setShowHistory(false)}
-                    className="rounded-full border border-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
-                  >
-                    Close
-                  </button>
-                </div>
-
-                <div className="mt-4 max-h-[60vh] space-y-3 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  <button
-                    type="button"
-                    onClick={clearHistory}
-                    className="rounded-full border border-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
-                  >
-                    Clear history
-                  </button>
-
-                  {history.length > 0 ? (
-                    history.map((entry) => (
-                      <div
-                        key={`${entry.createdAt}-${entry.question}`}
-                        className="space-y-2 rounded-3xl border border-white/8 bg-white/[0.04] p-4"
-                      >
-                        <div className="space-y-1">
-                          <p className="text-[10px] uppercase tracking-[0.22em] text-[#c6a47a]">
-                            {entry.title}
-                          </p>
-                          <p className="text-sm text-white/85">{entry.question}</p>
-                        </div>
-                        <p className="serif text-lg leading-snug text-white/95">{entry.passage}</p>
-                        <p className="text-xs text-white/40">{new Date(entry.createdAt).toLocaleString()}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm leading-6 text-white/55">
-                      No saved reflections yet.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : null}
         </motion.div>
       </div>
     </ScreenContainer>
