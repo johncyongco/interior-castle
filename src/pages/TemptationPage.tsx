@@ -89,7 +89,7 @@ export default function TemptationPage() {
         <div className="space-y-3">
           <button
             type="button"
-            className="btn-gold w-full"
+            className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
             onClick={() => {
               if (isFinalStep) {
                 increaseDepth()
@@ -105,7 +105,7 @@ export default function TemptationPage() {
           <button
             type="button"
             onClick={() => navigate('/room')}
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70 transition hover:bg-white/10"
+            className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/70 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
           >
             Skip
           </button>

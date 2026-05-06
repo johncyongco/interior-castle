@@ -57,7 +57,7 @@ export default function CommunityPage() {
             <button
               type="button"
               onClick={() => navigate('/companion')}
-              className="btn-gold mt-3 w-full"
+              className="mt-3 w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
             >
               Open Companion
             </button>

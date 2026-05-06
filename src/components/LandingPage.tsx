@@ -14,14 +14,17 @@ export default function LandingPage() {
         <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0f0c09] via-[#0f0c09]/75 to-transparent" />
       </div>
 
-      <div className="relative flex h-full flex-col items-center justify-end px-6 pb-24 text-center">
+      <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
         <div className="space-y-4">
           <p className="mx-auto max-w-[240px] text-sm text-[#c6a47a]">
-            Return inward. He is already there.
+            He is already there.
           </p>
         </div>
 
-        <button className="btn-gold mt-10 w-full" onClick={() => nav('/gate')}>
+        <button
+          className="mt-10 w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
+          onClick={() => nav('/gate')}
+        >
           Enter
         </button>
       </div>
