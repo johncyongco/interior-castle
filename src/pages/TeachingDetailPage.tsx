@@ -49,11 +49,46 @@ export default function TeachingDetailPage() {
 
   return (
     <ScreenContainer>
-      <div
-        className="absolute inset-0 bg-[url('/altar.png')] bg-cover opacity-10"
-        style={{ backgroundPosition: 'center 24%' }}
-      />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,236,199,0.1),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.06),rgba(15,12,9,0.48))]" />
+      {isFriendsOfTheSuffering ? (
+        <div
+          className="absolute inset-0 select-none touch-none"
+          onPointerDown={(event) => {
+            event.preventDefault()
+            startPreview()
+          }}
+          onPointerUp={stopPreview}
+          onPointerCancel={stopPreview}
+          onPointerLeave={stopPreview}
+          onContextMenu={(event) => event.preventDefault()}
+        >
+          <div
+            className="absolute inset-0 bg-[url('/Purgatory.png')] bg-cover"
+            style={{ backgroundPosition: 'center center' }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%),linear-gradient(180deg,rgba(18,13,11,0.20),rgba(18,13,11,0.78))]" />
+          <video
+            ref={videoRef}
+            src="/Purgatory-video.mp4"
+            draggable={false}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+              isPreviewing ? 'opacity-100' : 'opacity-0'
+            }`}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          />
+        </div>
+      ) : (
+        <>
+          <div
+            className="absolute inset-0 bg-[url('/altar.png')] bg-cover opacity-10"
+            style={{ backgroundPosition: 'center 24%' }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,236,199,0.1),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.06),rgba(15,12,9,0.48))]" />
+        </>
+      )}
       <div className="relative flex h-full flex-col px-6 py-10 pb-40 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -72,41 +107,6 @@ export default function TeachingDetailPage() {
             <h1 className="serif text-2xl text-[#e7cba9]">{teaching.title}</h1>
             {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
           </div>
-
-          {isFriendsOfTheSuffering ? (
-            <div
-              className="relative mt-5 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl shadow-soft"
-              onPointerDown={startPreview}
-              onPointerUp={stopPreview}
-              onPointerCancel={stopPreview}
-              onPointerLeave={stopPreview}
-              onContextMenu={(event) => event.preventDefault()}
-            >
-              <div className="relative h-72 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-                <img
-                  src="/Purgatory.png"
-                  alt="Purgatory"
-                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                    isPreviewing ? 'opacity-0' : 'opacity-100'
-                  }`}
-                />
-                <video
-                  ref={videoRef}
-                  src="/Purgatory-video.mp4"
-                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                    isPreviewing ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-hidden="true"
-                />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-              </div>
-            </div>
-          ) : null}
 
           {teaching.everydayThings && teaching.everydayThings.length > 0 ? (
             <div className="mt-5 space-y-3">
@@ -155,11 +155,7 @@ export default function TeachingDetailPage() {
                 ))}
               </div>
             </div>
-          ) : (
-            <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl shadow-soft">
-              <div className="min-h-40 rounded-2xl border border-dashed border-white/10 bg-black/10" />
-            </div>
-          )}
+          ) : null}
         </motion.div>
       </div>
     </ScreenContainer>
