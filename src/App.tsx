@@ -47,6 +47,7 @@ function CatechismRedirect() {
 
 function AppShell() {
   const location = useLocation()
+  const hideVignette = location.pathname === '/developing-virtues'
 
   useEffect(() => {
     void ensureSperoUser().catch(() => undefined)
@@ -55,7 +56,7 @@ function AppShell() {
   return (
     <div className="relative min-h-[100dvh] overflow-hidden bg-castle text-white">
       <AmbientField />
-      <div className="pointer-events-none absolute inset-0 vignette" />
+      {!hideVignette ? <div className="pointer-events-none absolute inset-0 vignette" /> : null}
       <div className="relative min-h-[100dvh] w-full overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
