@@ -401,6 +401,12 @@ export const teachings: Teaching[] = [
       },
     ],
   },
+  {
+    id: 'friends-of-the-suffering',
+    title: 'Friends of the Suffering',
+    text: '',
+    verses: [],
+  },
 ]
 
 export function getTeachingById(id: string | undefined) {

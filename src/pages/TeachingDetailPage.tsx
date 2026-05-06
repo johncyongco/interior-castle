@@ -60,7 +60,7 @@ export default function TeachingDetailPage() {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : teaching.text.trim() || teaching.verses.length > 0 ? (
             <div className="mt-5 space-y-4 rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl shadow-soft">
               <div className="space-y-4">
                 <p className="text-xs uppercase tracking-[0.28em] text-white/45">Verses</p>
@@ -79,6 +79,10 @@ export default function TeachingDetailPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          ) : (
+            <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl shadow-soft">
+              <div className="min-h-40 rounded-2xl border border-dashed border-white/10 bg-black/10" />
             </div>
           )}
         </motion.div>
