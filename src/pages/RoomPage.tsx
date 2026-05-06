@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
@@ -285,6 +286,53 @@ export default function RoomPage() {
         guardianPlaneMaterial.needsUpdate = true
       })
 
+      const holyFamilyGroup = new THREE.Group()
+      holyFamilyGroup.position.copy(sphericalToVector3(-179.96, 37.17, 497.5))
+      holyFamilyGroup.lookAt(0, 0, 0)
+      scene.add(holyFamilyGroup)
+
+      const holyFamilyShadowGeometry = new THREE.PlaneGeometry(22, 8)
+      const holyFamilyShadowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x120e0b,
+        transparent: true,
+        opacity: 0.07,
+        depthWrite: false,
+      })
+      const holyFamilyShadow = new THREE.Mesh(holyFamilyShadowGeometry, holyFamilyShadowMaterial)
+      holyFamilyShadow.position.set(0, -8.5, -0.08)
+      holyFamilyShadow.scale.set(1.45, 0.95, 1)
+      holyFamilyGroup.add(holyFamilyShadow)
+
+      const holyFamilyLoader = new OBJLoader()
+      const holyFamilyMaterial = new THREE.MeshStandardMaterial({
+        color: 0xd8c3a1,
+        roughness: 0.9,
+        metalness: 0,
+      })
+
+      holyFamilyLoader.load('/Holy%20Family.OBJ', (object) => {
+        const box = new THREE.Box3().setFromObject(object)
+        const size = new THREE.Vector3()
+        const center = new THREE.Vector3()
+        box.getSize(size)
+        box.getCenter(center)
+
+        object.position.sub(center)
+        object.traverse((child) => {
+          if (!(child instanceof THREE.Mesh)) return
+          child.material = holyFamilyMaterial
+          child.castShadow = false
+          child.receiveShadow = false
+        })
+
+        const maxDimension = Math.max(size.x, size.y, size.z) || 1
+        const targetHeight = 74
+        const scale = targetHeight / maxDimension
+        object.scale.setScalar(scale)
+        object.position.y -= size.y * scale * 0.1
+        holyFamilyGroup.add(object)
+      })
+
       const stThereseGroup = new THREE.Group()
       stThereseGroup.position.copy(sphericalToVector3(127, -13, 496.2))
       stThereseGroup.lookAt(0, 0, 0)
@@ -518,6 +566,9 @@ export default function RoomPage() {
         guardianAngelTexture.dispose()
         guardianPlaneMaterial.dispose()
         guardianPlaneGeometry.dispose()
+        holyFamilyMaterial.dispose()
+        holyFamilyShadowMaterial.dispose()
+        holyFamilyShadowGeometry.dispose()
         stThereseTexture.dispose()
         stTheresePlaneMaterial.dispose()
         stTheresePlaneGeometry.dispose()
