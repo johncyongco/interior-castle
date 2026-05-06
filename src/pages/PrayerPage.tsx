@@ -17,7 +17,7 @@ function PrayerIndex() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
           <div className="space-y-2 text-center pt-2">
@@ -88,7 +88,7 @@ function SilentPrayerMode() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
           <div className="space-y-2 text-center pt-2">
@@ -159,7 +159,7 @@ function GuidedRecollection() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="space-y-4"
         >
           <div className="space-y-2 text-center">
@@ -202,7 +202,7 @@ function PresenceMode() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="space-y-4"
         >
           <div className="space-y-2 text-center">
@@ -231,7 +231,7 @@ function PrayerTimeMock() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
           <div className="space-y-2 text-center pt-2">

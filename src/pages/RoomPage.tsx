@@ -60,7 +60,7 @@ export default function RoomPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="relative flex h-full flex-1 items-center px-6 py-10 pb-28"
         >
           <div className="grid w-full gap-4 text-center">

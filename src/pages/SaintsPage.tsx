@@ -18,7 +18,7 @@ export default function SaintsPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
           className="space-y-4"
         >
           <div className="space-y-2 text-center">
