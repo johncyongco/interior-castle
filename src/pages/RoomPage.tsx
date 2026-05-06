@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -43,6 +43,7 @@ export default function RoomPage() {
   const roomStep = useInteriorStore((store) => store.roomStep)
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
   const currentScene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
+  const [isWebglReady, setIsWebglReady] = useState(true)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -71,22 +72,36 @@ export default function RoomPage() {
     document.body.style.overflow = 'hidden'
     document.body.style.touchAction = 'none'
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100)
-    camera.position.set(0, 0, 0.1)
+    let renderer: THREE.WebGLRenderer | null = null
+    let scene: THREE.Scene | null = null
+    let camera: THREE.PerspectiveCamera | null = null
+    let geometry: THREE.SphereGeometry | null = null
+    let material: THREE.MeshBasicMaterial | null = null
+    let mesh: THREE.Mesh | null = null
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setPixelRatio(window.devicePixelRatio || 1)
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.outputColorSpace = THREE.SRGBColorSpace
-    renderer.domElement.style.touchAction = 'none'
-    container.appendChild(renderer.domElement)
+    try {
+      scene = new THREE.Scene()
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100)
+      camera.position.set(0, 0, 0.1)
 
-    const geometry = new THREE.SphereGeometry(500, 60, 40)
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+      renderer.setPixelRatio(window.devicePixelRatio || 1)
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.outputColorSpace = THREE.SRGBColorSpace
+      renderer.domElement.style.touchAction = 'none'
+      container.appendChild(renderer.domElement)
+    } catch {
+      document.body.style.overflow = previousBodyOverflow
+      document.body.style.touchAction = previousBodyTouchAction
+      setIsWebglReady(false)
+      return undefined
+    }
+
+    geometry = new THREE.SphereGeometry(500, 60, 40)
     geometry.scale(-1, 1, 1)
 
-    const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
-    const mesh = new THREE.Mesh(geometry, material)
+    material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+    mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
     sceneRef.current = scene
@@ -98,6 +113,8 @@ export default function RoomPage() {
     const updateSize = () => {
       const nextWidth = window.innerWidth
       const nextHeight = window.innerHeight
+      if (!camera || !renderer) return
+
       camera.aspect = nextWidth / nextHeight
       camera.updateProjectionMatrix()
       renderer.setSize(nextWidth, nextHeight)
@@ -169,6 +186,8 @@ export default function RoomPage() {
     const animate = () => {
       frameRef.current = window.requestAnimationFrame(animate)
 
+      if (!camera || !renderer) return
+
       latRef.current = Math.max(-85, Math.min(85, latRef.current))
 
       const phi = THREE.MathUtils.degToRad(90 - latRef.current)
@@ -201,13 +220,13 @@ export default function RoomPage() {
       window.removeEventListener('resize', onResize)
 
       textureRef.current?.dispose()
-      material.dispose()
-      geometry.dispose()
-      renderer.dispose()
+      material?.dispose()
+      geometry?.dispose()
+      renderer?.dispose()
       document.body.style.overflow = previousBodyOverflow
       document.body.style.touchAction = previousBodyTouchAction
 
-      if (renderer.domElement.parentElement === container) {
+      if (renderer?.domElement.parentElement === container) {
         container.removeChild(renderer.domElement)
       }
     }
@@ -240,7 +259,11 @@ export default function RoomPage() {
 
   return (
     <ScreenContainer>
-      <div ref={containerRef} className="absolute inset-0 bg-black touch-none cursor-grab active:cursor-grabbing" />
+      <div
+        ref={containerRef}
+        className="absolute inset-0 bg-black touch-none cursor-grab active:cursor-grabbing"
+        style={!isWebglReady ? { backgroundImage: `url(${currentScene.src})`, backgroundSize: 'cover', backgroundPosition: 'center center' } : undefined}
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
@@ -261,6 +284,11 @@ export default function RoomPage() {
           <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-black/25 text-[10px] font-medium tracking-[0.32em] text-white/60 backdrop-blur-xl">
             360
           </div>
+          {!isWebglReady ? (
+            <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-[10px] uppercase tracking-[0.24em] text-white/60 backdrop-blur-xl">
+              Panorama unavailable on this browser
+            </div>
+          ) : null}
         </motion.div>
       </div>
     </ScreenContainer>
