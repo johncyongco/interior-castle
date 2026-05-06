@@ -33,7 +33,7 @@ function AppShell() {
             initial={{ opacity: 0, filter: 'blur(8px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, filter: 'blur(8px)' }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
             className="relative min-h-[100dvh]"
           >
             <Routes location={location}>

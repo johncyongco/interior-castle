@@ -97,7 +97,7 @@ export default function ReflectionPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
           <div className="space-y-2 text-center">

@@ -45,6 +45,13 @@ export default function TeachingDetailPage() {
     }
   }
 
+  function triggerPreview() {
+    if (isPreviewing) return
+
+    setIsPreviewing(true)
+    void videoRef.current?.play().catch(() => undefined)
+  }
+
   const isFriendsOfTheSuffering = teaching.id === 'friends-of-the-suffering'
 
   return (
@@ -79,6 +86,24 @@ export default function TeachingDetailPage() {
             preload="metadata"
             aria-hidden="true"
           />
+          {!isPreviewing ? (
+            <button
+              type="button"
+              onClick={triggerPreview}
+              onPointerDown={(event) => event.preventDefault()}
+              className="absolute inset-0 flex items-center justify-center"
+              aria-label="Play Purgatory video"
+            >
+              <div className="rounded-full border border-white/15 bg-black/15 px-4 py-3 backdrop-blur-md shadow-soft transition hover:bg-black/20">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/60">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70">
+                    ▶
+                  </span>
+                  <span>Play</span>
+                </div>
+              </div>
+            </button>
+          ) : null}
         </div>
       ) : (
         <>
@@ -95,7 +120,7 @@ export default function TeachingDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           className={`flex min-h-full flex-col ${isFriendsOfTheSuffering ? 'pointer-events-none' : ''}`}
         >
           <div className="flex items-center justify-between">
