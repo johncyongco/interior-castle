@@ -96,7 +96,7 @@ export default function RoomPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       </div>
 
-      <div className="relative flex h-full flex-col px-6 py-10 pb-28">
+      <div className="pointer-events-none relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -106,7 +106,7 @@ export default function RoomPage() {
           <div className="flex items-center justify-between">
             <Link
               to="/saints"
-              className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
+              className="pointer-events-auto rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
             >
               Saints
             </Link>
