@@ -110,6 +110,15 @@ export default function RoomPage() {
     onClick: () => navigate('/first-mansion'),
     point: sphericalToVector3(0.14, 4.15),
   }
+  const stTherese3D = {
+    id: 'st-therese-3d',
+    label: 'St. Therese 3D',
+    shortLabel: '3D',
+    lon: 32.06,
+    lat: -22.75,
+    onClick: () => navigate('/st-therese-3d'),
+    point: sphericalToVector3(32.06, -22.75),
+  }
   const rangeHotspots: RangeHotspot[] = [
     {
       id: 'door',
@@ -170,6 +179,7 @@ export default function RoomPage() {
       point: sphericalToVector3(-113.17, 9.4),
     },
     firstMansion,
+    stTherese3D,
   ]
 
   useEffect(() => {
@@ -503,6 +513,8 @@ export default function RoomPage() {
               className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
+                  : hotspot.id === 'st-therese-3d'
+                    ? 'h-[1.9rem] w-[1.9rem] sm:h-[2.1rem] sm:w-[2.1rem]'
                   : hotspot.id === 'first-mansion'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
                   : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
@@ -524,7 +536,14 @@ export default function RoomPage() {
                   <path d="M15 10V6h3v4" />
                   <path d="M9 20v-5h6v5" />
                   <path d="M7 20h10" />
-                </svg>
+                  </svg>
+              ) : hotspot.id === 'st-therese-3d' ? (
+                <img
+                  src="/saint-teresa.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-full w-full rounded-full object-cover opacity-30 transition hover:opacity-55"
+                />
               ) : null}
             </button>
           </div>
