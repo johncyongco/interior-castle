@@ -402,6 +402,12 @@ export const teachings: Teaching[] = [
     ],
   },
   {
+    id: 'purgatory',
+    title: 'Purgatory',
+    text: '',
+    verses: [],
+  },
+  {
     id: 'friends-of-the-suffering',
     title: 'Friends of the Suffering',
     text: '',

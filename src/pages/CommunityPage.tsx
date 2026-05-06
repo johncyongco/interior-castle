@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
@@ -5,6 +6,45 @@ import { teachings } from '../lib/communityTeachings'
 
 export default function CommunityPage() {
   const navigate = useNavigate()
+  const [isPurgatoryPreviewing, setIsPurgatoryPreviewing] = useState(false)
+  const purgatoryVideoRef = useRef<HTMLVideoElement | null>(null)
+  const longPressTimerRef = useRef<number | null>(null)
+  const suppressNextClickRef = useRef(false)
+
+  useEffect(() => {
+    return () => {
+      if (longPressTimerRef.current !== null) {
+        window.clearTimeout(longPressTimerRef.current)
+      }
+    }
+  }, [])
+
+  function startPurgatoryPreview() {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current)
+    }
+
+    longPressTimerRef.current = window.setTimeout(() => {
+      suppressNextClickRef.current = true
+      setIsPurgatoryPreviewing(true)
+      void purgatoryVideoRef.current?.play().catch(() => undefined)
+    }, 450)
+  }
+
+  function stopPurgatoryPreview() {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current)
+      longPressTimerRef.current = null
+    }
+
+    if (isPurgatoryPreviewing) {
+      purgatoryVideoRef.current?.pause()
+      if (purgatoryVideoRef.current) {
+        purgatoryVideoRef.current.currentTime = 0
+      }
+      setIsPurgatoryPreviewing(false)
+    }
+  }
 
   return (
     <ScreenContainer>
@@ -30,12 +70,76 @@ export default function CommunityPage() {
                 <button
                   key={teaching.id}
                   type="button"
-                  onClick={() => navigate(`/community/${teaching.id}`)}
-                  className="w-full rounded-3xl border border-white/10 bg-white/[0.05] p-4 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08]"
+                  onClick={() => {
+                    if (teaching.id === 'purgatory' && suppressNextClickRef.current) {
+                      suppressNextClickRef.current = false
+                      return
+                    }
+
+                    navigate(`/community/${teaching.id}`)
+                  }}
+                  className={`relative w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-4 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08] ${
+                    teaching.id === 'purgatory' ? 'min-h-32' : ''
+                  }`}
+                  style={
+                    teaching.id === 'purgatory'
+                      ? {
+                          backgroundImage:
+                            "linear-gradient(180deg, rgba(18, 13, 11, 0.22), rgba(18, 13, 11, 0.78)), url('/Purgatory.png')",
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center center',
+                        }
+                      : undefined
+                  }
                 >
-                  <div className="space-y-1">
-                    <h2 className="serif text-lg text-[#e7cba9]">{teaching.title}</h2>
-                    {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
+                  {teaching.id === 'purgatory' ? (
+                    <div className="space-y-3">
+                      <div
+                        className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
+                        onPointerDown={startPurgatoryPreview}
+                        onPointerUp={stopPurgatoryPreview}
+                        onPointerCancel={stopPurgatoryPreview}
+                        onPointerLeave={stopPurgatoryPreview}
+                        onContextMenu={(event) => event.preventDefault()}
+                      >
+                        <div
+                          className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)] transition-opacity duration-300 ${
+                            isPurgatoryPreviewing ? 'opacity-0' : 'opacity-100'
+                          }`}
+                        />
+                        <img
+                          src="/Purgatory.png"
+                          alt="Purgatory"
+                          className={`h-32 w-full object-cover transition-opacity duration-300 ${
+                            isPurgatoryPreviewing ? 'opacity-0' : 'opacity-100'
+                          }`}
+                        />
+                        <video
+                          ref={purgatoryVideoRef}
+                          src="/Purgatory-video.mp4"
+                          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                            isPurgatoryPreviewing ? 'opacity-100' : 'opacity-0'
+                          }`}
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="relative z-10 space-y-1">
+                    <h2
+                      className={`serif text-lg ${
+                        teaching.id === 'purgatory' ? 'text-[#f3dfc0] drop-shadow-[0_1px_1px_rgba(0,0,0,0.55)]' : 'text-[#e7cba9]'
+                      }`}
+                    >
+                      {teaching.title}
+                    </h2>
+                    {teaching.text.trim() ? (
+                      <p className="text-sm leading-5 text-white/70">{teaching.text}</p>
+                    ) : null}
                   </div>
                 </button>
               ))}
