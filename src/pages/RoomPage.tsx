@@ -22,7 +22,7 @@ export default function RoomPage() {
   const startYRef = useRef(0)
   const offsetXRef = useRef(0)
   const offsetYRef = useRef(0)
-  const [isEntered, setIsEntered] = useState(false)
+  const [isEntered, setIsEntered] = useState(true)
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -37,18 +37,13 @@ export default function RoomPage() {
   }, [])
 
   function handleDown(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    if (!isEntered) {
-      setIsEntered(true)
-      return
-    }
-
     isDraggingRef.current = true
     startXRef.current = getClientX(event)
     startYRef.current = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
   }
 
   function handleMove(event: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>) {
-    if (!isEntered || !isDraggingRef.current || !imageRef.current) return
+    if (!isDraggingRef.current || !imageRef.current) return
 
     const clientX = getClientX(event)
     const clientY = 'touches' in event ? event.touches[0]?.clientY ?? 0 : event.clientY
@@ -87,29 +82,18 @@ export default function RoomPage() {
       >
         <div
           ref={imageRef}
-          className={`absolute inset-0 transition-transform duration-700 ${
-            isEntered ? 'scale-[1.14]' : 'scale-100'
-          }`}
+          className="absolute inset-0 scale-[1.14] transition-transform duration-700"
           style={{
             backgroundImage: `url('/room1.png')`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: '0px center',
             transformOrigin: 'center center',
-            transform: isEntered
-              ? 'perspective(1400px) translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotateY(calc(var(--drag-x, 0px) * 0.02)) rotateX(calc(var(--drag-y, 0px) * -0.015)) scale(1.14)'
-              : 'scale(1)',
+            transform:
+              'perspective(1400px) translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotateY(calc(var(--drag-x, 0px) * 0.02)) rotateX(calc(var(--drag-y, 0px) * -0.015)) scale(1.14)',
           }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
-
-        {!isEntered ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-full border border-white/15 bg-black/30 px-5 py-3 text-[10px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl">
-              Tap to enter
-            </div>
-          </div>
-        ) : null}
       </div>
 
       <div className="relative flex h-full flex-col px-6 py-10 pb-28">
