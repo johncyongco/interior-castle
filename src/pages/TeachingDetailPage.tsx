@@ -10,6 +10,15 @@ export default function TeachingDetailPage() {
   const [isPreviewing, setIsPreviewing] = useState(false)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const longPressTimerRef = useRef<number | null>(null)
+  const fossLink = 'https://fossnovena.org/'
+  const soulsToPrayFor = [
+    'Deceased family members',
+    'Forgotten souls in Purgatory',
+    'Souls with no one to pray for them',
+    'Souls of priests and religious',
+    'Souls who died suddenly',
+    'Friends and benefactors',
+  ]
 
   useEffect(() => {
     return () => {
@@ -86,18 +95,6 @@ export default function TeachingDetailPage() {
             preload="metadata"
             aria-hidden="true"
           />
-          {!isPreviewing ? (
-            <button
-              type="button"
-              onClick={triggerPreview}
-              className="absolute inset-0 z-20 flex items-center justify-center select-none"
-              aria-label="Play Purgatory video"
-            >
-              <div className="rounded-full border border-white/15 bg-black/15 px-4 py-3 text-[10px] uppercase tracking-[0.3em] text-white/60 backdrop-blur-md shadow-soft transition hover:bg-black/20">
-                Play
-              </div>
-            </button>
-          ) : null}
         </div>
       ) : (
         <>
@@ -115,15 +112,10 @@ export default function TeachingDetailPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className={`flex min-h-full flex-col ${isFriendsOfTheSuffering ? 'pointer-events-none' : ''}`}
+          className="relative z-20 flex min-h-full flex-col"
         >
           <div className="flex items-center justify-between">
-            <Link
-              to="/community"
-              className={`text-xs text-[#c6a47a] transition hover:text-[#e7cba9] ${
-                isFriendsOfTheSuffering ? 'pointer-events-auto' : ''
-              }`}
-            >
+            <Link to="/community" className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
               Back
             </Link>
           </div>
@@ -134,7 +126,92 @@ export default function TeachingDetailPage() {
             {teaching.text.trim() ? <p className="text-sm leading-5 text-white/70">{teaching.text}</p> : null}
           </div>
 
-          {teaching.everydayThings && teaching.everydayThings.length > 0 ? (
+          {isFriendsOfTheSuffering && !isPreviewing ? (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={triggerPreview}
+                className="rounded-full border border-white/15 bg-black/15 px-4 py-3 text-[10px] uppercase tracking-[0.3em] text-white/60 backdrop-blur-md shadow-soft transition hover:bg-black/20"
+                aria-label="Play Purgatory video"
+              >
+                Play
+              </button>
+            </div>
+          ) : null}
+
+          {isFriendsOfTheSuffering ? (
+            <div className="mt-5 space-y-3">
+              <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Prayer</p>
+                <h2 className="mt-2 serif text-xl text-[#e7cba9]">
+                  The Importance of Praying for Souls
+                </h2>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Souls</p>
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {soulsToPrayFor.map((soul) => (
+                    <div
+                      key={soul}
+                      className="rounded-2xl border border-white/10 bg-black/15 px-4 py-3 text-sm text-white/75"
+                    >
+                      {soul}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">Become Friends of the Suffering</p>
+                <h2 className="mt-2 serif text-xl text-[#e7cba9]">Friends of the Suffering Souls</h2>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  A Catholic lay association conducting a perpetual novena of Masses for the Holy Souls in Purgatory.
+                </p>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  FOSS began in devotion to Our Lady of Knock, and its perpetual novena offers Masses for the Holy Souls
+                  while also promising remembrance after death and a way to surround loved ones with heavenly intercessors.
+                </p>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  Members arrange one Mass each year for the intention, “For the Holy Souls in Purgatory, especially the
+                  deceased members of FOSS.” Additional enrollments can be made for family and friends, with the same Mass
+                  intention offered in confidence for their spiritual good.
+                </p>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  At present, members in 50 countries offer more than 35,000 Masses each year for this intention. If you
+                  love the Holy Souls and want prayer for yourself and your loved ones, join them at{' '}
+                  <a
+                    href={fossLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#e7cba9] underline decoration-white/25 underline-offset-4 transition hover:decoration-white/60"
+                  >
+                    fossnovena.org
+                  </a>
+                  .
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {[
+                    'ENROL YOURSELF',
+                    'ENROL SOMEONE ELSE',
+                    'DONATION',
+                    'ARRANGE MASS',
+                    'CONFIRM MASS',
+                  ].map((label) => (
+                    <a
+                      key={label}
+                      href={fossLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-white/10 bg-black/15 px-4 py-2 text-[10px] uppercase tracking-[0.18em] text-white/70 transition hover:bg-black/25 hover:text-white"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : teaching.everydayThings && teaching.everydayThings.length > 0 ? (
             <div className="mt-5 space-y-3">
               {teaching.everydayThings.map((thing) => (
                 <div
