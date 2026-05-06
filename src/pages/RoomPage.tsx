@@ -98,9 +98,17 @@ export default function RoomPage() {
     lat: 88.5,
     radius: 498.6,
     size: 28,
-    glowSize: 44,
     image: '/Guardian%20Angel.png',
     onClick: () => navigate('/guardian-angel'),
+  }
+  const firstMansion = {
+    id: 'first-mansion',
+    label: 'First Mansion',
+    shortLabel: '1st',
+    lon: 0.14,
+    lat: 4.15,
+    onClick: () => navigate('/first-mansion'),
+    point: sphericalToVector3(0.14, 4.15),
   }
   const rangeHotspots: RangeHotspot[] = [
     {
@@ -161,6 +169,7 @@ export default function RoomPage() {
       onClick: () => window.location.assign(catechismUrl),
       point: sphericalToVector3(-113.17, 9.4),
     },
+    firstMansion,
   ]
 
   useEffect(() => {
@@ -253,33 +262,19 @@ export default function RoomPage() {
         framedImageMaterial.needsUpdate = true
       })
 
-      const guardianGroup = new THREE.Group()
-      guardianGroup.position.copy(sphericalToVector3(guardianAngel.lon, guardianAngel.lat, guardianAngel.radius))
-      guardianGroup.lookAt(0, 0, 0)
-      scene.add(guardianGroup)
-
-      const guardianGlowGeometry = new THREE.PlaneGeometry(guardianAngel.glowSize, guardianAngel.glowSize)
-      const guardianGlowMaterial = new THREE.MeshBasicMaterial({
-        color: 0xf3e8cb,
-        transparent: true,
-        opacity: 0.08,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const guardianGlow = new THREE.Mesh(guardianGlowGeometry, guardianGlowMaterial)
-      guardianGlow.position.z = -0.03
-      guardianGroup.add(guardianGlow)
-
       const guardianPlaneGeometry = new THREE.PlaneGeometry(guardianAngel.size, guardianAngel.size)
       const guardianPlaneMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.72,
+        opacity: 0.82,
         depthWrite: false,
       })
       const guardianPlane = new THREE.Mesh(guardianPlaneGeometry, guardianPlaneMaterial)
-      guardianPlane.position.z = 0.07
-      guardianGroup.add(guardianPlane)
+      guardianPlane.position.copy(sphericalToVector3(guardianAngel.lon, guardianAngel.lat, guardianAngel.radius))
+      guardianPlane.lookAt(0, 0, 0)
+      guardianPlane.position.multiplyScalar(1.0002)
+      guardianPlane.renderOrder = 2
+      scene.add(guardianPlane)
 
       interactiveObjects.push(guardianPlane)
 
@@ -424,9 +419,6 @@ export default function RoomPage() {
           element.style.transform = `translate(${x}px, ${y}px)`
         })
 
-        const pulse = 0.98 + Math.sin(performance.now() * 0.0016) * 0.012
-        guardianGroup.scale.setScalar(pulse)
-        guardianGlowMaterial.opacity = 0.06 + Math.sin(performance.now() * 0.0012) * 0.018
         renderer?.render(scene, camera)
       }
 
@@ -456,8 +448,6 @@ export default function RoomPage() {
         guardianAngelTexture.dispose()
         guardianPlaneMaterial.dispose()
         guardianPlaneGeometry.dispose()
-        guardianGlowMaterial.dispose()
-        guardianGlowGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
       }
