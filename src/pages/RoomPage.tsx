@@ -42,7 +42,6 @@ type RoomScene = {
 export default function RoomPage() {
   const roomStep = useInteriorStore((store) => store.roomStep)
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
-  const advanceRoomStep = useInteriorStore((store) => store.advanceRoomStep)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
@@ -55,9 +54,6 @@ export default function RoomPage() {
   const latRef = useRef(0)
   const isDraggingRef = useRef(false)
   const lastPointerRef = useRef<{ x: number; y: number } | null>(null)
-
-  const currentScene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
-  const isFinalScene = roomStep >= ROOM_SCENES.length
 
   useEffect(() => {
     if (roomStep < 1) {
@@ -264,18 +260,6 @@ export default function RoomPage() {
           <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-black/25 text-[10px] font-medium tracking-[0.32em] text-white/60 backdrop-blur-xl">
             360
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              if (!isFinalScene) {
-                advanceRoomStep()
-              }
-            }}
-            className="mt-auto btn-gold w-full disabled:opacity-60"
-            disabled={isFinalScene}
-          >
-            {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
-          </button>
         </motion.div>
       </div>
     </ScreenContainer>
