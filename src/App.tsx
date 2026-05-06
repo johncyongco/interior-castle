@@ -37,6 +37,16 @@ function AppShell() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="relative min-h-[100dvh]"
           >
+            <motion.div
+              key={`${location.pathname}-jesus-overlay`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.6, 0] }}
+              transition={{ duration: 0.8, times: [0, 0.35, 1], ease: 'easeOut' }}
+              className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-[url('/Jesus.jpg')] bg-cover bg-center blur-xl scale-110 opacity-90" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.2),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,12,9,0.2))] mix-blend-screen" />
+            </motion.div>
             <Routes location={location}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/gate" element={<HomePage />} />
