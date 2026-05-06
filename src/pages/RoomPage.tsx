@@ -17,6 +17,17 @@ type HotspotPoint = Hotspot & {
   point: THREE.Vector3
 }
 
+type RangeHotspot = {
+  id: string
+  label: string
+  shortLabel: string
+  lonMin: number
+  lonMax: number
+  latMin: number
+  latMax: number
+  onClick: () => void
+}
+
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
   const lat = THREE.MathUtils.degToRad(latDeg)
@@ -36,14 +47,40 @@ function vector3ToSpherical(point: THREE.Vector3) {
   return { lon, lat }
 }
 
+function normalizeLon(lon: number) {
+  let normalized = lon
+  while (normalized <= -180) normalized += 360
+  while (normalized > 180) normalized -= 360
+  return normalized
+}
+
+function isLonInRange(lon: number, lonMin: number, lonMax: number) {
+  const value = normalizeLon(lon)
+  const min = normalizeLon(lonMin)
+  const max = normalizeLon(lonMax)
+  if (min <= max) return value >= min && value <= max
+  return value >= min || value <= max
+}
+
 export default function RoomPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
   const hotspotRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const doorLabelRef = useRef<HTMLDivElement | null>(null)
   const viewCoordRef = useRef<HTMLSpanElement | null>(null)
   const clickCoordRef = useRef<HTMLSpanElement | null>(null)
   const clickCountRef = useRef<HTMLSpanElement | null>(null)
+  const doorRegion: RangeHotspot = {
+    id: 'door',
+    label: 'Door',
+    shortLabel: 'Door',
+    lonMin: 164,
+    lonMax: -166,
+    latMin: -14.91,
+    latMax: 31.95,
+    onClick: () => navigate('/community'),
+  }
   const hotspotPoints: HotspotPoint[] = [
     {
       id: 'crucifix',
@@ -97,6 +134,11 @@ export default function RoomPage() {
     let lastClickLon = 0
     let lastClickLat = 0
     let clickCount = 0
+    const doorCenter = {
+      lon: 179.38,
+      lat: 8.52,
+    }
+    const doorPoint = sphericalToVector3(doorCenter.lon, doorCenter.lat)
 
     try {
       const scene = new THREE.Scene()
@@ -187,6 +229,15 @@ export default function RoomPage() {
         lastClickLat = hitLat
         clickCount += 1
 
+        if (
+          isLonInRange(hitLon, doorRegion.lonMin, doorRegion.lonMax) &&
+          hitLat >= doorRegion.latMin &&
+          hitLat <= doorRegion.latMax
+        ) {
+          doorRegion.onClick()
+          return
+        }
+
         if (clickCoordRef.current) {
           clickCoordRef.current.textContent = `${hitLon.toFixed(2)}, ${hitLat.toFixed(2)}`
         }
@@ -250,6 +301,19 @@ export default function RoomPage() {
           element.style.pointerEvents = 'auto'
           element.style.transform = `translate(${x}px, ${y}px)`
         })
+
+        if (doorLabelRef.current) {
+          const visible = doorPoint.clone().dot(cameraDirection) > 0
+          if (!visible) {
+            doorLabelRef.current.style.opacity = '0'
+          } else {
+            const projected = doorPoint.clone().project(camera)
+            const x = (projected.x * 0.5 + 0.5) * window.innerWidth
+            const y = (-projected.y * 0.5 + 0.5) * window.innerHeight
+            doorLabelRef.current.style.opacity = '1'
+            doorLabelRef.current.style.transform = `translate(${x}px, ${y}px)`
+          }
+        }
         renderer?.render(scene, camera)
       }
 
@@ -316,6 +380,13 @@ export default function RoomPage() {
           </div>
         </div>
         <div className="mt-3 space-y-2 border-t border-white/10 pt-2 text-[9px] leading-4 tracking-[0.16em] text-white/65">
+          <div className="flex items-center justify-between gap-3">
+            <span>{doorRegion.shortLabel}</span>
+            <span>
+              {doorRegion.lonMin.toFixed(2)} to {doorRegion.lonMax.toFixed(2)}, {doorRegion.latMin.toFixed(2)} to{' '}
+              {doorRegion.latMax.toFixed(2)}
+            </span>
+          </div>
           {hotspotPoints.map((hotspot) => (
             <div key={hotspot.id} className="flex items-center justify-between gap-3">
               <span>{hotspot.shortLabel}</span>
@@ -328,6 +399,12 @@ export default function RoomPage() {
       </div>
 
       <div className="absolute inset-0 z-20 pointer-events-none">
+        <div
+          ref={doorLabelRef}
+          className="pointer-events-none absolute left-0 top-0 -translate-x-1/2 -translate-y-[calc(100%+0.35rem)] rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[8px] uppercase tracking-[0.28em] text-white/80 backdrop-blur-xl sm:text-[9px]"
+        >
+          Door
+        </div>
         {hotspotPoints.map((hotspot) => (
           <div
             key={hotspot.id}
