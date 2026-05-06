@@ -1,61 +1,33 @@
-import { useEffect, useRef, useState } from 'react'
-import * as THREE from 'three'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 import { useInteriorStore } from '../store/interiorStore'
 
-const ROOM_SCENES: RoomScene[] = [
-  {
-    id: 1,
-    label: 'Panorama',
-    src: '/chair-room.png',
-    subtitle: 'A quiet entry with a simple chair and stillness.',
-  },
-  {
-    id: 2,
-    label: 'Panorama',
-    src: '/room1.png',
-    subtitle: 'Warm light gathers across the walls.',
-  },
-  {
-    id: 3,
-    label: 'Panorama',
-    src: '/room2.png',
-    subtitle: 'A deeper, softer atmosphere begins.',
-  },
-  {
-    id: 4,
-    label: 'Panorama',
-    src: '/room3.png',
-    subtitle: 'The light turns quieter and more contemplative.',
-  },
-]
-
 type RoomScene = {
   id: number
-  label: string
   src: string
-  subtitle: string
 }
+
+const ROOM_SCENES: RoomScene[] = [
+  { id: 1, src: '/chair-room.png' },
+  { id: 2, src: '/room1.png' },
+  { id: 3, src: '/room2.png' },
+  { id: 4, src: '/room3.png' },
+]
 
 export default function RoomPage() {
   const roomStep = useInteriorStore((store) => store.roomStep)
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
-  const currentScene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
-  const [isWebglReady, setIsWebglReady] = useState(true)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const sceneRef = useRef<THREE.Scene | null>(null)
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
-  const materialRef = useRef<THREE.MeshBasicMaterial | null>(null)
-  const meshRef = useRef<THREE.Mesh | null>(null)
-  const textureRef = useRef<THREE.Texture | null>(null)
-  const frameRef = useRef<number | null>(null)
-  const lonRef = useRef(0)
-  const latRef = useRef(0)
-  const isDraggingRef = useRef(false)
-  const lastPointerRef = useRef<{ x: number; y: number } | null>(null)
+  const scene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
+  const dragRef = useRef({
+    active: false,
+    lastX: 0,
+    lastY: 0,
+    x: 0,
+    y: 0,
+  })
+  const [dragPoint, setDragPoint] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     if (roomStep < 1) {
@@ -63,208 +35,84 @@ export default function RoomPage() {
     }
   }, [roomStep, setRoomStep])
 
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return undefined
+  const imageStyle = useMemo(
+    () => ({
+      transform: `translate3d(calc(-50% + ${dragPoint.x}px), calc(-50% + ${dragPoint.y}px), 0) scale(1.18)`,
+    }),
+    [dragPoint.x, dragPoint.y],
+  )
 
-    const previousBodyOverflow = document.body.style.overflow
-    const previousBodyTouchAction = document.body.style.touchAction
-    document.body.style.overflow = 'hidden'
-    document.body.style.touchAction = 'none'
-
-    let renderer: THREE.WebGLRenderer | null = null
-    let scene: THREE.Scene | null = null
-    let camera: THREE.PerspectiveCamera | null = null
-    let geometry: THREE.SphereGeometry | null = null
-    let material: THREE.MeshBasicMaterial | null = null
-    let mesh: THREE.Mesh | null = null
-
-    try {
-      scene = new THREE.Scene()
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100)
-      camera.position.set(0, 0, 0.1)
-
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-      renderer.setPixelRatio(window.devicePixelRatio || 1)
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      renderer.outputColorSpace = THREE.SRGBColorSpace
-      renderer.domElement.style.touchAction = 'none'
-      container.appendChild(renderer.domElement)
-    } catch {
-      document.body.style.overflow = previousBodyOverflow
-      document.body.style.touchAction = previousBodyTouchAction
-      setIsWebglReady(false)
-      return undefined
-    }
-
-    geometry = new THREE.SphereGeometry(500, 60, 40)
-    geometry.scale(-1, 1, 1)
-
-    material = new THREE.MeshBasicMaterial({ color: 0xffffff })
-    mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
-
-    sceneRef.current = scene
-    cameraRef.current = camera
-    rendererRef.current = renderer
-    materialRef.current = material
-    meshRef.current = mesh
-
-    const updateSize = () => {
-      const nextWidth = window.innerWidth
-      const nextHeight = window.innerHeight
-      if (!camera || !renderer) return
-
-      camera.aspect = nextWidth / nextHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(nextWidth, nextHeight)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    }
-
-    const onPointerDown = (event: PointerEvent) => {
-      isDraggingRef.current = true
-      lastPointerRef.current = { x: event.clientX, y: event.clientY }
-      container.setPointerCapture?.(event.pointerId)
-    }
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (!isDraggingRef.current || !lastPointerRef.current) return
-
-      const deltaX = event.clientX - lastPointerRef.current.x
-      const deltaY = event.clientY - lastPointerRef.current.y
-      lastPointerRef.current = { x: event.clientX, y: event.clientY }
-
-      lonRef.current += deltaX * 0.1
-      latRef.current -= deltaY * 0.1
-    }
-
-    const onPointerUp = () => {
-      isDraggingRef.current = false
-      lastPointerRef.current = null
-    }
-
-    const onTouchStart = (event: TouchEvent) => {
-      if (event.touches.length === 0) return
-      isDraggingRef.current = true
-      lastPointerRef.current = {
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY,
-      }
-    }
-
-    const onTouchMove = (event: TouchEvent) => {
-      if (!isDraggingRef.current || !lastPointerRef.current || event.touches.length === 0) return
-
-      const nextX = event.touches[0].clientX
-      const nextY = event.touches[0].clientY
-      const deltaX = nextX - lastPointerRef.current.x
-      const deltaY = nextY - lastPointerRef.current.y
-      lastPointerRef.current = { x: nextX, y: nextY }
-
-      lonRef.current += deltaX * 0.1
-      latRef.current -= deltaY * 0.1
-      event.preventDefault()
-    }
-
-    const onTouchEnd = () => {
-      isDraggingRef.current = false
-      lastPointerRef.current = null
-    }
-
-    const onResize = () => updateSize()
-
-    container.addEventListener('pointerdown', onPointerDown)
-    window.addEventListener('pointermove', onPointerMove)
-    window.addEventListener('pointerup', onPointerUp)
-    window.addEventListener('pointercancel', onPointerUp)
-    renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: true })
-    renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false })
-    renderer.domElement.addEventListener('touchend', onTouchEnd)
-    renderer.domElement.addEventListener('touchcancel', onTouchEnd)
-    window.addEventListener('resize', onResize)
-
-    const animate = () => {
-      frameRef.current = window.requestAnimationFrame(animate)
-
-      if (!camera || !renderer) return
-
-      latRef.current = Math.max(-85, Math.min(85, latRef.current))
-
-      const phi = THREE.MathUtils.degToRad(90 - latRef.current)
-      const theta = THREE.MathUtils.degToRad(lonRef.current)
-
-      camera.lookAt(
-        500 * Math.sin(phi) * Math.cos(theta),
-        500 * Math.cos(phi),
-        500 * Math.sin(phi) * Math.sin(theta),
-      )
-
-      renderer.render(scene, camera)
-    }
-
-    animate()
-
-    return () => {
-      if (frameRef.current !== null) {
-        window.cancelAnimationFrame(frameRef.current)
-      }
-
-      container.removeEventListener('pointerdown', onPointerDown)
-      window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('pointerup', onPointerUp)
-      window.removeEventListener('pointercancel', onPointerUp)
-      renderer.domElement.removeEventListener('touchstart', onTouchStart)
-      renderer.domElement.removeEventListener('touchmove', onTouchMove)
-      renderer.domElement.removeEventListener('touchend', onTouchEnd)
-      renderer.domElement.removeEventListener('touchcancel', onTouchEnd)
-      window.removeEventListener('resize', onResize)
-
-      textureRef.current?.dispose()
-      material?.dispose()
-      geometry?.dispose()
-      renderer?.dispose()
-      document.body.style.overflow = previousBodyOverflow
-      document.body.style.touchAction = previousBodyTouchAction
-
-      if (renderer?.domElement.parentElement === container) {
-        container.removeChild(renderer.domElement)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    const material = materialRef.current
-    if (!material) return undefined
-
-    const loader = new THREE.TextureLoader()
-    let cancelled = false
-
-    loader.load(currentScene.src, (texture) => {
-      if (cancelled) {
-        texture.dispose()
-        return
-      }
-
-      textureRef.current?.dispose()
-      texture.colorSpace = THREE.SRGBColorSpace
-      textureRef.current = texture
-      material.map = texture
-      material.needsUpdate = true
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [currentScene.src])
+  function syncDragPoint(nextX: number, nextY: number) {
+    setDragPoint({ x: nextX, y: nextY })
+  }
 
   return (
     <ScreenContainer>
       <div
-        ref={containerRef}
-        className="absolute inset-0 bg-black touch-none cursor-grab active:cursor-grabbing"
-        style={!isWebglReady ? { backgroundImage: `url(${currentScene.src})`, backgroundSize: 'cover', backgroundPosition: 'center center' } : undefined}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+        className="absolute inset-0 bg-black touch-none overflow-hidden cursor-grab active:cursor-grabbing"
+        onPointerDown={(event) => {
+          dragRef.current.active = true
+          dragRef.current.lastX = event.clientX
+          dragRef.current.lastY = event.clientY
+          event.currentTarget.setPointerCapture(event.pointerId)
+        }}
+        onPointerMove={(event) => {
+          if (!dragRef.current.active) return
+
+          const deltaX = event.clientX - dragRef.current.lastX
+          const deltaY = event.clientY - dragRef.current.lastY
+          dragRef.current.lastX = event.clientX
+          dragRef.current.lastY = event.clientY
+
+          const nextX = dragRef.current.x + deltaX * 0.6
+          const nextY = dragRef.current.y + deltaY * 0.6
+          dragRef.current.x = Math.max(-280, Math.min(280, nextX))
+          dragRef.current.y = Math.max(-180, Math.min(180, nextY))
+          syncDragPoint(dragRef.current.x, dragRef.current.y)
+        }}
+        onPointerUp={() => {
+          dragRef.current.active = false
+        }}
+        onPointerCancel={() => {
+          dragRef.current.active = false
+        }}
+        onTouchStart={(event) => {
+          if (event.touches.length === 0) return
+          dragRef.current.active = true
+          dragRef.current.lastX = event.touches[0].clientX
+          dragRef.current.lastY = event.touches[0].clientY
+        }}
+        onTouchMove={(event) => {
+          if (!dragRef.current.active || event.touches.length === 0) return
+
+          const nextX = event.touches[0].clientX
+          const nextY = event.touches[0].clientY
+          const deltaX = nextX - dragRef.current.lastX
+          const deltaY = nextY - dragRef.current.lastY
+          dragRef.current.lastX = nextX
+          dragRef.current.lastY = nextY
+
+          const updatedX = dragRef.current.x + deltaX * 0.6
+          const updatedY = dragRef.current.y + deltaY * 0.6
+          dragRef.current.x = Math.max(-280, Math.min(280, updatedX))
+          dragRef.current.y = Math.max(-180, Math.min(180, updatedY))
+          syncDragPoint(dragRef.current.x, dragRef.current.y)
+          event.preventDefault()
+        }}
+        onTouchEnd={() => {
+          dragRef.current.active = false
+        }}
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+        <img
+          src={scene.src}
+          alt="Room panorama"
+          className="absolute left-1/2 top-1/2 h-[120%] w-[120%] max-w-none select-none object-cover"
+          style={imageStyle}
+          draggable={false}
+        />
+      </div>
+
       <div className="relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
           initial={{ opacity: 0 }}
@@ -284,11 +132,6 @@ export default function RoomPage() {
           <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-black/25 text-[10px] font-medium tracking-[0.32em] text-white/60 backdrop-blur-xl">
             360
           </div>
-          {!isWebglReady ? (
-            <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-[10px] uppercase tracking-[0.24em] text-white/60 backdrop-blur-xl">
-              Panorama unavailable on this browser
-            </div>
-          ) : null}
         </motion.div>
       </div>
     </ScreenContainer>
