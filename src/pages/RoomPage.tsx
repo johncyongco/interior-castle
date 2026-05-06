@@ -13,6 +13,10 @@ type Hotspot = {
   onClick: () => void
 }
 
+type HotspotPoint = Hotspot & {
+  point: THREE.Vector3
+}
+
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
   const lat = THREE.MathUtils.degToRad(latDeg)
@@ -29,6 +33,35 @@ export default function RoomPage() {
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
   const hotspotRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const hotspotPoints: HotspotPoint[] = [
+    {
+      id: 'crucifix',
+      label: 'Crucifix',
+      shortLabel: 'Cross',
+      lon: -58,
+      lat: 12,
+      onClick: () => navigate('/prayer'),
+      point: sphericalToVector3(-58, 12),
+    },
+    {
+      id: 'bible',
+      label: 'Bible',
+      shortLabel: 'Bible',
+      lon: 18,
+      lat: -8,
+      onClick: () => navigate('/daily-gospel'),
+      point: sphericalToVector3(18, -8),
+    },
+    {
+      id: 'cc',
+      label: 'CC',
+      shortLabel: 'CC',
+      lon: 52,
+      lat: 14,
+      onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
+      point: sphericalToVector3(52, 14),
+    },
+  ]
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -47,35 +80,6 @@ export default function RoomPage() {
     let lon = 0
     let lat = 0
     const cameraDirection = new THREE.Vector3()
-    const hotspotPoints: Array<Hotspot & { point: THREE.Vector3 }> = [
-      {
-        id: 'crucifix',
-        label: 'Crucifix',
-        shortLabel: 'Cross',
-        lon: -58,
-        lat: 12,
-        onClick: () => navigate('/prayer'),
-        point: sphericalToVector3(-58, 12),
-      },
-      {
-        id: 'bible',
-        label: 'Bible',
-        shortLabel: 'Bible',
-        lon: 18,
-        lat: -8,
-        onClick: () => navigate('/daily-gospel'),
-        point: sphericalToVector3(18, -8),
-      },
-      {
-        id: 'cc',
-        label: 'CC',
-        shortLabel: 'CC',
-        lon: 52,
-        lat: 14,
-        onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
-        point: sphericalToVector3(52, 14),
-      },
-    ]
 
     try {
       const scene = new THREE.Scene()
