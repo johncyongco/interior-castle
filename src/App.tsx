@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import RoomPage from './pages/RoomPage'
 import DailyGospelPage from './pages/DailyGospelPage'
 import PrayerPage from './pages/PrayerPage'
+import RosaryPage from './pages/RosaryPage'
 import ReflectionPage from './pages/ReflectionPage'
 import ReflectionHistoryPage from './pages/ReflectionHistoryPage'
 import SoulsDetailPage from './pages/SoulsDetailPage'
@@ -60,6 +61,7 @@ function AppShell() {
               <Route path="/daily-gospel" element={<DailyGospelPage />} />
               <Route path="/prayer" element={<PrayerPage />} />
               <Route path="/prayer/*" element={<PrayerPage />} />
+              <Route path="/prayer/rosary" element={<RosaryPage />} />
               <Route path="/reflect" element={<ReflectionPage />} />
               <Route path="/reflection" element={<ReflectionPage />} />
               <Route path="/reflection/history" element={<ReflectionHistoryPage />} />

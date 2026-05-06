@@ -74,6 +74,10 @@ function PrayerIndex() {
                 <div className="font-medium">Presence Mode</div>
                 <div className="mt-1 text-sm text-white/65">Start and remain in God's presence.</div>
               </button>
+              <button onClick={() => navigate('/prayer/rosary')} className="quiet-button w-full">
+                <div className="font-medium">Rosary</div>
+                <div className="mt-1 text-sm text-white/65">Pray with the mysteries and a simple guide.</div>
+              </button>
               <button onClick={() => navigate('/prayer/time')} className="quiet-button w-full">
                 <div className="font-medium">Set Your Prayer Time</div>
                 <div className="mt-1 text-sm text-white/65">Mock for now. Choose a time for later.</div>
