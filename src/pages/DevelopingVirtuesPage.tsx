@@ -165,6 +165,12 @@ export default function DevelopingVirtuesPage() {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-transparent">
+      <img
+        src="/Mountains.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
       <div className="relative z-10 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
