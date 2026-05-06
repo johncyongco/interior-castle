@@ -79,7 +79,7 @@ export default function BottomNav() {
       </button>
       <button
         className="flex w-full max-w-[72px] min-w-0 items-center justify-center rounded-[14px] px-0 py-2.5 text-center text-[11px] font-medium leading-none tracking-[0.02em] text-[#e7cba9] transition active:scale-[0.98]"
-        onClick={() => nav('/room')}
+        onClick={() => nav('/room-entry')}
       >
         <span className="sm:hidden">
           <NavIcon path="room" />

@@ -129,6 +129,10 @@ export default function RoomPage() {
   ]
 
   useEffect(() => {
+    window.sessionStorage.removeItem('spero-room-entry')
+  }, [])
+
+  useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
     const previousBodyTouchAction = document.body.style.touchAction
     document.body.style.overflow = 'hidden'
