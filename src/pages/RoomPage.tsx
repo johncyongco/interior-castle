@@ -69,6 +69,11 @@ export default function RoomPage() {
     const container = containerRef.current
     if (!container) return undefined
 
+    const previousBodyOverflow = document.body.style.overflow
+    const previousBodyTouchAction = document.body.style.touchAction
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100)
     camera.position.set(0, 0, 0.1)
@@ -77,6 +82,7 @@ export default function RoomPage() {
     renderer.setPixelRatio(window.devicePixelRatio || 1)
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.domElement.style.touchAction = 'none'
     container.appendChild(renderer.domElement)
 
     const geometry = new THREE.SphereGeometry(500, 60, 40)
@@ -98,6 +104,7 @@ export default function RoomPage() {
       camera.aspect = nextWidth / nextHeight
       camera.updateProjectionMatrix()
       renderer.setSize(nextWidth, nextHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     }
 
     const onPointerDown = (event: PointerEvent) => {
@@ -122,12 +129,44 @@ export default function RoomPage() {
       lastPointerRef.current = null
     }
 
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.touches.length === 0) return
+      isDraggingRef.current = true
+      lastPointerRef.current = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY,
+      }
+    }
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (!isDraggingRef.current || !lastPointerRef.current || event.touches.length === 0) return
+
+      const nextX = event.touches[0].clientX
+      const nextY = event.touches[0].clientY
+      const deltaX = nextX - lastPointerRef.current.x
+      const deltaY = nextY - lastPointerRef.current.y
+      lastPointerRef.current = { x: nextX, y: nextY }
+
+      lonRef.current += deltaX * 0.1
+      latRef.current -= deltaY * 0.1
+      event.preventDefault()
+    }
+
+    const onTouchEnd = () => {
+      isDraggingRef.current = false
+      lastPointerRef.current = null
+    }
+
     const onResize = () => updateSize()
 
     container.addEventListener('pointerdown', onPointerDown)
     window.addEventListener('pointermove', onPointerMove)
     window.addEventListener('pointerup', onPointerUp)
     window.addEventListener('pointercancel', onPointerUp)
+    renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: true })
+    renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false })
+    renderer.domElement.addEventListener('touchend', onTouchEnd)
+    renderer.domElement.addEventListener('touchcancel', onTouchEnd)
     window.addEventListener('resize', onResize)
 
     const animate = () => {
@@ -158,12 +197,18 @@ export default function RoomPage() {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
       window.removeEventListener('pointercancel', onPointerUp)
+      renderer.domElement.removeEventListener('touchstart', onTouchStart)
+      renderer.domElement.removeEventListener('touchmove', onTouchMove)
+      renderer.domElement.removeEventListener('touchend', onTouchEnd)
+      renderer.domElement.removeEventListener('touchcancel', onTouchEnd)
       window.removeEventListener('resize', onResize)
 
       textureRef.current?.dispose()
       material.dispose()
       geometry.dispose()
       renderer.dispose()
+      document.body.style.overflow = previousBodyOverflow
+      document.body.style.touchAction = previousBodyTouchAction
 
       if (renderer.domElement.parentElement === container) {
         container.removeChild(renderer.domElement)

@@ -50,9 +50,6 @@ function PrayerIndex() {
                   </p>
                 ))}
               </div>
-              <p className="text-sm leading-6 text-white/65">
-                This is the pause before prayer begins.
-              </p>
               <PrimaryButton
                 onClick={() => {
                   setRoomStep(1)
