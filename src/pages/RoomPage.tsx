@@ -110,15 +110,6 @@ export default function RoomPage() {
     onClick: () => navigate('/first-mansion'),
     point: sphericalToVector3(0.14, 4.15),
   }
-  const stTherese3D = {
-    id: 'st-therese-3d',
-    label: 'St. Therese 3D',
-    shortLabel: '3D',
-    lon: 32.06,
-    lat: -22.75,
-    onClick: () => navigate('/st-therese-3d'),
-    point: sphericalToVector3(32.06, -22.75),
-  }
   const rangeHotspots: RangeHotspot[] = [
     {
       id: 'door',
@@ -179,7 +170,6 @@ export default function RoomPage() {
       point: sphericalToVector3(-113.17, 9.4),
     },
     firstMansion,
-    stTherese3D,
   ]
 
   useEffect(() => {
@@ -293,6 +283,40 @@ export default function RoomPage() {
         texture.colorSpace = THREE.SRGBColorSpace
         guardianPlaneMaterial.map = texture
         guardianPlaneMaterial.needsUpdate = true
+      })
+
+      const stThereseGroup = new THREE.Group()
+      stThereseGroup.position.copy(sphericalToVector3(32.06, -22.75, 496.2))
+      stThereseGroup.lookAt(0, 0, 0)
+      scene.add(stThereseGroup)
+
+      const stThereseShadowGeometry = new THREE.PlaneGeometry(18, 6)
+      const stThereseShadowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.18,
+        depthWrite: false,
+      })
+      const stThereseShadow = new THREE.Mesh(stThereseShadowGeometry, stThereseShadowMaterial)
+      stThereseShadow.position.set(0, -14, -0.08)
+      stThereseShadow.scale.set(1.18, 0.75, 1)
+      stThereseGroup.add(stThereseShadow)
+
+      const stTheresePlaneGeometry = new THREE.PlaneGeometry(18, 34)
+      const stTheresePlaneMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.98,
+        depthWrite: false,
+      })
+      const stTheresePlane = new THREE.Mesh(stTheresePlaneGeometry, stTheresePlaneMaterial)
+      stTheresePlane.position.z = 0.06
+      stThereseGroup.add(stTheresePlane)
+
+      const stThereseTexture = loader.load('/St. Therese.png', (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        stTheresePlaneMaterial.map = texture
+        stTheresePlaneMaterial.needsUpdate = true
       })
 
       const updateSize = () => {
@@ -467,6 +491,11 @@ export default function RoomPage() {
         guardianAngelTexture.dispose()
         guardianPlaneMaterial.dispose()
         guardianPlaneGeometry.dispose()
+        stThereseTexture.dispose()
+        stTheresePlaneMaterial.dispose()
+        stTheresePlaneGeometry.dispose()
+        stThereseShadowMaterial.dispose()
+        stThereseShadowGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
       }
@@ -513,8 +542,6 @@ export default function RoomPage() {
               className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
-                  : hotspot.id === 'st-therese-3d'
-                    ? 'h-[1.9rem] w-[1.9rem] sm:h-[2.1rem] sm:w-[2.1rem]'
                   : hotspot.id === 'first-mansion'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
                   : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
@@ -537,13 +564,6 @@ export default function RoomPage() {
                   <path d="M9 20v-5h6v5" />
                   <path d="M7 20h10" />
                   </svg>
-              ) : hotspot.id === 'st-therese-3d' ? (
-                <img
-                  src="/saint-teresa.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="h-full w-full rounded-full object-cover opacity-30 transition hover:opacity-55"
-                />
               ) : null}
             </button>
           </div>
