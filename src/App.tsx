@@ -26,7 +26,7 @@ function AppShell() {
     <div className="relative min-h-[100dvh] overflow-hidden bg-castle text-white">
       <AmbientField />
       <div className="pointer-events-none absolute inset-0 vignette" />
-      <div className="relative mx-auto min-h-[100dvh] w-full max-w-[375px] overflow-hidden px-2 sm:px-0">
+      <div className="relative mx-auto min-h-[100dvh] w-full max-w-[390px] overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
