@@ -167,6 +167,10 @@ export default function DevelopingVirtuesPage() {
   return (
     <ScreenContainer>
       <div className="absolute inset-0 bg-black" />
+      <div
+        className="absolute inset-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat"
+        style={{ backgroundPosition: 'center center' }}
+      />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(255,236,199,0.11),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.02),rgba(15,12,9,0.6))]" />
 
       <div className="relative flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
