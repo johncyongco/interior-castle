@@ -302,7 +302,7 @@ export default function RoomPage() {
       stThereseShadow.scale.set(1.18, 0.75, 1)
       stThereseGroup.add(stThereseShadow)
 
-      const stTheresePlaneGeometry = new THREE.PlaneGeometry(18, 34)
+      const stTheresePlaneGeometry = new THREE.PlaneGeometry(72, 136)
       const stTheresePlaneMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
