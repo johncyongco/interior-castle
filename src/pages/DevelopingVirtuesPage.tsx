@@ -171,7 +171,8 @@ export default function DevelopingVirtuesPage() {
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="relative z-10 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
+      <div className="relative z-10 flex h-full flex-col px-5 pt-6 sm:px-6">
+        <div className="flex-1 overflow-y-auto pb-24">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -225,6 +226,7 @@ export default function DevelopingVirtuesPage() {
             ))}
           </div>
         </motion.div>
+        </div>
       </div>
     </div>
   )
