@@ -50,6 +50,9 @@ export default function RoomPage() {
   const navigate = useNavigate()
   const catechismUrl = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
   const hotspotRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const viewCoordRef = useRef<HTMLSpanElement | null>(null)
+  const clickCoordRef = useRef<HTMLSpanElement | null>(null)
+  const clickCountRef = useRef<HTMLSpanElement | null>(null)
   const hotspotPoints: HotspotPoint[] = [
     {
       id: 'crucifix',
@@ -100,6 +103,9 @@ export default function RoomPage() {
     const raycaster = new THREE.Raycaster()
     const pointer = new THREE.Vector2()
     let dragDistance = 0
+    let lastClickLon = 0
+    let lastClickLat = 0
+    let clickCount = 0
 
     try {
       const scene = new THREE.Scene()
@@ -186,6 +192,16 @@ export default function RoomPage() {
 
         const hit = intersections[0].point
         const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
+        lastClickLon = hitLon
+        lastClickLat = hitLat
+        clickCount += 1
+
+        if (clickCoordRef.current) {
+          clickCoordRef.current.textContent = `${hitLon.toFixed(2)}, ${hitLat.toFixed(2)}`
+        }
+        if (clickCountRef.current) {
+          clickCountRef.current.textContent = String(clickCount)
+        }
 
         console.log('Panorama coordinate', {
           lon: Number(hitLon.toFixed(2)),
@@ -211,6 +227,16 @@ export default function RoomPage() {
           500 * Math.sin(phi) * Math.sin(theta),
         )
         camera.getWorldDirection(cameraDirection)
+
+        if (viewCoordRef.current) {
+          viewCoordRef.current.textContent = `${lon.toFixed(2)}, ${lat.toFixed(2)}`
+        }
+        if (clickCoordRef.current) {
+          clickCoordRef.current.textContent = `${lastClickLon.toFixed(2)}, ${lastClickLat.toFixed(2)}`
+        }
+        if (clickCountRef.current) {
+          clickCountRef.current.textContent = String(clickCount)
+        }
 
         hotspotPoints.forEach((hotspot) => {
           const element = hotspotRefs.current[hotspot.id]
@@ -270,6 +296,43 @@ export default function RoomPage() {
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
           360
+        </div>
+      </div>
+
+      <div className="absolute left-3 top-3 z-30 w-[min(92vw,18rem)] rounded-2xl border border-white/15 bg-black/55 p-3 text-[10px] uppercase tracking-[0.22em] text-white/75 backdrop-blur-xl sm:left-4 sm:top-4 sm:w-72">
+        <div className="flex items-center justify-between border-b border-white/10 pb-2">
+          <span>Debug Coordinates</span>
+          <span className="text-white/45">mobile ready</span>
+        </div>
+        <div className="mt-2 space-y-2 text-[10px] leading-5 tracking-[0.12em]">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-white/55">View lon/lat</span>
+            <span ref={viewCoordRef} className="text-white">
+              0.00, 0.00
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-white/55">Last click</span>
+            <span ref={clickCoordRef} className="text-white">
+              0.00, 0.00
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-white/55">Clicks</span>
+            <span ref={clickCountRef} className="text-white">
+              0
+            </span>
+          </div>
+        </div>
+        <div className="mt-3 space-y-2 border-t border-white/10 pt-2 text-[9px] leading-4 tracking-[0.16em] text-white/65">
+          {hotspotPoints.map((hotspot) => (
+            <div key={hotspot.id} className="flex items-center justify-between gap-3">
+              <span>{hotspot.shortLabel}</span>
+              <span>
+                {hotspot.lon.toFixed(2)}, {hotspot.lat.toFixed(2)}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
