@@ -1,12 +1,47 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import * as THREE from 'three'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
 import { SlowFade } from '../components/SlowFade'
 import { getGuidanceLevel, useInteriorStore } from '../store/interiorStore'
 
-function roomCopy(state: ReturnType<typeof useInteriorStore.getState>['state'], depth: number) {
-  const guidance = getGuidanceLevel(depth)
+type RoomScene = {
+  id: number
+  label: string
+  src: string
+  subtitle: string
+}
+
+const ROOM_SCENES: RoomScene[] = [
+  {
+    id: 1,
+    label: 'Entry Room',
+    src: '/chair-room.png',
+    subtitle: 'Begin here. Look around and continue inward.',
+  },
+  {
+    id: 2,
+    label: 'Room 1',
+    src: '/room1.png',
+    subtitle: 'The first interior room opens quietly.',
+  },
+  {
+    id: 3,
+    label: 'Room 2',
+    src: '/room2.png',
+    subtitle: 'The space deepens as you advance.',
+  },
+  {
+    id: 4,
+    label: 'Room 3',
+    src: '/room3.png',
+    subtitle: 'A deeper chamber waits beyond the door.',
+  },
+]
+
+function roomCopy(state: ReturnType<typeof useInteriorStore.getState>['state'], roomStep: number) {
+  const guidance = getGuidanceLevel(roomStep)
 
   if (state === 'tempted') {
     return ['You are being drawn outward. Return inward.']
@@ -29,7 +64,7 @@ function roomCopy(state: ReturnType<typeof useInteriorStore.getState>['state'], 
   }
 
   if (state === 'peaceful') {
-    if (depth < 3) {
+    if (roomStep < 3) {
       return ['Stay here.', 'You are in His presence. Stay as you are.']
     }
 
@@ -44,41 +79,201 @@ function roomCopy(state: ReturnType<typeof useInteriorStore.getState>['state'], 
 }
 
 export default function RoomPage() {
-  const state = useInteriorStore((store) => store.state)
-  const depth = useInteriorStore((store) => store.depth)
-  const lines = roomCopy(state, depth)
-  const navigate = useNavigate()
+  const mood = useInteriorStore((store) => store.mood)
+  const roomStep = useInteriorStore((store) => store.roomStep)
+  const setRoomStep = useInteriorStore((store) => store.setRoomStep)
+  const advanceRoomStep = useInteriorStore((store) => store.advanceRoomStep)
+  const lines = useMemo(() => roomCopy(mood, roomStep), [mood, roomStep])
+  const [isLookingAtDoor, setIsLookingAtDoor] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const sceneRef = useRef<THREE.Scene | null>(null)
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
+  const materialRef = useRef<THREE.MeshBasicMaterial | null>(null)
+  const meshRef = useRef<THREE.Mesh | null>(null)
+  const textureRef = useRef<THREE.Texture | null>(null)
+  const frameRef = useRef<number | null>(null)
+  const lonRef = useRef(0)
+  const latRef = useRef(0)
+  const isDraggingRef = useRef(false)
+  const lastPointerRef = useRef<{ x: number; y: number } | null>(null)
+
+  const currentScene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
+  const isFinalScene = roomStep >= ROOM_SCENES.length
+
+  useEffect(() => {
+    if (roomStep < 1) {
+      setRoomStep(1)
+    }
+  }, [roomStep, setRoomStep])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return undefined
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100)
+    camera.position.set(0, 0, 0.1)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setPixelRatio(window.devicePixelRatio || 1)
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    container.appendChild(renderer.domElement)
+
+    const geometry = new THREE.SphereGeometry(500, 60, 40)
+    geometry.scale(-1, 1, 1)
+
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+
+    sceneRef.current = scene
+    cameraRef.current = camera
+    rendererRef.current = renderer
+    materialRef.current = material
+    meshRef.current = mesh
+
+    const updateSize = () => {
+      const nextWidth = window.innerWidth
+      const nextHeight = window.innerHeight
+      camera.aspect = nextWidth / nextHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(nextWidth, nextHeight)
+    }
+
+    const updateDoorFocus = () => {
+      const centered = lonRef.current > -10 && lonRef.current < 10 && latRef.current > -10 && latRef.current < 10
+      setIsLookingAtDoor(centered)
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      isDraggingRef.current = true
+      lastPointerRef.current = { x: event.clientX, y: event.clientY }
+      if (event.target instanceof HTMLElement) {
+        event.target.setPointerCapture?.(event.pointerId)
+      }
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!isDraggingRef.current || !lastPointerRef.current) return
+
+      const deltaX = event.clientX - lastPointerRef.current.x
+      const deltaY = event.clientY - lastPointerRef.current.y
+      lastPointerRef.current = { x: event.clientX, y: event.clientY }
+
+      lonRef.current += deltaX * 0.1
+      latRef.current -= deltaY * 0.1
+      updateDoorFocus()
+    }
+
+    const onPointerUp = () => {
+      isDraggingRef.current = false
+      lastPointerRef.current = null
+    }
+
+    const onResize = () => updateSize()
+
+    container.addEventListener('pointerdown', onPointerDown)
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
+    window.addEventListener('pointercancel', onPointerUp)
+    window.addEventListener('resize', onResize)
+
+    const animate = () => {
+      frameRef.current = window.requestAnimationFrame(animate)
+
+      latRef.current = Math.max(-85, Math.min(85, latRef.current))
+
+      const phi = THREE.MathUtils.degToRad(90 - latRef.current)
+      const theta = THREE.MathUtils.degToRad(lonRef.current)
+
+      camera.lookAt(
+        500 * Math.sin(phi) * Math.cos(theta),
+        500 * Math.cos(phi),
+        500 * Math.sin(phi) * Math.sin(theta),
+      )
+
+      renderer.render(scene, camera)
+    }
+
+    animate()
+    updateDoorFocus()
+
+    return () => {
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
+      }
+
+      container.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerUp)
+      window.removeEventListener('resize', onResize)
+
+      textureRef.current?.dispose()
+      material.dispose()
+      geometry.dispose()
+      renderer.dispose()
+
+      if (renderer.domElement.parentElement === container) {
+        container.removeChild(renderer.domElement)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const material = materialRef.current
+    if (!material) return undefined
+
+    const loader = new THREE.TextureLoader()
+    let cancelled = false
+
+    loader.load(currentScene.src, (texture) => {
+      if (cancelled) {
+        texture.dispose()
+        return
+      }
+
+      textureRef.current?.dispose()
+      texture.colorSpace = THREE.SRGBColorSpace
+      textureRef.current = texture
+      material.map = texture
+      material.needsUpdate = true
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [currentScene.src])
 
   return (
     <ScreenContainer>
-      <div className="relative flex h-full flex-col gap-5">
-        <div
-          className="absolute inset-0 bg-[url('/chair-room.png')] bg-cover opacity-22"
-          style={{ backgroundPosition: 'center 28%' }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+      <div ref={containerRef} className="absolute inset-0 bg-black" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+      <div className="relative flex h-full flex-col px-6 py-10 pb-28">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="relative flex h-full flex-1 items-center px-6 py-10 pb-28"
+          className="flex h-full flex-col"
         >
-          <div className="grid w-full gap-4 text-center">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Link
-                  to="/saints"
-                  className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
-                >
-                  Saints
-                </Link>
-              </div>
-              <h2 className="serif text-2xl tracking-wide text-[#e7cba9]">Room</h2>
-            </div>
+          <div className="flex items-center justify-between">
+            <Link
+              to="/saints"
+              className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:shadow-glow"
+            >
+              Saints
+            </Link>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/50">
+              {currentScene.label}
+            </p>
+          </div>
 
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,236,199,0.12),transparent_35%),radial-gradient(circle_at_bottom,rgba(214,185,140,0.08),transparent_48%)]" />
-              <div className="relative space-y-4 py-10 text-center">
+          <div className="mt-auto grid gap-4">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
+              <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top,rgba(255,236,199,0.12),transparent_35%),radial-gradient(circle_at_bottom,rgba(214,185,140,0.08),transparent_48%)]" />
+              <div className="relative space-y-4 py-8 text-center">
                 {lines.map((line) => (
                   <SlowFade key={line}>
                     <p className="serif text-2xl leading-snug text-white/95">{line}</p>
@@ -87,9 +282,34 @@ export default function RoomPage() {
               </div>
             </div>
 
-            <div className="pt-2">
-              <button onClick={() => navigate('/prayer')} className="btn-gold w-full">
-                Begin
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isFinalScene) {
+                    advanceRoomStep()
+                  }
+                }}
+                className="btn-gold w-full disabled:opacity-60"
+                disabled={isFinalScene}
+              >
+                {roomStep <= 1 ? 'Begin' : isFinalScene ? 'Remain' : 'Continue'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (isLookingAtDoor && !isFinalScene) {
+                    advanceRoomStep()
+                  }
+                }}
+                className={`rounded-xl border px-4 py-3 text-sm transition ${
+                  isLookingAtDoor && !isFinalScene
+                    ? 'border-[#e7cba9]/40 bg-[#e7cba9]/10 text-[#e7cba9]'
+                    : 'pointer-events-none border-white/10 bg-white/5 text-white/45'
+                }`}
+              >
+                {isLookingAtDoor && !isFinalScene ? 'Door' : 'Look to door'}
               </button>
             </div>
           </div>

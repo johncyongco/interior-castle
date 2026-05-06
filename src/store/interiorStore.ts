@@ -8,10 +8,13 @@ interface Store {
   mood: InteriorState
   depth: number
   temptationStep: number
+  roomStep: number
   setState: (s: InteriorState) => void
   setMood: (s: InteriorState) => void
   increaseDepth: () => void
   setTemptationStep: (step: number) => void
+  setRoomStep: (step: number) => void
+  advanceRoomStep: () => void
 }
 
 export const useInteriorStore = create<Store>()(
@@ -21,10 +24,13 @@ export const useInteriorStore = create<Store>()(
       mood: 'restless',
       depth: 1,
       temptationStep: 0,
+      roomStep: 1,
       setState: (s) => set({ state: s, mood: s }),
       setMood: (s) => set({ state: s, mood: s }),
       increaseDepth: () => set((prev) => ({ depth: prev.depth + 1 })),
       setTemptationStep: (step) => set({ temptationStep: step }),
+      setRoomStep: (step) => set({ roomStep: step }),
+      advanceRoomStep: () => set((prev) => ({ roomStep: Math.min(prev.roomStep + 1, 4) })),
     }),
     {
       name: 'spero-interior',
@@ -34,6 +40,7 @@ export const useInteriorStore = create<Store>()(
         mood: state.mood,
         depth: state.depth,
         temptationStep: state.temptationStep,
+        roomStep: state.roomStep,
       }),
     },
   ),

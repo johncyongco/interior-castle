@@ -19,6 +19,7 @@ export default function HomePage() {
   const navigate = useNavigate()
   const setMood = useInteriorStore((store) => store.setMood)
   const setTemptationStep = useInteriorStore((store) => store.setTemptationStep)
+  const setRoomStep = useInteriorStore((store) => store.setRoomStep)
 
   return (
     <ScreenContainer>
@@ -52,8 +53,10 @@ export default function HomePage() {
                   void logInteriorState(option)
                   if (option === 'tempted') {
                     setTemptationStep(0)
+                    setRoomStep(1)
                     navigate('/temptation')
                   } else {
+                    setRoomStep(1)
                     navigate('/room')
                   }
                 }}
