@@ -164,10 +164,12 @@ export default function DevelopingVirtuesPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      <div
-        className="absolute inset-0 z-0 bg-[url('/Mountains.jpg')] bg-cover bg-center bg-no-repeat opacity-100"
-        style={{ backgroundPosition: 'center center' }}
+    <div className="relative h-screen w-full overflow-hidden bg-transparent">
+      <img
+        src="/Mountains.jpg"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
       <div className="relative z-10 flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
@@ -208,7 +210,7 @@ export default function DevelopingVirtuesPage() {
                   {section.cards.map((card) => (
                     <article
                       key={card.title}
-                      className="rounded-3xl border border-white/12 bg-white/[0.05] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl"
+                      className="rounded-3xl border border-white/14 bg-white/[0.03] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl"
                     >
                       <div className="mb-3 flex items-center justify-between gap-4">
                         <h3 className="serif text-xl tracking-wide text-[#f3dcc0]">{card.title}</h3>
