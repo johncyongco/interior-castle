@@ -6,7 +6,7 @@ function NavIcon({
   path: 'gate' | 'room' | 'prayer' | 'reflect' | 'community'
 }) {
   const common = {
-    className: 'h-5 w-5 shrink-0',
+    className: 'h-7 w-7 shrink-0',
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: 'currentColor',
