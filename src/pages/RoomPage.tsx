@@ -290,16 +290,16 @@ export default function RoomPage() {
       stThereseGroup.lookAt(0, 0, 0)
       scene.add(stThereseGroup)
 
-      const stThereseShadowGeometry = new THREE.PlaneGeometry(14, 5)
+      const stThereseShadowGeometry = new THREE.PlaneGeometry(18, 7)
       const stThereseShadowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x000000,
+        color: 0x120e0b,
         transparent: true,
-        opacity: 0.18,
+        opacity: 0.08,
         depthWrite: false,
       })
       const stThereseShadow = new THREE.Mesh(stThereseShadowGeometry, stThereseShadowMaterial)
-      stThereseShadow.position.set(0, -10, -0.08)
-      stThereseShadow.scale.set(1.18, 0.75, 1)
+      stThereseShadow.position.set(0, -11.5, -0.08)
+      stThereseShadow.scale.set(1.35, 0.9, 1)
       stThereseGroup.add(stThereseShadow)
 
       const stTheresePlaneGeometry = new THREE.PlaneGeometry(68, 85)
