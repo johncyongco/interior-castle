@@ -42,6 +42,7 @@ type RoomScene = {
 export default function RoomPage() {
   const roomStep = useInteriorStore((store) => store.roomStep)
   const setRoomStep = useInteriorStore((store) => store.setRoomStep)
+  const currentScene = ROOM_SCENES[Math.min(Math.max(roomStep, 1), ROOM_SCENES.length) - 1]
   const containerRef = useRef<HTMLDivElement | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
