@@ -4,11 +4,16 @@ export type VerseDetail = {
   sourceUrl: string
 }
 
+export type EverydayThing = {
+  name: string
+  verses: VerseDetail[]
+}
+
 export type Teaching = {
   id: string
   title: string
   text: string
-  everydayThings?: string[]
+  everydayThings?: EverydayThing[]
   verses: VerseDetail[]
 }
 
@@ -18,163 +23,273 @@ export const teachings: Teaching[] = [
     title: 'God is in All Things',
     text: 'The ordinary things of daily life can become signs of God’s presence, care, and wisdom.',
     everydayThings: [
-      'Food',
-      'Water',
-      'Air',
-      'Fire',
-      'Sky',
-      'Universe',
-      'Earth',
-      'Clothing',
-      'Work',
-      'Creation',
-      'Man',
-      'Body',
-      'Head',
-      'Arms',
-      'Feet',
-      'Walking',
-      'Running',
-      'Standing',
-      'Sea',
-      'Ocean',
-      'Breath',
-      'Time',
-      'Rest',
-      'Light',
+      {
+        name: 'Food',
+        verses: [
+          {
+            reference: 'Matthew 6:11',
+            excerpt: 'Daily bread reminds us that food is received as gift, not seized as control.',
+            sourceUrl: 'https://bible.usccb.org/bible/matthew/6',
+          },
+          {
+            reference: 'John 6:35',
+            excerpt: 'Jesus reveals himself as the true bread that satisfies deeper hunger.',
+            sourceUrl: 'https://bible.usccb.org/bible/john/6',
+          },
+        ],
+      },
+      {
+        name: 'Water',
+        verses: [
+          {
+            reference: 'John 4:13-14',
+            excerpt: 'Living water is offered by Christ for the thirst that ordinary water cannot end.',
+            sourceUrl: 'https://bible.usccb.org/bible/john/4',
+          },
+        ],
+      },
+      {
+        name: 'Air',
+        verses: [
+          {
+            reference: 'Acts 17:25',
+            excerpt: 'Life, breath, and everything else come from God.',
+            sourceUrl: 'https://bible.usccb.org/bible/acts/17',
+          },
+        ],
+      },
+      {
+        name: 'Fire',
+        verses: [
+          {
+            reference: 'Exodus 3:2',
+            excerpt: 'The burning bush shows the Lord who speaks and calls from the flame.',
+            sourceUrl: 'https://bible.usccb.org/bible/exodus/3',
+          },
+        ],
+      },
+      {
+        name: 'Sky',
+        verses: [
+          {
+            reference: 'Psalm 19:1',
+            excerpt: 'The heavens and sky declare the glory of God in the universe above us.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/19',
+          },
+        ],
+      },
+      {
+        name: 'Universe',
+        verses: [
+          {
+            reference: 'Genesis 1:1',
+            excerpt: 'God is the maker of heaven and earth, the beginning of all creation.',
+            sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
+          },
+          {
+            reference: 'Colossians 1:16-17',
+            excerpt: 'All things were created through him and for him, and in him all things hold together.',
+            sourceUrl: 'https://bible.usccb.org/bible/colossians/1',
+          },
+        ],
+      },
+      {
+        name: 'Earth',
+        verses: [
+          {
+            reference: 'Psalm 24:1',
+            excerpt: 'The earth and everything in it belong to the Lord.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/24',
+          },
+          {
+            reference: 'Isaiah 44:24',
+            excerpt: 'The Lord is the one who made all things, stretching out the heavens and the earth.',
+            sourceUrl: 'https://bible.usccb.org/bible/isaiah/44',
+          },
+        ],
+      },
+      {
+        name: 'Clothing',
+        verses: [
+          {
+            reference: 'Matthew 6:28-30',
+            excerpt: 'Even clothing points to the Father who knows what we need.',
+            sourceUrl: 'https://bible.usccb.org/bible/matthew/6',
+          },
+        ],
+      },
+      {
+        name: 'Work',
+        verses: [
+          {
+            reference: 'Colossians 3:23-24',
+            excerpt: 'Work can be offered to the Lord, not only to people.',
+            sourceUrl: 'https://bible.usccb.org/bible/colossians/3',
+          },
+          {
+            reference: 'Genesis 2:15',
+            excerpt: 'Human work begins as a vocation to serve and tend what God has made.',
+            sourceUrl: 'https://bible.usccb.org/bible/genesis/2',
+          },
+        ],
+      },
+      {
+        name: 'Creation',
+        verses: [
+          {
+            reference: 'Genesis 1:27',
+            excerpt: 'Man and woman are made in the image of God.',
+            sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
+          },
+        ],
+      },
+      {
+        name: 'Man',
+        verses: [
+          {
+            reference: 'Genesis 1:27',
+            excerpt: 'Man and woman are made in the image of God.',
+            sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
+          },
+        ],
+      },
+      {
+        name: 'Body',
+        verses: [
+          {
+            reference: 'Psalm 139:13-14',
+            excerpt: 'The body is fearfully and wonderfully made by God.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/139',
+          },
+          {
+            reference: '1 Corinthians 6:19-20',
+            excerpt: 'Your body is a temple of the Holy Spirit and should be honored.',
+            sourceUrl: 'https://bible.usccb.org/bible/1corinthians/6',
+          },
+        ],
+      },
+      {
+        name: 'Head',
+        verses: [
+          {
+            reference: 'Ephesians 1:22-23',
+            excerpt: 'Christ is the head over all things for the Church.',
+            sourceUrl: 'https://bible.usccb.org/bible/ephesians/1',
+          },
+        ],
+      },
+      {
+        name: 'Arms',
+        verses: [
+          {
+            reference: 'Isaiah 40:11',
+            excerpt: 'God tends his people with the care of a shepherd carrying them close.',
+            sourceUrl: 'https://bible.usccb.org/bible/isaiah/40',
+          },
+        ],
+      },
+      {
+        name: 'Feet',
+        verses: [
+          {
+            reference: 'Psalm 119:105',
+            excerpt: 'God gives light for the feet and direction for the path.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/119',
+          },
+        ],
+      },
+      {
+        name: 'Walking',
+        verses: [
+          {
+            reference: 'Micah 6:8',
+            excerpt: 'Walking with God means doing justice, loving mercy, and living humbly.',
+            sourceUrl: 'https://bible.usccb.org/bible/micah/6',
+          },
+        ],
+      },
+      {
+        name: 'Running',
+        verses: [
+          {
+            reference: 'Hebrews 12:1-2',
+            excerpt: 'The life of faith is a race run with endurance and eyes fixed on Jesus.',
+            sourceUrl: 'https://bible.usccb.org/bible/hebrews/12',
+          },
+        ],
+      },
+      {
+        name: 'Standing',
+        verses: [
+          {
+            reference: 'Ephesians 6:13-14',
+            excerpt: 'Standing firm means taking up truth and righteousness.',
+            sourceUrl: 'https://bible.usccb.org/bible/ephesians/6',
+          },
+        ],
+      },
+      {
+        name: 'Sea',
+        verses: [
+          {
+            reference: 'Psalm 95:5',
+            excerpt: 'The sea is a sign that the Lord made everything beneath and above it.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/95',
+          },
+        ],
+      },
+      {
+        name: 'Ocean',
+        verses: [
+          {
+            reference: 'Job 38:8-11',
+            excerpt: 'Even the ocean has limits set by the Lord who commands the waves.',
+            sourceUrl: 'https://bible.usccb.org/bible/job/38',
+          },
+        ],
+      },
+      {
+        name: 'Breath',
+        verses: [
+          {
+            reference: 'Acts 17:25',
+            excerpt: 'Life, breath, and everything else come from God.',
+            sourceUrl: 'https://bible.usccb.org/bible/acts/17',
+          },
+        ],
+      },
+      {
+        name: 'Time',
+        verses: [
+          {
+            reference: 'Ecclesiastes 3:1',
+            excerpt: 'Time itself is held within seasons and purposes appointed by God.',
+            sourceUrl: 'https://bible.usccb.org/bible/ecclesiastes/3',
+          },
+        ],
+      },
+      {
+        name: 'Rest',
+        verses: [
+          {
+            reference: 'Psalm 4:8',
+            excerpt: 'Sleep and rest are also places where the Lord keeps his people safe.',
+            sourceUrl: 'https://bible.usccb.org/bible/psalms/4',
+          },
+        ],
+      },
+      {
+        name: 'Light',
+        verses: [
+          {
+            reference: 'John 8:12',
+            excerpt: 'Christ is the light that helps us see the world rightly.',
+            sourceUrl: 'https://bible.usccb.org/bible/john/8',
+          },
+        ],
+      },
     ],
-    verses: [
-      {
-        reference: 'Genesis 1:1',
-        excerpt: 'God is the maker of heaven and earth, the beginning of all creation.',
-        sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
-      },
-      {
-        reference: 'Colossians 1:16-17',
-        excerpt: 'All things were created through him and for him, and in him all things hold together.',
-        sourceUrl: 'https://bible.usccb.org/bible/colossians/1',
-      },
-      {
-        reference: 'Matthew 6:11',
-        excerpt: 'Daily bread reminds us that food is received as gift, not seized as control.',
-        sourceUrl: 'https://bible.usccb.org/bible/matthew/6',
-      },
-      {
-        reference: 'John 6:35',
-        excerpt: 'Jesus reveals himself as the true bread that satisfies deeper hunger.',
-        sourceUrl: 'https://bible.usccb.org/bible/john/6',
-      },
-      {
-        reference: 'John 4:13-14',
-        excerpt: 'Living water is offered by Christ for the thirst that ordinary water cannot end.',
-        sourceUrl: 'https://bible.usccb.org/bible/john/4',
-      },
-      {
-        reference: 'Isaiah 44:24',
-        excerpt: 'The Lord is the one who made all things, stretching out the heavens and the earth.',
-        sourceUrl: 'https://bible.usccb.org/bible/isaiah/44',
-      },
-      {
-        reference: 'Psalm 19:1',
-        excerpt: 'The heavens and sky declare the glory of God in the universe above us.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/19',
-      },
-      {
-        reference: 'Psalm 24:1',
-        excerpt: 'The earth and everything in it belong to the Lord.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/24',
-      },
-      {
-        reference: 'Matthew 6:28-30',
-        excerpt: 'Even clothing points to the Father who knows what we need.',
-        sourceUrl: 'https://bible.usccb.org/bible/matthew/6',
-      },
-      {
-        reference: 'Colossians 3:23-24',
-        excerpt: 'Work can be offered to the Lord, not only to people.',
-        sourceUrl: 'https://bible.usccb.org/bible/colossians/3',
-      },
-      {
-        reference: 'Genesis 2:15',
-        excerpt: 'Human work begins as a vocation to serve and tend what God has made.',
-        sourceUrl: 'https://bible.usccb.org/bible/genesis/2',
-      },
-      {
-        reference: 'Genesis 1:27',
-        excerpt: 'Man and woman are made in the image of God.',
-        sourceUrl: 'https://bible.usccb.org/bible/genesis/1',
-      },
-      {
-        reference: 'Psalm 139:13-14',
-        excerpt: 'The body is fearfully and wonderfully made by God.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/139',
-      },
-      {
-        reference: '1 Corinthians 6:19-20',
-        excerpt: 'Your body is a temple of the Holy Spirit and should be honored.',
-        sourceUrl: 'https://bible.usccb.org/bible/1corinthians/6',
-      },
-      {
-        reference: 'Ephesians 1:22-23',
-        excerpt: 'Christ is the head over all things for the Church.',
-        sourceUrl: 'https://bible.usccb.org/bible/ephesians/1',
-      },
-      {
-        reference: 'Isaiah 40:11',
-        excerpt: 'God tends his people with the care of a shepherd carrying them close.',
-        sourceUrl: 'https://bible.usccb.org/bible/isaiah/40',
-      },
-      {
-        reference: 'Psalm 119:105',
-        excerpt: 'God gives light for the feet and direction for the path.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/119',
-      },
-      {
-        reference: 'Hebrews 12:1-2',
-        excerpt: 'The life of faith is a race run with endurance and eyes fixed on Jesus.',
-        sourceUrl: 'https://bible.usccb.org/bible/hebrews/12',
-      },
-      {
-        reference: 'Micah 6:8',
-        excerpt: 'Walking with God means doing justice, loving mercy, and living humbly.',
-        sourceUrl: 'https://bible.usccb.org/bible/micah/6',
-      },
-      {
-        reference: 'Ephesians 6:13-14',
-        excerpt: 'Standing firm means taking up truth and righteousness.',
-        sourceUrl: 'https://bible.usccb.org/bible/ephesians/6',
-      },
-      {
-        reference: 'Psalm 95:5',
-        excerpt: 'The sea is a sign that the Lord made everything beneath and above it.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/95',
-      },
-      {
-        reference: 'Job 38:8-11',
-        excerpt: 'Even the ocean has limits set by the Lord who commands the waves.',
-        sourceUrl: 'https://bible.usccb.org/bible/job/38',
-      },
-      {
-        reference: 'Acts 17:25',
-        excerpt: 'Life, breath, and everything else come from God.',
-        sourceUrl: 'https://bible.usccb.org/bible/acts/17',
-      },
-      {
-        reference: 'Ecclesiastes 3:1',
-        excerpt: 'Time itself is held within seasons and purposes appointed by God.',
-        sourceUrl: 'https://bible.usccb.org/bible/ecclesiastes/3',
-      },
-      {
-        reference: 'Psalm 4:8',
-        excerpt: 'Sleep and rest are also places where the Lord keeps his people safe.',
-        sourceUrl: 'https://bible.usccb.org/bible/psalms/4',
-      },
-      {
-        reference: 'John 8:12',
-        excerpt: 'Christ is the light that helps us see the world rightly.',
-        sourceUrl: 'https://bible.usccb.org/bible/john/8',
-      },
-    ],
+    verses: [],
   },
   {
     id: 'promises-of-god',

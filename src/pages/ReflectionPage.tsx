@@ -1,11 +1,20 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import ScreenContainer from '../components/ScreenContainer'
 import ChoiceButton from '../components/ChoiceButton'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { useInteriorStore } from '../store/interiorStore'
 import { logReflection } from '../lib/speroIdentity'
-import { getTeresaReflectionPassage } from '../lib/teresaPassages'
+import { getTeresaReflectionInsight } from '../lib/teresaPassages'
+import {
+  clearReflectionDraft,
+  clearReflectionHistory,
+  loadReflectionHistory,
+  loadReflectionDraft,
+  saveReflectionDraft,
+  saveReflectionEntry,
+  type ReflectionEntry,
+} from '../lib/reflectionJournal'
 
 const questions = [
   'Where did you seek yourself today?',
@@ -16,9 +25,33 @@ const questions = [
 export default function ReflectionPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null)
   const [input, setInput] = useState('')
-  const [response, setResponse] = useState('')
+  const [response, setResponse] = useState<{
+    title: string
+    description: string
+    passage: string
+  } | null>(null)
+  const [savedNotice, setSavedNotice] = useState('')
+  const [history, setHistory] = useState<ReflectionEntry[]>([])
+  const [showHistory, setShowHistory] = useState(false)
   const increaseDepth = useInteriorStore((store) => store.increaseDepth)
   const mood = useInteriorStore((store) => store.mood)
+
+  useEffect(() => {
+    const draft = loadReflectionDraft()
+    if (!draft) return
+
+    if (draft.question) setSelectedQuestion(draft.question)
+    setInput(draft.input ?? '')
+  }, [])
+
+  useEffect(() => {
+    setHistory(loadReflectionHistory())
+  }, [])
+
+  useEffect(() => {
+    if (!selectedQuestion && !input) return
+    saveReflectionDraft({ question: selectedQuestion, input })
+  }, [selectedQuestion, input])
 
   const prompt = useMemo(
     () => selectedQuestion ?? 'The interior mirror. Look within with honesty and trust.',
@@ -26,14 +59,36 @@ export default function ReflectionPage() {
   )
 
   async function submitReflection() {
-    const text = getTeresaReflectionPassage({
+    const insight = getTeresaReflectionInsight({
       mood,
       question: selectedQuestion ?? prompt,
       input,
     })
-    setResponse(text)
+    setResponse(insight)
+    setSavedNotice('Saved to your reflection journal.')
+    saveReflectionEntry({
+      question: selectedQuestion ?? prompt,
+      input,
+      title: insight.title,
+      description: insight.description,
+      passage: insight.passage,
+      mood,
+      createdAt: new Date().toISOString(),
+    })
+    setHistory(loadReflectionHistory())
+    clearReflectionDraft()
     increaseDepth()
-    void logReflection(input || prompt, text)
+    void logReflection(input || prompt, insight.passage)
+  }
+
+  function openHistory() {
+    setHistory(loadReflectionHistory())
+    setShowHistory(true)
+  }
+
+  function clearHistory() {
+    clearReflectionHistory()
+    setHistory([])
   }
 
   return (
@@ -50,6 +105,16 @@ export default function ReflectionPage() {
           transition={{ duration: 1.5, ease: 'easeOut' }}
           className="flex h-full flex-col"
         >
+          <div className="absolute right-0 top-0 z-20">
+            <button
+              type="button"
+              onClick={openHistory}
+              className="rounded-full border border-white/10 bg-black/20 px-3 py-2 text-[10px] uppercase tracking-[0.22em] text-[#e7cba9] backdrop-blur-md transition hover:bg-black/30"
+            >
+              Your Reflections
+            </button>
+          </div>
+
           <div className="space-y-2 text-center">
             <h1 className="serif text-2xl text-center mb-3 text-[#e7cba9]">Reflection</h1>
             <p className="text-center text-sm text-[#c6a47a] mb-8">
@@ -91,8 +156,10 @@ export default function ReflectionPage() {
 
           {response ? (
             <div className="mt-5 space-y-3 rounded-3xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur-xl shadow-soft">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/45">First Mansion</p>
-              <p className="serif text-2xl leading-snug text-white/95">{response}</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-white/45">{response.title}</p>
+              <p className="text-sm leading-6 text-white/70">{response.description}</p>
+              <p className="serif text-2xl leading-snug text-white/95">{response.passage}</p>
+              {savedNotice ? <p className="text-xs text-[#c6a47a]">{savedNotice}</p> : null}
               <p className="text-xs text-white/40">St. Teresa of Avila</p>
             </div>
           ) : (
@@ -104,6 +171,70 @@ export default function ReflectionPage() {
               <p className="text-xs text-white/40">St. Teresa of Avila</p>
             </div>
           )}
+
+          {showHistory ? (
+            <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/55 px-4 pb-6 backdrop-blur-sm sm:items-center">
+              <div className="w-full max-w-[390px] rounded-[28px] border border-white/10 bg-[#16100c]/95 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.28em] text-white/45">Your Reflections</p>
+                    <p className="mt-1 text-xs text-white/55">Saved entries and the quotes they surfaced.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowHistory(false)}
+                    className="rounded-full border border-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="mt-4 max-h-[60vh] space-y-3 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {history.length > 0 ? (
+                    history.map((entry) => (
+                      <div
+                        key={`${entry.createdAt}-${entry.question}`}
+                        className="space-y-2 rounded-3xl border border-white/8 bg-white/[0.04] p-4"
+                      >
+                        <div className="space-y-1">
+                          <p className="text-[10px] uppercase tracking-[0.22em] text-[#c6a47a]">
+                            {entry.title}
+                          </p>
+                          <p className="text-sm text-white/85">{entry.question}</p>
+                        </div>
+                        <p className="serif text-lg leading-snug text-white/95">{entry.passage}</p>
+                        {entry.description ? (
+                          <p className="text-sm leading-6 text-white/65">{entry.description}</p>
+                        ) : null}
+                        <p className="text-xs text-white/40">{new Date(entry.createdAt).toLocaleString()}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm leading-6 text-white/55">
+                      No saved reflections yet.
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={clearHistory}
+                    className="rounded-full border border-white/10 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
+                  >
+                    Clear history
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowHistory(false)}
+                    className="rounded-full bg-[#e7cba9] px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#1a120b]"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </motion.div>
       </div>
     </ScreenContainer>
