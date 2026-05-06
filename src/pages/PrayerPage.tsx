@@ -78,6 +78,18 @@ function PrayerIndex() {
                 <div className="font-medium">Rosary</div>
                 <div className="mt-1 text-sm text-white/65">Pray with the mysteries and a simple guide.</div>
               </button>
+              <button onClick={() => navigate('/prayer/divine-mercy')} className="quiet-button w-full">
+                <div className="font-medium">Divine Mercy Chaplet</div>
+                <div className="mt-1 text-sm text-white/65">Pray the chaplet with a guided flow.</div>
+              </button>
+              <button onClick={() => navigate('/prayer/angels-prayer')} className="quiet-button w-full">
+                <div className="font-medium">Angels Prayer</div>
+                <div className="mt-1 text-sm text-white/65">AMOE Philippines prayer guide.</div>
+              </button>
+              <button onClick={() => navigate('/prayer/deliverance-prayer')} className="quiet-button w-full">
+                <div className="font-medium">Deliverance Prayer</div>
+                <div className="mt-1 text-sm text-white/65">AMOE Philippines prayer guide.</div>
+              </button>
               <button onClick={() => navigate('/prayer/time')} className="quiet-button w-full">
                 <div className="font-medium">Set Your Prayer Time</div>
                 <div className="mt-1 text-sm text-white/65">Mock for now. Choose a time for later.</div>

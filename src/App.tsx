@@ -7,6 +7,9 @@ import RoomPage from './pages/RoomPage'
 import DailyGospelPage from './pages/DailyGospelPage'
 import PrayerPage from './pages/PrayerPage'
 import RosaryPage from './pages/RosaryPage'
+import DivineMercyPage from './pages/DivineMercyPage'
+import AngelsPrayerPage from './pages/AngelsPrayerPage'
+import DeliverancePrayerPage from './pages/DeliverancePrayerPage'
 import ReflectionPage from './pages/ReflectionPage'
 import ReflectionHistoryPage from './pages/ReflectionHistoryPage'
 import SoulsDetailPage from './pages/SoulsDetailPage'
@@ -62,6 +65,9 @@ function AppShell() {
               <Route path="/prayer" element={<PrayerPage />} />
               <Route path="/prayer/*" element={<PrayerPage />} />
               <Route path="/prayer/rosary" element={<RosaryPage />} />
+              <Route path="/prayer/divine-mercy" element={<DivineMercyPage />} />
+              <Route path="/prayer/angels-prayer" element={<AngelsPrayerPage />} />
+              <Route path="/prayer/deliverance-prayer" element={<DeliverancePrayerPage />} />
               <Route path="/reflect" element={<ReflectionPage />} />
               <Route path="/reflection" element={<ReflectionPage />} />
               <Route path="/reflection/history" element={<ReflectionHistoryPage />} />
