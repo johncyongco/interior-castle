@@ -326,32 +326,17 @@ export default function RoomPage() {
             float leftLight = (1.0 - vUv.x) * 0.16;
             float bottomLight = (1.0 - vUv.y) * 0.08;
             float rightFalloff = vUv.x * 0.09;
-            float edgeFade = smoothstep(0.02, 0.10, vUv.x) * smoothstep(0.02, 0.10, vUv.y) *
-              smoothstep(0.02, 0.10, 1.0 - vUv.x) * smoothstep(0.02, 0.10, 1.0 - vUv.y);
 
             vec3 warm = vec3(1.0, 0.86, 0.68);
             vec3 shaded = tex.rgb * (1.0 - rightFalloff) + warm * (leftLight + bottomLight);
-            shaded = mix(shaded, shaded * 0.96, 1.0 - edgeFade);
 
-            gl_FragColor = vec4(shaded, tex.a * 0.98);
+            gl_FragColor = vec4(shaded, tex.a);
           }
         `,
       })
       const stTheresePlane = new THREE.Mesh(stTheresePlaneGeometry, stTheresePlaneMaterial)
       stTheresePlane.position.set(0, -10, 0.06)
       stThereseGroup.add(stTheresePlane)
-
-      const stThereseWrapGeometry = new THREE.PlaneGeometry(70, 87)
-      const stThereseWrapMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffc98c,
-        transparent: true,
-        opacity: 0.045,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      })
-      const stThereseWrap = new THREE.Mesh(stThereseWrapGeometry, stThereseWrapMaterial)
-      stThereseWrap.position.set(0, -10, -0.02)
-      stThereseGroup.add(stThereseWrap)
 
       const stThereseTexture = loader.load('/St. Therese.png', (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace
@@ -536,8 +521,6 @@ export default function RoomPage() {
         stThereseTexture.dispose()
         stTheresePlaneMaterial.dispose()
         stTheresePlaneGeometry.dispose()
-        stThereseWrapMaterial.dispose()
-        stThereseWrapGeometry.dispose()
         stThereseShadowMaterial.dispose()
         stThereseShadowGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
