@@ -291,23 +291,10 @@ export default function RoomPage() {
       holyFamilyGroup.lookAt(0, 0, 0)
       scene.add(holyFamilyGroup)
 
-      const holyFamilyShadowGeometry = new THREE.PlaneGeometry(22, 8)
-      const holyFamilyShadowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x120e0b,
-        transparent: true,
-        opacity: 0.07,
-        depthWrite: false,
-      })
-      const holyFamilyShadow = new THREE.Mesh(holyFamilyShadowGeometry, holyFamilyShadowMaterial)
-      holyFamilyShadow.position.set(0, -8.5, -0.08)
-      holyFamilyShadow.scale.set(1.45, 0.95, 1)
-      holyFamilyGroup.add(holyFamilyShadow)
-
       const holyFamilyLoader = new OBJLoader()
-      const holyFamilyMaterial = new THREE.MeshStandardMaterial({
-        color: 0xd8c3a1,
-        roughness: 0.9,
-        metalness: 0,
+      const holyFamilyMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf1e4d0,
+        side: THREE.DoubleSide,
       })
 
       holyFamilyLoader.load('/Holy%20Family.OBJ', (object) => {
@@ -326,7 +313,7 @@ export default function RoomPage() {
         })
 
         const maxDimension = Math.max(size.x, size.y, size.z) || 1
-        const targetHeight = 74
+        const targetHeight = 84
         const scale = targetHeight / maxDimension
         object.scale.setScalar(scale)
         object.position.y -= size.y * scale * 0.1
@@ -567,8 +554,6 @@ export default function RoomPage() {
         guardianPlaneMaterial.dispose()
         guardianPlaneGeometry.dispose()
         holyFamilyMaterial.dispose()
-        holyFamilyShadowMaterial.dispose()
-        holyFamilyShadowGeometry.dispose()
         stThereseTexture.dispose()
         stTheresePlaneMaterial.dispose()
         stTheresePlaneGeometry.dispose()
