@@ -351,7 +351,9 @@ export default function RoomPage() {
               aria-label={`${hotspot.label} hotspot`}
               title={hotspot.label}
               className={`pointer-events-auto absolute left-0 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
-                hotspot.id === 'crucifix' || hotspot.id === 'bible' ? 'h-10 w-10 sm:h-12 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
+                hotspot.id === 'crucifix' || hotspot.id === 'bible'
+                  ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
+                  : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
             >
             </button>
