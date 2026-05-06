@@ -170,7 +170,6 @@ export default function DevelopingVirtuesPage() {
         className="absolute inset-0 bg-[url('/Mountains.png')] bg-cover bg-center bg-no-repeat"
         style={{ backgroundPosition: 'center center' }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_34%,rgba(255,244,220,0.1),transparent_28%),linear-gradient(180deg,rgba(12,10,8,0.08),rgba(12,10,8,0.45))]" />
       <div className="relative flex h-full flex-col px-5 pb-24 pt-6 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
