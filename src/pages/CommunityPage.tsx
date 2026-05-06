@@ -66,12 +66,15 @@ export default function CommunityPage() {
 
           <div className="mt-4 space-y-2">
             <div className="space-y-2">
-              {teachings.map((teaching) => (
+              {teachings.map((teaching) => {
+                const isPurgatoryCard = teaching.id === 'friends-of-the-suffering'
+
+                return (
                 <button
                   key={teaching.id}
                   type="button"
                   onClick={() => {
-                    if (teaching.id === 'purgatory' && suppressNextClickRef.current) {
+                    if (isPurgatoryCard && suppressNextClickRef.current) {
                       suppressNextClickRef.current = false
                       return
                     }
@@ -79,60 +82,51 @@ export default function CommunityPage() {
                     navigate(`/community/${teaching.id}`)
                   }}
                   className={`relative w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-4 text-left backdrop-blur-xl shadow-soft transition hover:bg-white/[0.08] ${
-                    teaching.id === 'purgatory' ? 'min-h-32' : ''
+                    isPurgatoryCard ? 'min-h-32' : ''
                   }`}
                   style={
-                    teaching.id === 'purgatory'
+                    isPurgatoryCard
                       ? {
                           backgroundImage:
-                            "linear-gradient(180deg, rgba(18, 13, 11, 0.22), rgba(18, 13, 11, 0.78)), url('/Purgatory.png')",
+                            "linear-gradient(180deg, rgba(18, 13, 11, 0.24), rgba(18, 13, 11, 0.82)), url('/Purgatory.png')",
                           backgroundSize: 'cover',
                           backgroundPosition: 'center center',
                         }
                       : undefined
                   }
                 >
-                  {teaching.id === 'purgatory' ? (
-                    <div className="space-y-3">
+                  {isPurgatoryCard ? (
+                    <>
                       <div
-                        className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20"
+                        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)]"
+                      />
+                      <video
+                        ref={purgatoryVideoRef}
+                        src="/Purgatory-video.mp4"
+                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                          isPurgatoryPreviewing ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        aria-hidden="true"
+                      />
+                      <div
+                        className="absolute inset-0 z-10"
                         onPointerDown={startPurgatoryPreview}
                         onPointerUp={stopPurgatoryPreview}
                         onPointerCancel={stopPurgatoryPreview}
                         onPointerLeave={stopPurgatoryPreview}
                         onContextMenu={(event) => event.preventDefault()}
-                      >
-                        <div
-                          className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,220,170,0.18),transparent_35%)] transition-opacity duration-300 ${
-                            isPurgatoryPreviewing ? 'opacity-0' : 'opacity-100'
-                          }`}
-                        />
-                        <img
-                          src="/Purgatory.png"
-                          alt="Purgatory"
-                          className={`h-32 w-full object-cover transition-opacity duration-300 ${
-                            isPurgatoryPreviewing ? 'opacity-0' : 'opacity-100'
-                          }`}
-                        />
-                        <video
-                          ref={purgatoryVideoRef}
-                          src="/Purgatory-video.mp4"
-                          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                            isPurgatoryPreviewing ? 'opacity-100' : 'opacity-0'
-                          }`}
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                      </div>
-                    </div>
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    </>
                   ) : null}
                   <div className="relative z-10 space-y-1">
                     <h2
                       className={`serif text-lg ${
-                        teaching.id === 'purgatory' ? 'text-[#f3dfc0] drop-shadow-[0_1px_1px_rgba(0,0,0,0.55)]' : 'text-[#e7cba9]'
+                        isPurgatoryCard ? 'text-[#f3dfc0] drop-shadow-[0_1px_1px_rgba(0,0,0,0.55)]' : 'text-[#e7cba9]'
                       }`}
                     >
                       {teaching.title}
@@ -142,7 +136,8 @@ export default function CommunityPage() {
                     ) : null}
                   </div>
                 </button>
-              ))}
+                )
+              })}
             </div>
           </div>
 
