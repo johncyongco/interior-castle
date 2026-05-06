@@ -23,7 +23,7 @@ export default function FriendsFossPage() {
         >
           <div className="flex items-center justify-between">
             <Link to={backTo} className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]">
-              Back
+              {cameFromRoom ? 'Back to Room' : 'Back'}
             </Link>
           </div>
 
