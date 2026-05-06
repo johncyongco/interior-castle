@@ -58,28 +58,28 @@ export default function RoomPage() {
       id: 'crucifix',
       label: 'Crucifix',
       shortLabel: 'Cross',
-      lon: fixLon(-150),
-      lat: 10,
+      lon: fixLon(-270),
+      lat: 7.87,
       onClick: () => navigate('/prayer'),
-      point: sphericalToVector3(fixLon(-150), 10),
+      point: sphericalToVector3(fixLon(-270), 7.87),
     },
     {
       id: 'bible',
       label: 'Bible',
       shortLabel: 'Bible',
-      lon: fixLon(-70),
-      lat: -12,
+      lon: fixLon(-67),
+      lat: -8.88,
       onClick: () => navigate('/daily-gospel'),
-      point: sphericalToVector3(fixLon(-70), -12),
+      point: sphericalToVector3(fixLon(-67), -8.88),
     },
     {
       id: 'cc',
       label: 'CC',
       shortLabel: 'CC',
-      lon: fixLon(-30),
-      lat: 8,
+      lon: fixLon(-117),
+      lat: -1.2,
       onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
-      point: sphericalToVector3(fixLon(-30), 8),
+      point: sphericalToVector3(fixLon(-117), -1.2),
     },
   ]
 
@@ -106,6 +106,7 @@ export default function RoomPage() {
     let lastClickLon = 0
     let lastClickLat = 0
     let clickCount = 0
+    const hotspotRadius = 8
 
     try {
       const scene = new THREE.Scene()
@@ -209,12 +210,22 @@ export default function RoomPage() {
         })
       }
 
+      const updateHotspotSizes = () => {
+        hotspotPoints.forEach((hotspot) => {
+          const element = hotspotRefs.current[hotspot.id]
+          if (!element) return
+          element.style.width = `${hotspotRadius * 2}px`
+          element.style.height = `${hotspotRadius * 2}px`
+        })
+      }
+
       mount.addEventListener('pointerdown', onPointerDown)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
       window.addEventListener('pointercancel', onPointerUp)
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
+      updateHotspotSizes()
 
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
@@ -347,10 +358,9 @@ export default function RoomPage() {
             onClick={hotspot.onClick}
             aria-label={`${hotspot.label} hotspot`}
             title={hotspot.label}
-            className="pointer-events-auto absolute left-0 top-0 flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/15 bg-black/45 px-2.5 py-1.5 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:min-h-0 sm:min-w-0 sm:px-3 sm:py-2 sm:text-[9px] sm:tracking-[0.3em]"
+            className="pointer-events-auto absolute left-0 top-0 flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/45 text-[8px] uppercase tracking-[0.24em] text-white/80 backdrop-blur-xl transition hover:bg-black/60 hover:text-white sm:h-5 sm:w-5 sm:text-[9px]"
           >
             <span className="inline-flex h-2 w-2 rounded-full bg-[#e7cba9] shadow-[0_0_12px_rgba(231,203,169,0.85)] sm:h-2.5 sm:w-2.5" />
-            <span className="whitespace-nowrap">{hotspot.shortLabel}</span>
           </button>
         ))}
       </div>
