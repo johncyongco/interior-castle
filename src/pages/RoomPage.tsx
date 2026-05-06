@@ -17,6 +17,15 @@ type HotspotPoint = Hotspot & {
   point: THREE.Vector3
 }
 
+const OFFSET = -120
+
+function fixLon(lon: number) {
+  let fixed = lon + OFFSET
+  if (fixed < -180) fixed += 360
+  if (fixed > 180) fixed -= 360
+  return fixed
+}
+
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
   const lat = THREE.MathUtils.degToRad(latDeg)
@@ -38,28 +47,28 @@ export default function RoomPage() {
       id: 'crucifix',
       label: 'Crucifix',
       shortLabel: 'Cross',
-      lon: -58,
-      lat: 12,
+      lon: fixLon(-150),
+      lat: 10,
       onClick: () => navigate('/prayer'),
-      point: sphericalToVector3(-58, 12),
+      point: sphericalToVector3(fixLon(-150), 10),
     },
     {
       id: 'bible',
       label: 'Bible',
       shortLabel: 'Bible',
-      lon: 18,
-      lat: -8,
+      lon: fixLon(-70),
+      lat: -12,
       onClick: () => navigate('/daily-gospel'),
-      point: sphericalToVector3(18, -8),
+      point: sphericalToVector3(fixLon(-70), -12),
     },
     {
       id: 'cc',
       label: 'CC',
       shortLabel: 'CC',
-      lon: 52,
-      lat: 14,
+      lon: fixLon(-30),
+      lat: 8,
       onClick: () => window.open(catechismUrl, '_blank', 'noopener,noreferrer'),
-      point: sphericalToVector3(52, 14),
+      point: sphericalToVector3(fixLon(-30), 8),
     },
   ]
 
