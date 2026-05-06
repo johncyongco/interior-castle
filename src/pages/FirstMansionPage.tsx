@@ -29,15 +29,14 @@ export default function FirstMansionPage() {
           <button
             type="button"
             onClick={() => setPlaying(true)}
-            className="flex h-20 w-20 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1] hover:scale-105"
           >
-            <svg viewBox="0 0 24 24" className="ml-1 h-10 w-10 fill-white/60">
+            <svg viewBox="0 0 24 24" className="h-14 w-14 fill-white/60 transition hover:fill-white/80 hover:scale-105">
               <path d="M8 5v14l11-7z" />
             </svg>
           </button>
         )}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 z-20 flex justify-center pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+3.5rem)] left-0 right-0 z-20 flex justify-center">
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">You are in the 1st Mansion</p>
       </div>
     </ScreenContainer>
