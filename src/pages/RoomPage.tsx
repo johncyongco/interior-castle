@@ -579,8 +579,10 @@ export default function RoomPage() {
               className={`pointer-events-auto absolute left-0 top-0 z-[60] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-transparent bg-transparent text-transparent shadow-none opacity-0 transition hover:opacity-100 ${
                 hotspot.id === 'crucifix' || hotspot.id === 'bible'
                   ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
-                  : hotspot.id === 'first-mansion' || hotspot.id === 'developing-virtues'
+                  : hotspot.id === 'first-mansion'
                     ? 'h-[1.6rem] w-[1.6rem] sm:h-[1.8rem] sm:w-[1.8rem]'
+                    : hotspot.id === 'developing-virtues'
+                      ? 'h-[3.75rem] w-[3.75rem] sm:h-[4.5rem] sm:w-[4.5rem]'
                     : 'h-[2.25rem] w-[2.25rem] sm:h-[2.625rem] sm:w-[2.625rem]'
               }`}
             >
