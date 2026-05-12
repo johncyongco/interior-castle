@@ -32,10 +32,12 @@ export default function BreakfastCalendarPage() {
             </button>
           </div>
 
+          <h1 className="serif text-center text-lg text-[#e7cba9] sm:text-xl">Daily Mass Live</h1>
+
           <div className="flex-1 rounded-3xl border border-white/10 bg-white/[0.05] p-2 backdrop-blur-xl shadow-soft sm:p-4">
             <iframe
               title="Daily Mass Calendar"
-              src="https://calendar.google.com/calendar/embed?src=t0goendl3jsjbcuemc06g6r3o4%40group.calendar.google.com&ctz=Asia%2FManila"
+              src="https://calendar.google.com/calendar/embed?src=t0goendl3jsjbcuemc06g6r3o4%40group.calendar.google.com&ctz=Asia%2FManila&mode=AGENDA"
               className="h-full w-full rounded-2xl border-0 bg-black"
             />
           </div>
