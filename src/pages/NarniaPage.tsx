@@ -221,7 +221,7 @@ export default function NarniaPage() {
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
-        <p className="narnia text-lg tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-xl">Welcome to Narnia</p>
+        <p className="narnia text-base tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-lg">Welcome to Narnia</p>
       </div>
       <div className="absolute bottom-24 left-0 right-0 z-10 flex flex-col items-center gap-3">
         <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
@@ -252,10 +252,10 @@ export default function NarniaPage() {
               transition={{ duration: 0.6, ease: 'easeOut' }}
               className="max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-8 text-center backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
             >
-              <p className="narnia text-3xl leading-relaxed text-[#d4e8f0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+              <p className="narnia text-lg leading-relaxed text-[#d4e8f0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] sm:text-xl">
                 Beware the Turkish Delight
               </p>
-              <p className="mt-4 narnia text-xl leading-relaxed text-[#b8d4e0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+              <p className="mt-4 narnia text-base leading-relaxed text-[#b8d4e0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] sm:text-lg">
                 — what looks sweet can enslave the will.
               </p>
               <p className="mt-6 text-[11px] italic tracking-[0.15em] text-[#8ab0c0]">
