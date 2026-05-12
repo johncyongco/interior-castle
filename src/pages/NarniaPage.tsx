@@ -280,8 +280,12 @@ export default function NarniaPage() {
           onClick={() => setShowTurkishDelight(true)}
           className="pointer-events-auto flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center opacity-40 transition hover:opacity-60 hover:scale-110"
         >
-          <svg viewBox="0 0 512 512" className="h-full w-full fill-[#d4e8f0]" aria-hidden="true">
-            <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm-16-296c0-17.7 14.3-32 32-32s32 14.3 32 32v192c0 17.7-14.3 32-32 32s-32-14.3-32-32V160z" />
+          <svg viewBox="0 0 100 100" className="h-full w-full fill-[#d4e8f0]" aria-hidden="true">
+            <path d="M50 5c-8 0-15 4-19 10-4-2-9-1-12 2-3 3-4 8-2 12-6 5-10 12-10 20 0 8 3 15 8 20 5 5 12 8 20 8 3 0 6 0 9-1 3 3 7 5 12 5 5 0 9-2 12-5 3 1 6 1 9 1 8 0 15-3 20-8 5-5 8-12 8-20 0-8-3-15-8-20 2-4 1-9-2-12-3-3-8-4-12-2-4-6-11-10-19-10zm0 5c5 0 9 2 12 6l1 1 2-1c3-1 7 0 9 2 2 2 3 5 2 8l-1 2 2 2c4 3 6 8 6 14 0 5-2 10-5 14-3 4-7 6-12 6-3 0-6-1-8-3l-1-1-2 1c-3 2-6 3-9 3s-6-1-9-3l-2-1-1 1c-2 2-5 3-8 3-5 0-9-2-12-6-3-4-5-9-5-14 0-6 2-11 6-14l2-2-1-2c-1-3 0-6 2-8 2-2 6-3 9-2l2 1 1-1c3-4 7-6 12-6z" />
+            <path d="M50 20c-6 0-11 2-15 6-4 4-6 9-6 15s2 11 6 15c4 4 9 6 15 6s11-2 15-6c4-4 6-9 6-15s-2-11-6-15c-4-4-9-6-15-6zm0 5c4 0 7 1 10 4 3 3 4 6 4 10s-1 7-4 10c-3 3-6 4-10 4s-7-1-10-4c-3-3-4-6-4-10s1-7 4-10c3-3 6-4 10-4z" />
+            <circle cx="38" cy="38" r="3" />
+            <circle cx="62" cy="38" r="3" />
+            <path d="M40 52c0 0 4 6 10 6s10-6 10-6" stroke="#d4e8f0" strokeWidth="2" fill="none" strokeLinecap="round" />
           </svg>
         </button>
       </div>
