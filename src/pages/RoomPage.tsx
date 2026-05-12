@@ -319,14 +319,15 @@ export default function RoomPage() {
 
       const stThereseShadowGeometry = new THREE.PlaneGeometry(18, 7)
       const stThereseShadowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x120e0b,
+        color: 0x0a0806,
         transparent: true,
-        opacity: 0.08,
+        opacity: 0.25,
         depthWrite: false,
       })
       const stThereseShadow = new THREE.Mesh(stThereseShadowGeometry, stThereseShadowMaterial)
-      stThereseShadow.position.set(0, -11.5, -0.08)
-      stThereseShadow.scale.set(1.35, 0.9, 1)
+      stThereseShadow.position.set(1, -13, -0.1)
+      stThereseShadow.scale.set(1.6, 1.1, 1)
+      stThereseShadow.rotation.z = 0.04
       stThereseGroup.add(stThereseShadow)
 
       const stTheresePlaneGeometry = new THREE.PlaneGeometry(68, 85)
@@ -350,9 +351,9 @@ export default function RoomPage() {
             vec4 tex = texture2D(map, vUv);
             if (tex.a < 0.02) discard;
 
-            float leftLight = (1.0 - vUv.x) * 0.16;
-            float bottomLight = (1.0 - vUv.y) * 0.08;
-            float rightFalloff = vUv.x * 0.09;
+            float leftLight = (1.0 - vUv.x) * 0.22;
+            float bottomLight = (1.0 - vUv.y) * 0.12;
+            float rightFalloff = vUv.x * 0.12;
 
             vec3 warm = vec3(1.0, 0.86, 0.68);
             vec3 shaded = tex.rgb * (1.0 - rightFalloff) + warm * (leftLight + bottomLight);
