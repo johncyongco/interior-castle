@@ -224,6 +224,7 @@ export default function RoomPage() {
       const frameInteractiveObjects: THREE.Object3D[] = []
       const guardianInteractiveObjects: THREE.Object3D[] = []
       const breakfastInteractiveObjects: THREE.Object3D[] = []
+      const narniaInteractiveObjects: THREE.Object3D[] = []
 
     try {
       const scene = new THREE.Scene()
@@ -400,6 +401,46 @@ export default function RoomPage() {
         breakfastImageMaterial.needsUpdate = true
       })
 
+      const narniaFrameWidth = 44
+      const narniaFrameHeight = 34
+      const narniaGroup = new THREE.Group()
+      narniaGroup.position.copy(sphericalToVector3(-80.91, 12.20, 496))
+      narniaGroup.lookAt(0, 0, 0)
+      scene.add(narniaGroup)
+
+      const narniaBorderGeometry = new THREE.PlaneGeometry(narniaFrameWidth, narniaFrameHeight)
+      const narniaBorderMaterial = new THREE.MeshBasicMaterial({
+        color: 0x5a3d2b,
+        transparent: true,
+        opacity: 0.92,
+      })
+      const narniaBorder = new THREE.Mesh(narniaBorderGeometry, narniaBorderMaterial)
+      narniaGroup.add(narniaBorder)
+
+      const narniaMattingGeometry = new THREE.PlaneGeometry(narniaFrameWidth - 3, narniaFrameHeight - 3)
+      const narniaMattingMaterial = new THREE.MeshBasicMaterial({
+        color: 0x17120f,
+        transparent: true,
+        opacity: 0.92,
+      })
+      const narniaMatting = new THREE.Mesh(narniaMattingGeometry, narniaMattingMaterial)
+      narniaMatting.position.z = 0.12
+      narniaGroup.add(narniaMatting)
+
+      const narniaImageGeometry = new THREE.PlaneGeometry(narniaFrameWidth - 6, narniaFrameHeight - 6)
+      const narniaImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+      const narniaImage = new THREE.Mesh(narniaImageGeometry, narniaImageMaterial)
+      narniaImage.position.z = 0.2
+      narniaGroup.add(narniaImage)
+
+      narniaInteractiveObjects.push(narniaBorder, narniaMatting, narniaImage)
+
+      const narniaTexture = loader.load('/Narnia%20Map.png', (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        narniaImageMaterial.map = texture
+        narniaImageMaterial.needsUpdate = true
+      })
+
       const updateSize = () => {
         if (!renderer) return
         camera.aspect = window.innerWidth / window.innerHeight
@@ -481,6 +522,14 @@ export default function RoomPage() {
         if (breakfastHits.length) {
           setPanelFromHit(breakfastFrame.label, breakfastFrame.lon, breakfastFrame.lat, 'Breakfast hotspot')
           breakfastFrame.onClick()
+          return
+        }
+
+        const narniaHits = raycaster.intersectObjects(narniaInteractiveObjects, false)
+        if (narniaHits.length) {
+          setPanelFromHit('Narnia Map', -80.91, 12.20, 'Narnia hotspot')
+          window.sessionStorage.setItem('spero-room-entry', 'door')
+          navigate('/breakfast')
           return
         }
 
@@ -589,6 +638,13 @@ export default function RoomPage() {
         breakfastImageGeometry.dispose()
         breakfastBorderMaterial.dispose()
         breakfastBorderGeometry.dispose()
+        narniaTexture.dispose()
+        narniaImageMaterial.dispose()
+        narniaImageGeometry.dispose()
+        narniaMattingMaterial.dispose()
+        narniaMattingGeometry.dispose()
+        narniaBorderMaterial.dispose()
+        narniaBorderGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
       }
