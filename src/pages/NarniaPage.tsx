@@ -275,12 +275,10 @@ export default function NarniaPage() {
         className="pointer-events-none absolute left-0 top-0 z-20"
         style={{ opacity: 0 }}
       >
-        <img
-          src="/Aslan%27s%20Glyph.png"
-          alt=""
-          aria-hidden="true"
+        <button
+          type="button"
           onClick={() => setShowTurkishDelight(true)}
-          className="pointer-events-auto h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-40 transition hover:opacity-60 hover:scale-110"
+          className="pointer-events-auto h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[url('/Aslan%27s%20Glyph.png')] bg-contain bg-center bg-no-repeat opacity-40 transition hover:opacity-60 hover:scale-110"
         />
       </div>
 
