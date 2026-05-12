@@ -4,6 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 
+function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
+  const lon = THREE.MathUtils.degToRad(lonDeg)
+  const lat = THREE.MathUtils.degToRad(latDeg)
+  return new THREE.Vector3(
+    radius * Math.cos(lat) * Math.cos(lon),
+    radius * Math.sin(lat),
+    radius * Math.cos(lat) * Math.sin(lon),
+  )
+}
+
 function normalizeLon(lon: number) {
   let normalized = lon
   while (normalized <= -180) normalized += 360
@@ -36,6 +46,7 @@ type CoordinatePanel = {
 export default function NarniaPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
+  const hotspotRef = useRef<HTMLDivElement | null>(null)
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({
     label: 'Welcome to Narnia',
     source: 'Tap the panorama',
@@ -44,6 +55,9 @@ export default function NarniaPage() {
   })
   const [showTurkishDelight, setShowTurkishDelight] = useState(false)
 
+  const turkishDelightLon = -39.02
+  const turkishDelightLat = -9.19
+  const turkishDelightPoint = sphericalToVector3(turkishDelightLon, turkishDelightLat)
   const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
 
   useEffect(() => {
@@ -177,6 +191,8 @@ export default function NarniaPage() {
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
 
+      const cameraDirection = new THREE.Vector3()
+
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
         lat = Math.max(-85, Math.min(85, lat))
@@ -187,6 +203,27 @@ export default function NarniaPage() {
           500 * Math.cos(phi),
           500 * Math.sin(phi) * Math.sin(theta),
         )
+        camera.getWorldDirection(cameraDirection)
+
+        const element = hotspotRef.current
+        if (element) {
+          const relative = turkishDelightPoint.clone()
+          const visible = relative.dot(cameraDirection) > 0
+
+          if (!visible) {
+            element.style.opacity = '0'
+            element.style.pointerEvents = 'none'
+          } else {
+            const projected = turkishDelightPoint.clone().project(camera)
+            const x = (projected.x * 0.5 + 0.5) * window.innerWidth
+            const y = (-projected.y * 0.5 + 0.5) * window.innerHeight
+
+            element.style.opacity = '1'
+            element.style.pointerEvents = 'auto'
+            element.style.transform = `translate(${x}px, ${y}px)`
+          }
+        }
+
         renderer?.render(scene, camera)
       }
 
@@ -233,6 +270,22 @@ export default function NarniaPage() {
           className="rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
         >
           Back to Room
+        </button>
+      </div>
+
+      <div
+        ref={hotspotRef}
+        className="pointer-events-none absolute left-0 top-0 z-20"
+        style={{ opacity: 0 }}
+      >
+        <button
+          type="button"
+          onClick={() => setShowTurkishDelight(true)}
+          className="pointer-events-auto flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 backdrop-blur-sm transition hover:scale-110 hover:bg-black/50"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-[#e8c8a0]/70" aria-hidden="true">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+          </svg>
         </button>
       </div>
 
