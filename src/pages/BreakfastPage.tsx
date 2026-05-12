@@ -46,12 +46,15 @@ function isLonInRange(lon: number, lonMin: number, lonMax: number) {
 export default function BreakfastPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
+  const scriptureRef = useRef<HTMLDivElement | null>(null)
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({
     label: 'Breakfast',
     source: 'Tap the panorama',
     lon: null,
     lat: null,
   })
+
+  const scripturePoint = sphericalToVector3(-4.81, 39.86)
 
   const hotspotRanges = [
     { lonMin: 144.54, lonMax: -179, latMin: -2.61, latMax: 21.68, route: '/breakfast/media' },
@@ -199,6 +202,8 @@ export default function BreakfastPage() {
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
 
+      const cameraDirection = new THREE.Vector3()
+
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
         lat = Math.max(-85, Math.min(85, lat))
@@ -209,6 +214,23 @@ export default function BreakfastPage() {
           500 * Math.cos(phi),
           500 * Math.sin(phi) * Math.sin(theta),
         )
+        camera.getWorldDirection(cameraDirection)
+
+        const scriptureEl = scriptureRef.current
+        if (scriptureEl) {
+          const relative = scripturePoint.clone()
+          const visible = relative.dot(cameraDirection) > 0
+          if (!visible) {
+            scriptureEl.style.opacity = '0'
+          } else {
+            const projected = scripturePoint.clone().project(camera)
+            const x = (projected.x * 0.5 + 0.5) * window.innerWidth
+            const y = (-projected.y * 0.5 + 0.5) * window.innerHeight
+            scriptureEl.style.opacity = '1'
+            scriptureEl.style.transform = `translate(${x}px, ${y}px)`
+          }
+        }
+
         renderer?.render(scene, camera)
       }
 
@@ -244,6 +266,20 @@ export default function BreakfastPage() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
         <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Breakfast</p>
+      </div>
+      <div
+        ref={scriptureRef}
+        className="pointer-events-none absolute left-0 top-0 z-20 max-w-[85vw]"
+        style={{ opacity: 0 }}
+      >
+        <div className="-translate-x-1/2 -translate-y-1/2 text-center">
+          <p className="serif text-[13px] leading-5 text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+            &ldquo;When they climbed out on shore, they saw a charcoal fire with fish on it and bread.&hellip; Jesus said to them, &ldquo;Come, have breakfast.&rdquo;&rdquo;
+          </p>
+          <p className="mt-1 text-[11px] italic tracking-[0.15em] text-[#c6a47a]/80 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            John 21:9-12
+          </p>
+        </div>
       </div>
       <div className="absolute bottom-24 left-0 right-0 z-10 flex justify-center">
         <button
