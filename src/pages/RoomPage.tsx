@@ -92,6 +92,18 @@ export default function RoomPage() {
     image: '/saint-teresa.png',
     onClick: () => navigate('/saints'),
   }
+  const breakfastFrame = {
+    id: 'breakfast-frame',
+    label: 'Breakfast Frame',
+    shortLabel: 'Breakfast',
+    lon: 150.33,
+    lat: 7.74,
+    radius: 496.2,
+    width: 28,
+    height: 20,
+    image: '/Breakfast.png',
+    onClick: () => navigate('/breakfast'),
+  }
   const guardianAngel = {
     label: 'Guardian Angel',
     lon: 0,
@@ -208,6 +220,7 @@ export default function RoomPage() {
       let dragDistance = 0
       const frameInteractiveObjects: THREE.Object3D[] = []
       const guardianInteractiveObjects: THREE.Object3D[] = []
+      const breakfastInteractiveObjects: THREE.Object3D[] = []
 
     try {
       const scene = new THREE.Scene()
@@ -356,6 +369,34 @@ export default function RoomPage() {
         texture.wrapT = THREE.ClampToEdgeWrapping
       })
 
+      const breakfastGroup = new THREE.Group()
+      breakfastGroup.position.copy(sphericalToVector3(150.33, 7.74, 496.2))
+      breakfastGroup.lookAt(0, 0, 0)
+      scene.add(breakfastGroup)
+
+      const breakfastBorderGeometry = new THREE.PlaneGeometry(28, 20)
+      const breakfastBorderMaterial = new THREE.MeshBasicMaterial({
+        color: 0x6a4b2f,
+        transparent: true,
+        opacity: 0.9,
+      })
+      const breakfastBorder = new THREE.Mesh(breakfastBorderGeometry, breakfastBorderMaterial)
+      breakfastGroup.add(breakfastBorder)
+
+      const breakfastImageGeometry = new THREE.PlaneGeometry(25, 17)
+      const breakfastImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+      const breakfastImage = new THREE.Mesh(breakfastImageGeometry, breakfastImageMaterial)
+      breakfastImage.position.z = 0.15
+      breakfastGroup.add(breakfastImage)
+
+      breakfastInteractiveObjects.push(breakfastBorder, breakfastImage)
+
+      const breakfastTexture = loader.load('/Breakfast.png', (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        breakfastImageMaterial.map = texture
+        breakfastImageMaterial.needsUpdate = true
+      })
+
       const updateSize = () => {
         if (!renderer) return
         camera.aspect = window.innerWidth / window.innerHeight
@@ -430,6 +471,13 @@ export default function RoomPage() {
         if (frameHits.length) {
           setPanelFromHit(pictureFrame.label, pictureFrame.lon, pictureFrame.lat, 'Frame hotspot')
           pictureFrame.onClick()
+          return
+        }
+
+        const breakfastHits = raycaster.intersectObjects(breakfastInteractiveObjects, false)
+        if (breakfastHits.length) {
+          setPanelFromHit(breakfastFrame.label, breakfastFrame.lon, breakfastFrame.lat, 'Breakfast hotspot')
+          breakfastFrame.onClick()
           return
         }
 
@@ -533,6 +581,11 @@ export default function RoomPage() {
         stTheresePlaneGeometry.dispose()
         stThereseShadowMaterial.dispose()
         stThereseShadowGeometry.dispose()
+        breakfastTexture.dispose()
+        breakfastImageMaterial.dispose()
+        breakfastImageGeometry.dispose()
+        breakfastBorderMaterial.dispose()
+        breakfastBorderGeometry.dispose()
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
       }
