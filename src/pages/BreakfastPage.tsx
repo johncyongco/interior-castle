@@ -28,6 +28,21 @@ type CoordinatePanel = {
   lat: number | null
 }
 
+function normalizeLon(lon: number) {
+  let normalized = lon
+  while (normalized <= -180) normalized += 360
+  while (normalized > 180) normalized -= 360
+  return normalized
+}
+
+function isLonInRange(lon: number, lonMin: number, lonMax: number) {
+  const value = normalizeLon(lon)
+  const min = normalizeLon(lonMin)
+  const max = normalizeLon(lonMax)
+  if (min <= max) return value >= min && value <= max
+  return value >= min || value <= max
+}
+
 export default function BreakfastPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
@@ -37,6 +52,12 @@ export default function BreakfastPage() {
     lon: null,
     lat: null,
   })
+
+  const hotspotRanges = [
+    { lonMin: 144.54, lonMax: -179, latMin: -2.61, latMax: 21.68 },
+    { lonMin: 96, lonMax: 96, latMin: -2.61, latMax: -2.61 },
+    { lonMin: 166.01, lonMax: 167.44, latMin: -22.67, latMax: 21.68 },
+  ]
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -140,6 +161,23 @@ export default function BreakfastPage() {
 
         const hit = intersections[0].point
         const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
+
+        for (const range of hotspotRanges) {
+          if (
+            isLonInRange(hitLon, range.lonMin, range.lonMax) &&
+            hitLat >= range.latMin &&
+            hitLat <= range.latMax
+          ) {
+            setCoordinatePanel({
+              label: 'Video Hotspot',
+              source: 'Wall hotspot',
+              lon: Number(hitLon.toFixed(2)),
+              lat: Number(hitLat.toFixed(2)),
+            })
+            navigate('/breakfast/media')
+            return
+          }
+        }
 
         setCoordinatePanel({
           label: 'Breakfast Panorama',
