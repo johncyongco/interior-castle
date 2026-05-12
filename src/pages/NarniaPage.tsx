@@ -260,10 +260,7 @@ export default function NarniaPage() {
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
         <p className="narnia text-base tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-lg">Welcome to Narnia</p>
       </div>
-      <div className="absolute bottom-24 left-0 right-0 z-10 flex flex-col items-center gap-3">
-        <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
-          360
-        </div>
+      <div className="absolute bottom-24 left-0 right-0 z-10 flex flex-col items-center">
         <button
           type="button"
           onClick={() => navigate('/room')}
@@ -278,15 +275,13 @@ export default function NarniaPage() {
         className="pointer-events-none absolute left-0 top-0 z-20"
         style={{ opacity: 0 }}
       >
-        <button
-          type="button"
+        <img
+          src="/Aslan%27s%20Glyph.png"
+          alt=""
+          aria-hidden="true"
           onClick={() => setShowTurkishDelight(true)}
-          className="pointer-events-auto flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 backdrop-blur-sm transition hover:scale-110 hover:bg-black/50"
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-[#e8c8a0]/70" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-          </svg>
-        </button>
+          className="pointer-events-auto h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-40 transition hover:opacity-60 hover:scale-110"
+        />
       </div>
 
       <AnimatePresence>
