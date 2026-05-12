@@ -102,7 +102,10 @@ export default function RoomPage() {
     width: 28,
     height: 20,
     image: '/Breakfast.png',
-    onClick: () => navigate('/breakfast'),
+    onClick: () => {
+      window.sessionStorage.setItem('spero-room-entry', 'door')
+      navigate('/breakfast')
+    },
   }
   const guardianAngel = {
     label: 'Guardian Angel',
