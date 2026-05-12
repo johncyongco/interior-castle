@@ -99,8 +99,8 @@ export default function RoomPage() {
     lon: 150.33,
     lat: 7.74,
     radius: 496.2,
-    width: 28,
-    height: 20,
+    width: 52,
+    height: 36,
     image: '/Breakfast.png',
     onClick: () => {
       window.sessionStorage.setItem('spero-room-entry', 'door')
@@ -375,11 +375,11 @@ export default function RoomPage() {
       })
 
       const breakfastGroup = new THREE.Group()
-      breakfastGroup.position.copy(sphericalToVector3(150.33, 7.74, 496.2))
+      breakfastGroup.position.copy(sphericalToVector3(breakfastFrame.lon, breakfastFrame.lat, 496.2))
       breakfastGroup.lookAt(0, 0, 0)
       scene.add(breakfastGroup)
 
-      const breakfastBorderGeometry = new THREE.PlaneGeometry(28, 20)
+      const breakfastBorderGeometry = new THREE.PlaneGeometry(breakfastFrame.width, breakfastFrame.height)
       const breakfastBorderMaterial = new THREE.MeshBasicMaterial({
         color: 0x6a4b2f,
         transparent: true,
@@ -388,7 +388,7 @@ export default function RoomPage() {
       const breakfastBorder = new THREE.Mesh(breakfastBorderGeometry, breakfastBorderMaterial)
       breakfastGroup.add(breakfastBorder)
 
-      const breakfastImageGeometry = new THREE.PlaneGeometry(25, 17)
+      const breakfastImageGeometry = new THREE.PlaneGeometry(breakfastFrame.width - 3, breakfastFrame.height - 3)
       const breakfastImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
       const breakfastImage = new THREE.Mesh(breakfastImageGeometry, breakfastImageMaterial)
       breakfastImage.position.z = 0.15
