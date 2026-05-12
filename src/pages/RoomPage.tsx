@@ -415,7 +415,7 @@ export default function RoomPage() {
 
       narniaInteractiveObjects.push(narniaPlane)
 
-      const narniaTexture = loader.load('/Narnia%20Map.png', (texture) => {
+      const narniaTexture = loader.load('/Map.png', (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace
         narniaPlaneMaterial.map = texture
         narniaPlaneMaterial.needsUpdate = true
@@ -507,7 +507,7 @@ export default function RoomPage() {
 
         const narniaHits = raycaster.intersectObjects(narniaInteractiveObjects, false)
         if (narniaHits.length) {
-          setPanelFromHit('Narnia Map', -80.91, 12.20, 'Narnia hotspot')
+          setPanelFromHit('Map', -80.91, 12.20, 'Map hotspot')
           window.sessionStorage.setItem('spero-room-entry', 'door')
           navigate('/narnia')
           return

@@ -1,11 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap');
-
-@font-face {
-  font-family: 'Narnia BLL';
-  src: url('/fonts/NarniaBLL.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&family=Cinzel+Decorative:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,7 +55,7 @@
   }
 
   .narnia {
-    font-family: 'Narnia BLL', serif;
+    font-family: 'Cinzel Decorative', serif;
   }
 
   .page-frame {

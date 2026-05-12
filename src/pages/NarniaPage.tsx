@@ -48,7 +48,7 @@ export default function NarniaPage() {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const hotspotRef = useRef<HTMLDivElement | null>(null)
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({
-    label: 'Welcome to Narnia',
+    label: 'Winter Panorama',
     source: 'Tap the panorama',
     lon: null,
     lat: null,
@@ -258,7 +258,7 @@ export default function NarniaPage() {
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
-        <p className="narnia text-base tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-lg">Welcome to Narnia</p>
+        <p className="narnia text-base tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-lg">Welcome</p>
       </div>
       <div className="absolute bottom-24 left-0 right-0 z-10 flex flex-col items-center">
         <button
@@ -278,8 +278,12 @@ export default function NarniaPage() {
         <button
           type="button"
           onClick={() => setShowTurkishDelight(true)}
-          className="pointer-events-auto h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[url('/Aslan%27s%20Glyph.png')] bg-contain bg-center bg-no-repeat opacity-40 transition hover:opacity-60 hover:scale-110"
-        />
+          className="pointer-events-auto flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center opacity-40 transition hover:opacity-60 hover:scale-110"
+        >
+          <svg viewBox="0 0 512 512" className="h-full w-full fill-[#d4e8f0]" aria-hidden="true">
+            <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm-16-296c0-17.7 14.3-32 32-32s32 14.3 32 32v192c0 17.7-14.3 32-32 32s-32-14.3-32-32V160z" />
+          </svg>
+        </button>
       </div>
 
       <AnimatePresence>
