@@ -1,8 +1,23 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
+
+function normalizeLon(lon: number) {
+  let normalized = lon
+  while (normalized <= -180) normalized += 360
+  while (normalized > 180) normalized -= 360
+  return normalized
+}
+
+function isLonInRange(lon: number, lonMin: number, lonMax: number) {
+  const value = normalizeLon(lon)
+  const min = normalizeLon(lonMin)
+  const max = normalizeLon(lonMax)
+  if (min <= max) return value >= min && value <= max
+  return value >= min || value <= max
+}
 
 function vector3ToSpherical(point: THREE.Vector3) {
   const radius = point.length()
@@ -27,6 +42,9 @@ export default function NarniaPage() {
     lon: null,
     lat: null,
   })
+  const [showTurkishDelight, setShowTurkishDelight] = useState(false)
+
+  const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -131,6 +149,15 @@ export default function NarniaPage() {
         const hit = intersections[0].point
         const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
 
+        if (
+          isLonInRange(hitLon, turkishDelightRange.lonMin, turkishDelightRange.lonMax) &&
+          hitLat >= turkishDelightRange.latMin &&
+          hitLat <= turkishDelightRange.latMax
+        ) {
+          setShowTurkishDelight(true)
+          return
+        }
+
         setCoordinatePanel({
           label: 'Narnia Panorama',
           source: 'Wall click',
@@ -194,7 +221,7 @@ export default function NarniaPage() {
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
-        <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Welcome to Narnia</p>
+        <p className="narnia text-lg tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-xl">Welcome to Narnia</p>
       </div>
       <div className="absolute bottom-24 left-0 right-0 z-10 flex justify-center">
         <button
@@ -205,6 +232,44 @@ export default function NarniaPage() {
           Back to Room
         </button>
       </div>
+
+      <AnimatePresence>
+        {showTurkishDelight && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 px-6 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-8 text-center backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+            >
+              <p className="narnia text-3xl leading-relaxed text-[#d4e8f0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+                Beware the Turkish Delight
+              </p>
+              <p className="mt-4 narnia text-xl leading-relaxed text-[#b8d4e0] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+                — what looks sweet can enslave the will.
+              </p>
+              <p className="mt-6 text-[11px] italic tracking-[0.15em] text-[#8ab0c0]">
+                Edmund&rsquo;s lesson
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowTurkishDelight(false)}
+                className="mt-8 rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:bg-white/[0.1]"
+              >
+                Dismiss
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
