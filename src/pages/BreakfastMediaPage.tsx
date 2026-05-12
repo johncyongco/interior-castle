@@ -52,6 +52,10 @@ export default function BreakfastMediaPage() {
           >
             Open on YouTube
           </a>
+
+          <p className="serif text-center text-[13px] leading-5 text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+            &ldquo;I am with you always, until the end of the age.&rdquo;
+          </p>
         </motion.div>
       </div>
     </ScreenContainer>
