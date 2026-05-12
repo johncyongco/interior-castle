@@ -28,6 +28,7 @@ import DevelopingVirtuesPage from './pages/DevelopingVirtuesPage'
 import BreakfastPage from './pages/BreakfastPage'
 import BreakfastMediaPage from './pages/BreakfastMediaPage'
 import BreakfastCalendarPage from './pages/BreakfastCalendarPage'
+import NarniaPage from './pages/NarniaPage'
 import { AmbientField } from './components/AmbientField'
 import { ensureSperoUser } from './lib/speroIdentity'
 import BottomNav from './components/BottomNav'
@@ -113,6 +114,7 @@ function AppShell() {
                <Route path="/breakfast" element={<BreakfastPage />} />
                <Route path="/breakfast/media" element={<BreakfastMediaPage />} />
                <Route path="/breakfast/calendar" element={<BreakfastCalendarPage />} />
+               <Route path="/narnia" element={<NarniaPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>
