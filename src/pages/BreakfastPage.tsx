@@ -54,9 +54,10 @@ export default function BreakfastPage() {
   })
 
   const hotspotRanges = [
-    { lonMin: 144.54, lonMax: -179, latMin: -2.61, latMax: 21.68 },
-    { lonMin: 96, lonMax: 96, latMin: -2.61, latMax: -2.61 },
-    { lonMin: 166.01, lonMax: 167.44, latMin: -22.67, latMax: 21.68 },
+    { lonMin: 144.54, lonMax: -179, latMin: -2.61, latMax: 21.68, route: '/breakfast/media' },
+    { lonMin: 96, lonMax: 96, latMin: -2.61, latMax: -2.61, route: '/breakfast/media' },
+    { lonMin: 166.01, lonMax: 167.44, latMin: -22.67, latMax: 21.68, route: '/breakfast/media' },
+    { lonMin: -81.17, lonMax: -54.20, latMin: -68.62, latMax: -37.32, route: '/breakfast/calendar' },
   ]
 
   useEffect(() => {
@@ -169,12 +170,12 @@ export default function BreakfastPage() {
             hitLat <= range.latMax
           ) {
             setCoordinatePanel({
-              label: 'Video Hotspot',
+              label: range.route === '/breakfast/media' ? 'Video Hotspot' : 'Calendar Hotspot',
               source: 'Wall hotspot',
               lon: Number(hitLon.toFixed(2)),
               lat: Number(hitLat.toFixed(2)),
             })
-            navigate('/breakfast/media')
+            navigate(range.route)
             return
           }
         }
