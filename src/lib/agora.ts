@@ -114,8 +114,6 @@ export async function joinChannel(
 
 export async function leaveChannel() {
   if (localTrack) {
-    try { await localTrack.setEnabled(false) } catch {}
-    try { await localTrack.setMuted(true) } catch {}
     localTrack.stop()
     localTrack.close()
     localTrack = null
@@ -135,7 +133,7 @@ export function getJoinedChannel() {
 }
 
 export async function startTalking() {
-  if (!localTrack) return
+  if (!localTrack) { console.warn('startTalking: no localTrack yet') ; return }
   await localTrack.setEnabled(true)
 }
 
