@@ -79,11 +79,15 @@ export async function joinChannel(
 
   await client.join(appId, channelId, rtcToken || null, username)
 
+  joinedChannel = channelId
+}
+
+export async function initMic() {
+  if (localTrack) return
+  if (!client) return
   localTrack = await AgoraRTC.createMicrophoneAudioTrack()
   await localTrack.setEnabled(false)
   await client.publish(localTrack)
-
-  joinedChannel = channelId
 }
 
 export async function leaveChannel() {

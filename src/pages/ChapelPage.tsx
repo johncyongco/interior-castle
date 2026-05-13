@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 import { supabase } from '../lib/supabase'
-import { isAgoraAvailable, startTalking, stopTalking, getJoinedChannel } from '../lib/agora'
+import { isAgoraAvailable, startTalking, stopTalking, initMic } from '../lib/agora'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
@@ -337,10 +337,10 @@ export default function ChapelPage() {
             <div className="ml-auto flex gap-2">
               <button
                 type="button"
-                onMouseDown={startTalking}
-                onMouseUp={stopTalking}
-                onTouchStart={startTalking}
-                onTouchEnd={stopTalking}
+                onMouseDown={async () => { await initMic(); startTalking() }}
+                  onMouseUp={stopTalking}
+                  onTouchStart={async () => { await initMic(); startTalking() }}
+                  onTouchEnd={stopTalking}
                 className="rounded-full border border-white/14 bg-white/[0.05] px-4 py-1.5 text-[10px] text-white/70 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400"
               >
                 Push to Talk
