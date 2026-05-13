@@ -247,9 +247,8 @@ export default function ChapelPage() {
       </div>
 
       {/* Heart icon popup menu */}
-      <AnimatePresence>
-        {showMenu && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-sm">
+      {showMenu && !activeRoomView && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-sm">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3, ease: 'easeOut' }} className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]">
               {menuView === 'menu' && (
                 <div className="space-y-4">
@@ -357,7 +356,6 @@ export default function ChapelPage() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }} className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6">
         <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
           <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
