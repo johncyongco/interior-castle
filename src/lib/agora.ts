@@ -75,9 +75,19 @@ export async function joinChannel(
   client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
   client.on('user-published', async (remoteUser, mediaType) => {
-    await client?.subscribe(remoteUser, mediaType)
-    if (mediaType === 'audio') remoteUser.audioTrack?.play()
-    onUserJoin?.(String(remoteUser.uid))
+    try {
+      await client?.subscribe(remoteUser, mediaType)
+      if (mediaType === 'audio' && remoteUser.audioTrack) {
+        const audioEl = new Audio()
+        audioEl.srcObject = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()])
+        await audioEl.play().catch(() => {})
+        console.log('Agora: remote audio playing for', String(remoteUser.uid))
+      }
+      onUserJoin?.(String(remoteUser.uid))
+      console.log('Agora: onUserJoin called, new count triggered')
+    } catch (e) {
+      console.error('Agora: subscribe/play failed', e)
+    }
   })
   client.on('user-unpublished', (remoteUser) => {
     onUserLeave?.(String(remoteUser.uid))
