@@ -179,22 +179,13 @@ export default function RoomPopups() {
               </div>
               <p className="mt-3 text-center text-[11px] italic text-[#e7cba9]/50">"Where two or three are gathered in my name, there am I in the midst of them."</p>
               <p className="text-center text-[9px] text-white/30">Matthew 18:20</p>
-              <div className="mt-4 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => window.location.href = `/chapel/room/${activeRoom.id}`}
-                  className="flex-1 rounded-2xl border border-white/14 bg-white/[0.05] py-2.5 text-xs text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]"
-                >
-                  Open Room
-                </button>
-                <button
-                  type="button"
-                  onClick={async () => { await leaveChannel() }}
-                  className="flex-1 rounded-2xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs text-red-400/70 transition hover:bg-red-500/20"
-                >
-                  Leave
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={async () => { await leaveChannel() }}
+                className="mt-4 w-full rounded-2xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs text-red-400/70 transition hover:bg-red-500/20"
+              >
+                Leave Prayer Room
+              </button>
             </motion.div>
           </motion.div>
         )}
