@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
@@ -6,12 +6,13 @@ import ScreenContainer from '../components/ScreenContainer'
 
 let audio: HTMLAudioElement | null = null
 
-function startAudio() {
-  if (audio) return
-  audio = new Audio('/Music/Snowy Forest.mp3')
-  audio.loop = true
-  audio.volume = 0.6
-  audio.play().catch(() => {})
+function getOrCreateAudio() {
+  if (!audio) {
+    audio = new Audio('/Music/Snowy Forest.mp3')
+    audio.loop = true
+    audio.volume = 0.6
+  }
+  return audio
 }
 
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
@@ -64,15 +65,7 @@ export default function NarniaPage() {
     lat: null,
   })
   const [showTurkishDelight, setShowTurkishDelight] = useState(false)
-
-  const turkishDelightLon = -39.02
-  const turkishDelightLat = -9.19
-  const turkishDelightPoint = sphericalToVector3(turkishDelightLon, turkishDelightLat)
-  const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
-
-  const handleFirstInteraction = useCallback(() => {
-    startAudio()
-  }, [])
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
@@ -138,7 +131,7 @@ export default function NarniaPage() {
       }
 
       const onPointerDown = (event: PointerEvent) => {
-        startAudio()
+    getOrCreateAudio().play().catch(() => {}) ; setIsPlaying(true)
         isDragging = true
         dragDistance = 0
         const point = getPoint(event)
@@ -294,13 +287,23 @@ export default function NarniaPage() {
       <div className="absolute bottom-24 right-6 z-10">
         <button
           type="button"
-          onClick={startAudio}
+          onClick={() => {
+            const a = getOrCreateAudio()
+            if (a.paused) { a.play().catch(() => {}); setIsPlaying(true) }
+            else { a.pause(); setIsPlaying(false) }
+          }}
           className="flex h-12 w-12 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] backdrop-blur-xl transition hover:bg-white/[0.1]"
-          aria-label="Play music"
+          aria-label={isPlaying ? 'Pause music' : 'Play music'}
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-white/50" aria-hidden="true">
-            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-          </svg>
+          {isPlaying ? (
+            <svg viewBox="0 0 24 24" className="h-5 w-5 fill-white/50" aria-hidden="true">
+              <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-5 w-5 fill-white/50" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
         </button>
       </div>
 
