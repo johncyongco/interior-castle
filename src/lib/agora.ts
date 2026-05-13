@@ -63,17 +63,24 @@ export async function joinChannel(
     } catch {}
   }
 
-  client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' })
-  client.setClientRole('audience')
+  client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
-  client.on('user-joined', (user) => onUserJoin?.(String(user.uid)))
-  client.on('user-left', (user) => onUserLeave?.(String(user.uid)))
+  client.on('user-published', async (remoteUser, mediaType) => {
+    await client?.subscribe(remoteUser, mediaType)
+    if (mediaType === 'audio') remoteUser.audioTrack?.play()
+    onUserJoin?.(String(remoteUser.uid))
+  })
+  client.on('user-unpublished', (remoteUser) => {
+    onUserLeave?.(String(remoteUser.uid))
+  })
+  client.on('user-left', (remoteUser) => {
+    onUserLeave?.(String(remoteUser.uid))
+  })
 
   await client.join(appId, channelId, rtcToken || null, username)
 
   localTrack = await AgoraRTC.createMicrophoneAudioTrack()
   await localTrack.setEnabled(false)
-  await client.setClientRole('host')
   await client.publish(localTrack)
 
   joinedChannel = channelId
