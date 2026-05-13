@@ -208,7 +208,7 @@ export default function ChapelPage() {
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
           <p className="serif text-lg text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] sm:text-xl">Welcome to the Chapel</p>
           <p className="mt-2 text-xs text-white/50">Enter a name to join</p>
-          <input value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleJoin() }} placeholder="Your name" className="mt-6 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-center text-sm text-white outline-none placeholder:text-white/30 backdrop-blur-xl transition focus:border-white/30" autoFocus />
+          <input value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleJoin() }} placeholder="Your name" className="mt-6 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-center text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl transition focus:border-white/30" autoFocus />
           <button type="button" onClick={handleJoin} className="mt-4 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]">Enter the Chapel</button>
         </div>
       </ScreenContainer>
@@ -263,7 +263,7 @@ export default function ChapelPage() {
               {menuView === 'create' && (
                 <div className="space-y-4">
                   <p className="serif text-center text-lg text-[#e7cba9]">Create a Prayer Room</p>
-                  <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Room name" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />
+                  <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Room name" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />
                   <div className="flex gap-2">
                     {['Rosary', 'Divine Mercy', 'Scripture', 'Free Prayer'].map((m) => (
                       <button key={m} type="button" onClick={() => setNewMode(m)} className={`rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${newMode === m ? 'bg-[#e7cba9]/20 text-[#e7cba9]' : 'bg-white/5 text-white/40 hover:text-white/60'}`}>{m}</button>
@@ -273,7 +273,7 @@ export default function ChapelPage() {
                     <button type="button" onClick={() => setNewType('public')} className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${newType === 'public' ? 'bg-green-500/20 text-green-300' : 'bg-white/5 text-white/40'}`}>Public</button>
                     <button type="button" onClick={() => setNewType('private')} className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${newType === 'private' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-white/40'}`}>Private</button>
                   </div>
-                  {newType === 'private' && <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Room password" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />}
+                  {newType === 'private' && <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Room password" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />}
                   <button type="button" onClick={createChannel} className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Create & Join</button>
                   <button type="button" onClick={() => setMenuView('menu')} className="w-full text-xs text-white/40 transition hover:text-white/60">Back</button>
                 </div>
