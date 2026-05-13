@@ -1,12 +1,18 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 
-const audio = new Audio('/music/Snowy Forest.mp3')
-audio.loop = true
-audio.volume = 0.6
+let audio: HTMLAudioElement | null = null
+
+function startAudio() {
+  if (audio) return
+  audio = new Audio('/music/Snowy Forest.mp3')
+  audio.loop = true
+  audio.volume = 0.6
+  audio.play().catch(() => {})
+}
 
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
@@ -64,9 +70,8 @@ export default function NarniaPage() {
   const turkishDelightPoint = sphericalToVector3(turkishDelightLon, turkishDelightLat)
   const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
 
-  useEffect(() => {
-    audio.play().catch(() => {})
-    return () => { audio.pause(); audio.currentTime = 0 }
+  const handleFirstInteraction = useCallback(() => {
+    startAudio()
   }, [])
 
   useEffect(() => {
@@ -133,6 +138,7 @@ export default function NarniaPage() {
       }
 
       const onPointerDown = (event: PointerEvent) => {
+        startAudio()
         isDragging = true
         dragDistance = 0
         const point = getPoint(event)
@@ -260,6 +266,7 @@ export default function NarniaPage() {
         }
         document.body.style.overflow = previousBodyOverflow
         document.body.style.touchAction = previousBodyTouchAction
+        if (audio) { audio.pause(); audio.currentTime = 0; audio = null }
       }
     } catch {
       document.body.style.overflow = previousBodyOverflow
