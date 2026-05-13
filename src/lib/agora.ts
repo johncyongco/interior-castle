@@ -133,11 +133,11 @@ export function getJoinedChannel() {
 }
 
 export async function startTalking() {
-  if (!localTrack) { console.warn('startTalking: no localTrack yet') ; return }
-  await localTrack.setEnabled(true)
+  if (!localTrack) { console.warn('startTalking: no localTrack') ; return }
+  await localTrack.setMuted(false)
 }
 
 export async function stopTalking() {
   if (!localTrack) return
-  await localTrack.setEnabled(false)
+  await localTrack.setMuted(true)
 }
