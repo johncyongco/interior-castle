@@ -176,10 +176,7 @@ export default function RoomPage() {
       shortLabel: 'Cross',
       lon: 86.16,
       lat: 18.41,
-      onClick: () => {
-        window.sessionStorage.setItem('spero-room-entry', 'door')
-        navigate('/chapel')
-      },
+      onClick: () => navigate('/prayer'),
       point: sphericalToVector3(86.16, 18.41),
     },
     {
