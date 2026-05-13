@@ -265,7 +265,7 @@ export default function ChapelPage() {
   return (
     <ScreenContainer>
       <div className="absolute inset-0 bg-black" />
-      <div className="pointer-events-none absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center" style={{ backgroundPosition: 'center center' }} />
+      <div className="pointer-events-none absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center opacity-20" style={{ backgroundPosition: 'center center' }} />
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
       <div className="pointer-events-none absolute bottom-24 left-0 right-0 z-20 flex justify-center">
