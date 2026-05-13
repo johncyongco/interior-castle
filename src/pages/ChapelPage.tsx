@@ -174,8 +174,8 @@ export default function ChapelPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-    let lon = 0
-    let lat = 0
+    let lon = -179.76
+    let lat = 6.2
     let dragDistance = 0
     let lastDragTime = performance.now()
     const raycaster = new THREE.Raycaster()
