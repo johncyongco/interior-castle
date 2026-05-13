@@ -228,8 +228,8 @@ export default function RoomPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-      let lon = -71.82
-      let lat = -1.32
+      let lon = -72.04
+      let lat = 0.83
       const cameraDirection = new THREE.Vector3()
       const raycaster = new THREE.Raycaster()
       const pointer = new THREE.Vector2()
@@ -573,8 +573,7 @@ export default function RoomPage() {
         const narniaHits = raycaster.intersectObjects(narniaInteractiveObjects, false)
         if (narniaHits.length) {
           setPanelFromHit('Map', -80.91, 12.20, 'Map hotspot')
-          window.sessionStorage.setItem('spero-room-entry', 'door')
-          navigate('/narnia')
+          openPopup('narnia')
           return
         }
 
