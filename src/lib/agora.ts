@@ -79,15 +79,19 @@ export async function joinChannel(
 
   await client.join(appId, channelId, rtcToken || null, username)
 
-  joinedChannel = channelId
-}
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      localTrack = await AgoraRTC.createMicrophoneAudioTrack()
+      break
+    } catch {
+      if (attempt < 2) await new Promise(r => setTimeout(r, 1000))
+      else throw new Error('Microphone access denied')
+    }
+  }
+  await localTrack!.setMuted(true)
+  await client.publish([localTrack!])
 
-export async function initMic() {
-  if (localTrack) return
-  if (!client) return
-  localTrack = await AgoraRTC.createMicrophoneAudioTrack()
-  await localTrack.setEnabled(false)
-  await client.publish(localTrack)
+  joinedChannel = channelId
 }
 
 export async function leaveChannel() {

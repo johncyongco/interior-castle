@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 import { supabase } from '../lib/supabase'
-import { isAgoraAvailable, startTalking, stopTalking, initMic } from '../lib/agora'
+import { isAgoraAvailable, startTalking, stopTalking } from '../lib/agora'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
@@ -344,9 +344,9 @@ export default function ChapelPage() {
               <div className="mt-4 flex gap-3">
                 <button
                   type="button"
-                  onMouseDown={async () => { await initMic(); startTalking() }}
+                  onMouseDown={startTalking}
                   onMouseUp={stopTalking}
-                  onTouchStart={async () => { await initMic(); startTalking() }}
+                  onTouchStart={startTalking}
                   onTouchEnd={stopTalking}
                   className="touch-none select-none flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400 active:border-green-500/30"
                 >
