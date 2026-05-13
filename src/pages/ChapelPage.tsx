@@ -338,7 +338,7 @@ export default function ChapelPage() {
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-white/90">{activeRoomView.name}</p>
-                  <p className="text-[10px] text-white/40">{activeRoomView.mode} · Connected</p>
+                  <p className="text-[10px] text-white/40">{activeRoomView.mode} · {activeRoomView.userCount} in room</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
@@ -348,7 +348,7 @@ export default function ChapelPage() {
                   onMouseUp={stopTalking}
                   onTouchStart={async () => { await initMic(); startTalking() }}
                   onTouchEnd={stopTalking}
-                  className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400 active:border-green-500/30"
+                  className="touch-none select-none flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400 active:border-green-500/30"
                 >
                   Push to Talk
                 </button>
