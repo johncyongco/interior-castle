@@ -52,6 +52,7 @@ export default function ChapelPage() {
   const [newPassword, setNewPassword] = useState('')
   const [joinPassword, setJoinPassword] = useState('')
   const [joinPasswordId, setJoinPasswordId] = useState<string | null>(null)
+  const [activeRoomView, setActiveRoomView] = useState<PrayerChannel | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -82,7 +83,7 @@ export default function ChapelPage() {
     setNewPassword('')
     setMenuView('menu')
     setShowMenu(false)
-    navigate(`/chapel/room/${channel.id}`, { state: { channel, username, password: newType === 'private' ? newPassword : undefined } })
+    setActiveRoomView(channel)
   }, [newName, newMode, newType, newPassword, username, channels, navigate])
 
   const joinChannel = useCallback((channel: PrayerChannel) => {
@@ -90,8 +91,8 @@ export default function ChapelPage() {
       setJoinPasswordId(channel.id)
       return
     }
-    navigate(`/chapel/room/${channel.id}`, { state: { channel, username } })
-  }, [navigate, username])
+    setActiveRoomView(channel)
+  }, [username])
 
   const deleteChannel = useCallback((id: string) => {
     const updated = channels.filter(c => c.id !== id)
@@ -102,11 +103,10 @@ export default function ChapelPage() {
   const confirmJoinPassword = useCallback(() => {
     const ch = channels.find(c => c.id === joinPasswordId)
     if (!ch) return
-    // In a real app, validate against stored password hash
-    navigate(`/chapel/room/${ch.id}`, { state: { channel: ch, username, password: joinPassword } })
+    setActiveRoomView(ch)
     setJoinPasswordId(null)
     setJoinPassword('')
-  }, [joinPasswordId, channels, navigate, username, joinPassword])
+  }, [joinPasswordId, channels, username])
 
   useEffect(() => {
     if (showPrompt || !username) return
@@ -325,6 +325,27 @@ export default function ChapelPage() {
                   </div>
                 </div>
               )}
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Prayer Room overlay */}
+        {activeRoomView && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 px-6 backdrop-blur-sm">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: 'easeOut' }} className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-6 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]">
+              <p className="serif text-center text-lg text-[#e7cba9]">{activeRoomView.name}</p>
+              <p className="text-center text-[10px] uppercase tracking-[0.28em] text-white/40">{activeRoomView.mode} · {activeRoomView.type}</p>
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+                <p className="text-[10px] uppercase tracking-[0.28em] text-white/40">In this room (1)</p>
+                <div className="mt-2 flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+                  <span className="h-2 w-2 rounded-full bg-green-400/70" />
+                  <span className="text-sm text-white/80">{username}</span>
+                  <span className="text-[10px] text-white/30">(you)</span>
+                </div>
+              </div>
+              <p className="mt-4 text-center text-[11px] italic text-[#e7cba9]/50">&ldquo;Where two or three are gathered in my name, there am I in the midst of them.&rdquo;</p>
+              <p className="text-center text-[9px] text-white/30">Matthew 18:20</p>
+              <button type="button" onClick={() => setActiveRoomView(null)} className="mt-5 w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Leave Room</button>
             </motion.div>
           </motion.div>
         )}
