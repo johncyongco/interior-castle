@@ -28,9 +28,25 @@ type PrayerMode = {
   creator: string
 }
 
+type HotspotPoint = {
+  id: string
+  label: string
+  lon: number
+  lat: number
+  onClick: () => void
+}
+
+function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
+  const lon = THREE.MathUtils.degToRad(lonDeg)
+  const lat = THREE.MathUtils.degToRad(latDeg)
+  return new THREE.Vector3(radius * Math.cos(lat) * Math.cos(lon), radius * Math.sin(lat), radius * Math.cos(lat) * Math.sin(lon))
+}
+
 export default function ChapelPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
+  const hotspotRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const instructionRef = useRef<HTMLDivElement | null>(null)
   const [username, setUsername] = useState('')
   const [showPrompt, setShowPrompt] = useState(true)
   const [modes, setModes] = useState<PrayerMode[]>([])
@@ -38,6 +54,16 @@ export default function ChapelPage() {
   const [newModeName, setNewModeName] = useState('')
   const [newModeType, setNewModeType] = useState<'public' | 'private'>('public')
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({ label: 'Chapel', source: 'Tap the panorama', lon: null, lat: null })
+
+  const chapelHotspots: HotspotPoint[] = [
+    {
+      id: 'prayer-icon',
+      label: 'Prayer Icon',
+      lon: -155.94,
+      lat: 7.94,
+      onClick: () => console.log('Prayer room — coming soon'),
+    },
+  ]
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -194,6 +220,7 @@ export default function ChapelPage() {
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
 
+      const cameraDirection = new THREE.Vector3()
       let frameCount = 0
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
@@ -204,6 +231,41 @@ export default function ChapelPage() {
         const phi = THREE.MathUtils.degToRad(90 - lat)
         const theta = THREE.MathUtils.degToRad(lon)
         camera.lookAt(500 * Math.sin(phi) * Math.cos(theta), 500 * Math.cos(phi), 500 * Math.sin(phi) * Math.sin(theta))
+        camera.getWorldDirection(cameraDirection)
+
+        chapelHotspots.forEach((hotspot) => {
+          const element = hotspotRefs.current[hotspot.id]
+          if (!element) return
+          const point = sphericalToVector3(hotspot.lon, hotspot.lat)
+          const visible = point.dot(cameraDirection) > 0
+          if (!visible) {
+            element.style.opacity = '0'
+            element.style.pointerEvents = 'none'
+            return
+          }
+          const projected = point.clone().project(camera)
+          const x = (projected.x * 0.5 + 0.5) * window.innerWidth
+          const y = (-projected.y * 0.5 + 0.5) * window.innerHeight
+          element.style.opacity = '1'
+          element.style.pointerEvents = 'auto'
+          element.style.transform = `translate(${x}px, ${y}px)`
+        })
+
+        const instructionEl = instructionRef.current
+        if (instructionEl) {
+          const instrPoint = sphericalToVector3(-0.70, 13.68)
+          const instrVisible = instrPoint.dot(cameraDirection) > 0
+          if (!instrVisible) {
+            instructionEl.style.opacity = '0'
+          } else {
+            const instrProjected = instrPoint.clone().project(camera)
+            const ix = (instrProjected.x * 0.5 + 0.5) * window.innerWidth
+            const iy = (-instrProjected.y * 0.5 + 0.5) * window.innerHeight
+            instructionEl.style.opacity = '1'
+            instructionEl.style.transform = `translate(${ix}px, ${iy}px)`
+          }
+        }
+
         renderer?.render(scene, camera)
       }
       animate()
@@ -274,6 +336,41 @@ export default function ChapelPage() {
 
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Chapel</p>
+      </div>
+
+      {/* Hotspot markers */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {chapelHotspots.map((hotspot) => (
+          <div
+            key={hotspot.id}
+            ref={(el) => { hotspotRefs.current[hotspot.id] = el }}
+            className="pointer-events-none absolute left-0 top-0"
+          >
+            <button
+              type="button"
+              onClick={hotspot.onClick}
+              aria-label={hotspot.label}
+              className="pointer-events-auto absolute left-0 top-0 z-[60] flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] opacity-0 transition hover:bg-white/[0.1] hover:opacity-100"
+            >
+              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-none stroke-[#e7cba9] stroke-[1.8]" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Instruction text at -0.70, 13.68 */}
+      <div
+        ref={instructionRef}
+        className="pointer-events-none absolute left-0 top-0 z-20 max-w-[200px]"
+        style={{ opacity: 0 }}
+      >
+        <div className="-translate-x-1/2 -translate-y-1/2 text-center">
+          <p className="serif text-[10px] leading-tight text-[#e7cba9]/70 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+            Tap the prayer icon to join the prayer room
+          </p>
+        </div>
       </div>
 
       <motion.div
