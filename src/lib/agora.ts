@@ -97,3 +97,16 @@ export async function leaveChannel() {
 export function getJoinedChannel() {
   return joinedChannel
 }
+
+export function isMicMuted() {
+  return localTrack ? !localTrack.enabled : true
+}
+
+export async function toggleMic() {
+  if (!localTrack) return
+  if (localTrack.enabled) {
+    await localTrack.setEnabled(false)
+  } else {
+    await localTrack.setEnabled(true)
+  }
+}

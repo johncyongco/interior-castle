@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 import { supabase } from '../lib/supabase'
-import { isAgoraAvailable } from '../lib/agora'
+import { isAgoraAvailable, toggleMic, isMicMuted } from '../lib/agora'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
@@ -53,6 +53,7 @@ export default function ChapelPage() {
   const [joinPassword, setJoinPassword] = useState('')
   const [joinPasswordId, setJoinPasswordId] = useState<string | null>(null)
   const [activeRoomView, setActiveRoomView] = useState<PrayerChannel | null>(null)
+  const [micMuted, setMicMuted] = useState(true)
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -345,7 +346,12 @@ export default function ChapelPage() {
               </div>
               <p className="mt-4 text-center text-[11px] italic text-[#e7cba9]/50">&ldquo;Where two or three are gathered in my name, there am I in the midst of them.&rdquo;</p>
               <p className="text-center text-[9px] text-white/30">Matthew 18:20</p>
-              <button type="button" onClick={() => setActiveRoomView(null)} className="mt-5 w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Leave Room</button>
+              <div className="mt-5 flex gap-3">
+                <button type="button" onClick={async () => { await toggleMic(); setMicMuted(isMicMuted()) }} className={`flex-1 rounded-3xl border px-4 py-3 text-sm backdrop-blur-xl transition ${micMuted ? 'border-red-500/20 bg-red-500/10 text-red-400/70' : 'border-green-500/20 bg-green-500/10 text-green-400/70'}`}>
+                  {micMuted ? 'Muted' : 'Live'}
+                </button>
+                <button type="button" onClick={() => setActiveRoomView(null)} className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Leave</button>
+              </div>
             </motion.div>
           </motion.div>
         )}
