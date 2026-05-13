@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { getActivePrayerRoom, leaveChannel, subscribeToJoinState } from '../lib/agora'
 
 type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel'
 
@@ -11,11 +13,19 @@ export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel') {
 }
 
 export default function RoomPopups() {
+  const navigate = useNavigate()
   const [active, setActive] = useState<PopupState>('none')
+  const [activeRoom, setActiveRoom] = useState(getActivePrayerRoom())
 
   useEffect(() => {
     setActiveGlobal = setActive
     return () => { setActiveGlobal = null }
+  }, [])
+
+  useEffect(() => {
+    return subscribeToJoinState(() => {
+      setActiveRoom(getActivePrayerRoom())
+    })
   }, [])
 
   const dateString = useMemo(() => {
@@ -142,6 +152,47 @@ export default function RoomPopups() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Floating mini player for active prayer room */}
+      {activeRoom && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          className="fixed bottom-24 left-4 right-4 z-50 mx-auto max-w-sm"
+        >
+          <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-green-400" />
+              <div className="min-w-0">
+                <p className="truncate text-xs text-white/80">{activeRoom.name}</p>
+                <p className="text-[9px] text-white/40">{activeRoom.mode} · Live</p>
+              </div>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const id = activeRoom.id
+                  window.location.href = `/chapel/room/${id}`
+                }}
+                className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] text-white/70 transition hover:bg-white/20"
+              >
+                Open
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await leaveChannel()
+                }}
+                className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-[10px] text-red-400/70 transition hover:bg-red-500/20"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </>,
     document.body,
   )

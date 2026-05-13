@@ -32,6 +32,7 @@ export default function PrayerRoomPage() {
       channel.id,
       null,
       username,
+      channel,
       (uid) => setUsers((prev) => (prev.includes(uid) ? prev : [...prev, uid])),
       (uid) => setUsers((prev) => prev.filter((u) => u !== uid)),
     ).then(() => {

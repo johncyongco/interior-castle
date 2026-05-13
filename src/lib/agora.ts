@@ -1,10 +1,13 @@
 import AgoraRTC, { IAgoraRTCClient, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng'
+import type { PrayerChannel } from '../pages/ChapelPage'
 
 const appId = import.meta.env.VITE_AGORA_APP_ID as string | undefined
 
 let client: IAgoraRTCClient | null = null
 let localTrack: IMicrophoneAudioTrack | null = null
 let joinedChannel = ''
+let joinedChannelInfo: PrayerChannel | null = null
+let listeners: Array<() => void> = []
 
 export type ChannelInfo = {
   channel: string
@@ -19,15 +22,32 @@ export function isAgoraAvailable() {
   return !!appId
 }
 
+export function subscribeToJoinState(fn: () => void) {
+  listeners.push(fn)
+  return () => { listeners = listeners.filter(l => l !== fn) }
+}
+
+function notify() {
+  listeners.forEach(fn => fn())
+}
+
+export function getActivePrayerRoom(): PrayerChannel | null {
+  return joinedChannelInfo
+}
+
 export async function joinChannel(
-  channel: string,
+  channelId: string,
   token: string | null,
   username: string,
+  channelInfo: PrayerChannel,
   onUserJoin?: (uid: string) => void,
   onUserLeave?: (uid: string) => void,
 ) {
-  if (!appId) throw new Error('Agora App ID not configured')
   if (client) await leaveChannel()
+  joinedChannelInfo = channelInfo
+  notify()
+
+  if (!appId) return
 
   client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' })
   client.setClientRole('audience')
@@ -35,13 +55,13 @@ export async function joinChannel(
   client.on('user-joined', (user) => onUserJoin?.(String(user.uid)))
   client.on('user-left', (user) => onUserLeave?.(String(user.uid)))
 
-  await client.join(appId, channel, token || null, username)
+  await client.join(appId, channelId, token || null, username)
 
   localTrack = await AgoraRTC.createMicrophoneAudioTrack()
   await client.setClientRole('host')
   await client.publish(localTrack)
 
-  joinedChannel = channel
+  joinedChannel = channelId
 }
 
 export async function leaveChannel() {
@@ -56,6 +76,8 @@ export async function leaveChannel() {
     client = null
   }
   joinedChannel = ''
+  joinedChannelInfo = null
+  notify()
 }
 
 export function getJoinedChannel() {
