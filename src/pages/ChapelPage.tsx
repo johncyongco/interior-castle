@@ -398,7 +398,7 @@ export default function ChapelPage() {
                 >
                   Push to Talk
                 </button>
-                <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null) }} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null); setPrayerRoomCount(1) }} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
               </div>
             </div>
           </motion.div>

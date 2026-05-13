@@ -114,6 +114,8 @@ export async function joinChannel(
 
 export async function leaveChannel() {
   if (localTrack) {
+    try { await localTrack.setEnabled(false) } catch {}
+    try { await localTrack.setMuted(true) } catch {}
     localTrack.stop()
     localTrack.close()
     localTrack = null
