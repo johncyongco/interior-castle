@@ -161,49 +161,26 @@ export default function RoomPopups() {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-6 text-center backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
             >
-              <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">A Riddle</p>
+                <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">A Riddle</p>
               <p className="mt-3 text-sm leading-6 text-[#e7cba9]/80">&ldquo;Where did Reepicheep finally rest?&rdquo;</p>
               <input
                 value={narniaAnswer}
-                onChange={(e) => { setNarniaAnswer(e.target.value); setNarniaError('') }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    const a = narniaAnswer.trim().toLowerCase()
-                    if (a.includes('aslan') && (a.includes('country') || a.includes('home'))) {
-                      try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}
-                      setActive('none')
-                      setNarniaAnswer('')
-                      navigate('/narnia')
-                    } else {
-                      setNarniaError('Not quite. Try again.')
-                    }
+                onChange={(e) => {
+                  setNarniaAnswer(e.target.value)
+                  setNarniaError('')
+                  const a = e.target.value.trim().toLowerCase()
+                  if (a.includes('aslan') && (a.includes('country') || a.includes('home'))) {
+                    try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}
+                    setActive('none')
+                    setNarniaAnswer('')
+                    navigate('/narnia')
                   }
                 }}
                 placeholder="Your answer..."
                 className="mt-4 w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-center text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl transition focus:border-white/30"
-                autoFocus
               />
               {narniaError && <p className="mt-2 text-xs text-red-400/70">{narniaError}</p>}
-              <div className="mt-4 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const a = narniaAnswer.trim().toLowerCase()
-                    if (a.includes('aslan') && (a.includes('country') || a.includes('home'))) {
-                      try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}
-                      setActive('none')
-                      setNarniaAnswer('')
-                      navigate('/narnia')
-                    } else {
-                      setNarniaError('Not quite. Try again.')
-                    }
-                  }}
-                  className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]"
-                >
-                  Enter Narnia
-                </button>
-                <button type="button" onClick={() => { setActive('none'); setNarniaAnswer(''); setNarniaError('') }} className="rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-2 text-xs text-white/60 backdrop-blur-xl transition hover:bg-white/[0.1]">Cancel</button>
-              </div>
+              <button type="button" onClick={() => { setActive('none'); setNarniaAnswer(''); setNarniaError('') }} className="mt-4 w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-2 text-xs text-white/60 backdrop-blur-xl transition hover:bg-white/[0.1]">Dismiss</button>
             </motion.div>
           </motion.div>
         )}
