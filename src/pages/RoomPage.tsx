@@ -234,6 +234,7 @@ export default function RoomPage() {
       const raycaster = new THREE.Raycaster()
       const pointer = new THREE.Vector2()
       let dragDistance = 0
+      let lastDragTime = performance.now()
       const frameInteractiveObjects: THREE.Object3D[] = []
       const guardianInteractiveObjects: THREE.Object3D[] = []
       const breakfastInteractiveObjects: THREE.Object3D[] = []
@@ -511,6 +512,7 @@ export default function RoomPage() {
         dragDistance += Math.hypot(deltaX, deltaY)
         startX = point.x
         startY = point.y
+        lastDragTime = performance.now()
 
         lon += deltaX * 0.12
         lat -= deltaY * 0.08
@@ -607,8 +609,12 @@ export default function RoomPage() {
       window.addEventListener('resize', updateSize)
       renderer.domElement.addEventListener('click', onCanvasClick)
 
+      let frameCount = 0
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
+        frameCount++
+        const timeSinceDrag = performance.now() - lastDragTime
+        if (timeSinceDrag > 2000 && frameCount % 12 !== 0) return
         lat = Math.max(-85, Math.min(85, lat))
         const phi = THREE.MathUtils.degToRad(90 - lat)
         const theta = THREE.MathUtils.degToRad(lon)

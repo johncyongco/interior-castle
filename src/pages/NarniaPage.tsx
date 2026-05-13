@@ -77,6 +77,7 @@ export default function NarniaPage() {
     let lon = 0
     let lat = 0
     let dragDistance = 0
+    let lastDragTime = performance.now()
     const raycaster = new THREE.Raycaster()
     const pointer = new THREE.Vector2()
 
@@ -139,6 +140,7 @@ export default function NarniaPage() {
         dragDistance += Math.hypot(deltaX, deltaY)
         startX = point.x
         startY = point.y
+        lastDragTime = performance.now()
         lon += deltaX * 0.12
         lat -= deltaY * 0.08
       }
@@ -193,8 +195,12 @@ export default function NarniaPage() {
 
       const cameraDirection = new THREE.Vector3()
 
+      let frameCount = 0
       const animate = () => {
         frameId = window.requestAnimationFrame(animate)
+        frameCount++
+        const timeSinceDrag = performance.now() - lastDragTime
+        if (timeSinceDrag > 2000 && frameCount % 12 !== 0) return
         lat = Math.max(-85, Math.min(85, lat))
         const phi = THREE.MathUtils.degToRad(90 - lat)
         const theta = THREE.MathUtils.degToRad(lon)
