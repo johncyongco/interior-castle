@@ -56,7 +56,7 @@ export async function joinChannel(
       const res = await fetch(`${tokenServerUrl}/rtc-token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelName: channelId, uid: username }),
+        body: JSON.stringify({ channelName: channelId, uid: Number(username) || Math.floor(Math.random() * 100000) + 1 }),
       })
       const data = await res.json()
       rtcToken = data.token || data.rtcToken || null
@@ -77,8 +77,10 @@ export async function joinChannel(
     onUserLeave?.(String(remoteUser.uid))
   })
 
+  const uid = Number(username) || Math.floor(Math.random() * 100000) + 1
+
   try {
-    await client.join(appId, channelId, rtcToken || null, username)
+    await client.join(appId, channelId, rtcToken || null, uid)
   } catch (err) {
     console.error('Agora join failed:', err)
     throw err
