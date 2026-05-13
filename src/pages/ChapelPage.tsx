@@ -7,13 +7,22 @@ import { supabase } from '../lib/supabase'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
+type PrayerMode = {
+  id: string
+  name: string
+  type: 'public' | 'private'
+  creator: string
+}
+
 export default function ChapelPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
   const [username, setUsername] = useState('')
   const [showPrompt, setShowPrompt] = useState(true)
-  const [users, setUsers] = useState<string[]>([])
-  const [coordinatePanel, setCoordinatePanel] = useState({ label: 'Chapel', source: 'Tap the panorama', lon: null as number | null, lat: null as number | null })
+  const [modes, setModes] = useState<PrayerMode[]>([])
+  const [showCreate, setShowCreate] = useState(false)
+  const [newModeName, setNewModeName] = useState('')
+  const [newModeType, setNewModeType] = useState<'public' | 'private'>('public')
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -30,36 +39,35 @@ export default function ChapelPage() {
     setShowPrompt(false)
   }, [username])
 
+  const createMode = useCallback(() => {
+    const name = newModeName.trim()
+    if (!name) return
+    const mode: PrayerMode = {
+      id: crypto.randomUUID(),
+      name,
+      type: newModeType,
+      creator: username,
+    }
+    setModes((prev) => [...prev, mode])
+    setNewModeName('')
+    setShowCreate(false)
+  }, [newModeName, newModeType, username])
+
+  const joinMode = useCallback((mode: PrayerMode) => {
+    if (mode.type === 'private') {
+      const code = prompt('Enter the passcode for this prayer mode:')
+      if (!code) return
+    }
+    // Join the prayer mode — for now just console
+    console.log(`${username} joined ${mode.name}`)
+  }, [username])
+
   useEffect(() => {
     if (showPrompt || !username) return
-    if (!supabase) {
-      setUsers([`${username} (you) — offline mode`])
-      return
-    }
-    const channel = supabase.channel('chapel-presence', {
-      config: { presence: { key: username } },
-    })
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState()
-        const present = Object.values(state).flatMap((p: any) => p.map((u: any) => u.username))
-        setUsers(present.length ? present : [username])
-      })
-      .on('presence', { event: 'join' }, ({ key }) => {
-        setUsers((prev) => (prev.includes(key) ? prev : [...prev, key]))
-      })
-      .on('presence', { event: 'leave' }, ({ key }) => {
-        setUsers((prev) => prev.filter((u) => u !== key))
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({ username })
-        }
-      })
-    return () => { channel.unsubscribe().catch(() => {}) }
+    if (!supabase) return
+    // Future: sync prayer modes via Supabase
   }, [showPrompt, username])
 
-  // Three.js panorama
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
     const previousBodyTouchAction = document.body.style.touchAction
@@ -78,8 +86,6 @@ export default function ChapelPage() {
     let lat = 0
     let dragDistance = 0
     let lastDragTime = performance.now()
-    const raycaster = new THREE.Raycaster()
-    const pointer = new THREE.Vector2()
 
     try {
       const scene = new THREE.Scene()
@@ -147,29 +153,11 @@ export default function ChapelPage() {
 
       const onPointerUp = () => { isDragging = false }
 
-      const onCanvasClick = (event: MouseEvent) => {
-        if (dragDistance > 6) return
-        const rect = renderer?.domElement.getBoundingClientRect()
-        if (!renderer || !rect) return
-        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-        pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
-        raycaster.setFromCamera(pointer, camera)
-        const intersections = raycaster.intersectObject(mesh, false)
-        if (!intersections.length) return
-        const hit = intersections[0].point
-        const radius = hit.length()
-        const hitLon = THREE.MathUtils.radToDeg(Math.atan2(hit.z, hit.x))
-        const hitLat = THREE.MathUtils.radToDeg(Math.asin(hit.y / radius))
-        setCoordinatePanel({ label: 'Chapel', source: 'Wall click', lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
-        console.log('Chapel coordinate', { lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
-      }
-
       mount.addEventListener('pointerdown', onPointerDown)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
       window.addEventListener('pointercancel', onPointerUp)
       window.addEventListener('resize', updateSize)
-      renderer.domElement.addEventListener('click', onCanvasClick)
 
       let frameCount = 0
       const animate = () => {
@@ -192,7 +180,6 @@ export default function ChapelPage() {
         window.removeEventListener('pointerup', onPointerUp)
         window.removeEventListener('pointercancel', onPointerUp)
         window.removeEventListener('resize', updateSize)
-        renderer?.domElement.removeEventListener('click', onCanvasClick)
         material.dispose()
         geometry.dispose()
         renderer?.dispose()
@@ -243,7 +230,7 @@ export default function ChapelPage() {
       />
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <div className="pointer-events-none absolute bottom-24 left-0 right-0 z-20 flex justify-center">
         <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
           360
         </div>
@@ -253,46 +240,75 @@ export default function ChapelPage() {
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Chapel</p>
       </div>
 
-      {/* Back to Room — no button, handled by nav bar */}
+      {/* Prayer Modes Panel */}
+      <div className="absolute right-4 top-16 z-20 w-56 space-y-2">
+        <div className="rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <div className="mb-1.5 text-[9px] tracking-[0.28em] text-white/45">Prayer Modes</div>
+          {modes.length === 0 ? (
+            <div className="text-[10px] text-white/40">No active modes</div>
+          ) : (
+            modes.map((mode) => (
+              <div key={mode.id} className="flex items-center justify-between gap-2 py-1">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${mode.type === 'public' ? 'bg-green-400/70' : 'bg-amber-400/70'}`} />
+                  <span className="truncate text-[11px] tracking-[0.1em] text-white/80">{mode.name}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => joinMode(mode)}
+                  className="shrink-0 rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[8px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20"
+                >
+                  Join
+                </button>
+              </div>
+            ))
+          )}
+        </div>
 
-      {/* Presence panel */}
-      <div className="pointer-events-none absolute right-4 top-16 z-20 min-w-[10rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-        <div className="mb-1.5 text-[9px] tracking-[0.28em] text-white/45">Praying Together</div>
-        {users.length === 0 ? (
-          <div className="text-[10px] text-white/40">Loading...</div>
-        ) : (
-          users.map((u) => (
-            <div key={u} className="flex items-center gap-2 py-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-400/70" />
-              <span className="text-[11px] tracking-[0.1em] text-white/80">{u}</span>
+        {showCreate ? (
+          <div className="rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+            <input
+              value={newModeName}
+              onChange={(e) => setNewModeName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') createMode() }}
+              placeholder="Mode name"
+              className="w-full rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2 text-xs text-white outline-none placeholder:text-white/30"
+              autoFocus
+            />
+            <div className="mt-2 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setNewModeType('public')}
+                className={`rounded-full px-2.5 py-1 text-[8px] uppercase tracking-[0.15em] transition ${newModeType === 'public' ? 'bg-green-500/20 text-green-300' : 'bg-white/5 text-white/40'}`}
+              >
+                Public
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewModeType('private')}
+                className={`rounded-full px-2.5 py-1 text-[8px] uppercase tracking-[0.15em] transition ${newModeType === 'private' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-white/40'}`}
+              >
+                Private
+              </button>
+              <button
+                type="button"
+                onClick={createMode}
+                className="ml-auto rounded-full bg-white/10 px-3 py-1 text-[8px] uppercase tracking-[0.15em] text-white/70 transition hover:bg-white/20"
+              >
+                Create
+              </button>
             </div>
-          ))
-        )}
-        {!supabase && users.length > 0 && (
-          <div className="mt-1 text-[8px] text-amber-400/60">offline mode</div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className="w-full rounded-2xl border border-dashed border-white/10 bg-white/[0.03] py-2 text-[10px] uppercase tracking-[0.2em] text-white/40 backdrop-blur-xl transition hover:bg-white/[0.06] hover:text-white/60"
+          >
+            + New Prayer Mode
+          </button>
         )}
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
-        className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6"
-      >
-        <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
-          <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
-          <div className="mb-1 text-[11px] tracking-[0.2em] text-white/90">{coordinatePanel.label}</div>
-          <div className="mb-2 text-[9px] tracking-[0.22em] text-amber-100/70">{coordinatePanel.source}</div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-white/45">Lon</span>
-            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">{coordinatePanel.lon === null ? '--' : coordinatePanel.lon.toFixed(2)}</span>
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-4">
-            <span className="text-white/45">Lat</span>
-            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">{coordinatePanel.lat === null ? '--' : coordinatePanel.lat.toFixed(2)}</span>
-          </div>
-        </div>
-      </motion.div>
     </ScreenContainer>
   )
 }
