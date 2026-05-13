@@ -240,75 +240,7 @@ export default function ChapelPage() {
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Chapel</p>
       </div>
 
-      {/* Prayer Modes Panel */}
-      <div className="absolute right-4 top-16 z-20 w-56 space-y-2">
-        <div className="rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-          <div className="mb-1.5 text-[9px] tracking-[0.28em] text-white/45">Prayer Modes</div>
-          {modes.length === 0 ? (
-            <div className="text-[10px] text-white/40">No active modes</div>
-          ) : (
-            modes.map((mode) => (
-              <div key={mode.id} className="flex items-center justify-between gap-2 py-1">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${mode.type === 'public' ? 'bg-green-400/70' : 'bg-amber-400/70'}`} />
-                  <span className="truncate text-[11px] tracking-[0.1em] text-white/80">{mode.name}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => joinMode(mode)}
-                  className="shrink-0 rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[8px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20"
-                >
-                  Join
-                </button>
-              </div>
-            ))
-          )}
-        </div>
 
-        {showCreate ? (
-          <div className="rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
-            <input
-              value={newModeName}
-              onChange={(e) => setNewModeName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') createMode() }}
-              placeholder="Mode name"
-              className="w-full rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2 text-xs text-white outline-none placeholder:text-white/30"
-              autoFocus
-            />
-            <div className="mt-2 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setNewModeType('public')}
-                className={`rounded-full px-2.5 py-1 text-[8px] uppercase tracking-[0.15em] transition ${newModeType === 'public' ? 'bg-green-500/20 text-green-300' : 'bg-white/5 text-white/40'}`}
-              >
-                Public
-              </button>
-              <button
-                type="button"
-                onClick={() => setNewModeType('private')}
-                className={`rounded-full px-2.5 py-1 text-[8px] uppercase tracking-[0.15em] transition ${newModeType === 'private' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-white/40'}`}
-              >
-                Private
-              </button>
-              <button
-                type="button"
-                onClick={createMode}
-                className="ml-auto rounded-full bg-white/10 px-3 py-1 text-[8px] uppercase tracking-[0.15em] text-white/70 transition hover:bg-white/20"
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setShowCreate(true)}
-            className="w-full rounded-2xl border border-dashed border-white/10 bg-white/[0.03] py-2 text-[10px] uppercase tracking-[0.2em] text-white/40 backdrop-blur-xl transition hover:bg-white/[0.06] hover:text-white/60"
-          >
-            + New Prayer Mode
-          </button>
-        )}
-      </div>
     </ScreenContainer>
   )
 }
