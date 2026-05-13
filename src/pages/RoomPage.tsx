@@ -500,6 +500,7 @@ export default function RoomPage() {
         const point = getPoint(event)
         startX = point.x
         startY = point.y
+        lastDragTime = performance.now()
         event.currentTarget.setPointerCapture(event.pointerId)
       }
 
