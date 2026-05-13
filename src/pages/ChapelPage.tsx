@@ -91,6 +91,7 @@ export default function ChapelPage() {
       setJoinPasswordId(channel.id)
       return
     }
+    setShowMenu(false)
     setActiveRoomView(channel)
   }, [username])
 
