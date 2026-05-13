@@ -8,7 +8,7 @@ let audio: HTMLAudioElement | null = null
 
 function startAudio() {
   if (audio) return
-  audio = new Audio('/music/Snowy Forest.mp3')
+  audio = new Audio('/Music/Snowy Forest.mp3')
   audio.loop = true
   audio.volume = 0.6
   audio.play().catch(() => {})
