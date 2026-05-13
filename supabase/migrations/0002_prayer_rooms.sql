@@ -13,4 +13,4 @@ alter table public.prayer_rooms enable row level security;
 
 create policy "anyone can read prayer rooms" on public.prayer_rooms for select using (true);
 create policy "anonymous can insert prayer rooms" on public.prayer_rooms for insert with check (true);
-create policy "creator can delete own room" on public.prayer_rooms for delete using (auth.uid() = creator);
+create policy "creator can delete own room" on public.prayer_rooms for delete using (auth.uid()::text = creator);

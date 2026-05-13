@@ -77,13 +77,19 @@ export async function joinChannel(
     onUserLeave?.(String(remoteUser.uid))
   })
 
-  await client.join(appId, channelId, rtcToken || null, username)
+  try {
+    await client.join(appId, channelId, rtcToken || null, username)
+  } catch (err) {
+    console.error('Agora join failed:', err)
+    throw err
+  }
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       localTrack = await AgoraRTC.createMicrophoneAudioTrack()
       break
-    } catch {
+    } catch (err) {
+      console.error('Mic attempt failed:', err)
       if (attempt < 2) await new Promise(r => setTimeout(r, 1000))
       else throw new Error('Microphone access denied')
     }
