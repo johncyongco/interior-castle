@@ -228,8 +228,8 @@ export default function RoomPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-      let lon = 0
-      let lat = 0
+      let lon = -71.82
+      let lat = -1.32
       const cameraDirection = new THREE.Vector3()
       const raycaster = new THREE.Raycaster()
       const pointer = new THREE.Vector2()
