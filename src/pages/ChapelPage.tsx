@@ -86,6 +86,7 @@ export default function ChapelPage() {
   const [joinPassword, setJoinPassword] = useState('')
   const [joinPasswordId, setJoinPasswordId] = useState<string | null>(null)
   const [activeRoomView, setActiveRoomView] = useState<PrayerChannel | null>(null)
+  const [prayerRoomCount, setPrayerRoomCount] = useState(1)
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -101,8 +102,12 @@ export default function ChapelPage() {
   }, [username])
 
   const joinAgoraChannel = useCallback(async (channel: PrayerChannel) => {
+    setPrayerRoomCount(1)
     try {
-      await agoraJoin(channel.id, null, username, channel)
+      await agoraJoin(channel.id, null, username, channel,
+        () => setPrayerRoomCount((c) => c + 1),
+        () => setPrayerRoomCount((c) => Math.max(1, c - 1)),
+      )
     } catch (err) {
       console.error('Failed to join Agora channel:', err)
     }
@@ -379,7 +384,7 @@ export default function ChapelPage() {
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-white/90">{activeRoomView.name}</p>
-                  <p className="text-[10px] text-white/40">{activeRoomView.mode} · {activeRoomView.userCount} in room</p>
+                  <p className="text-[10px] text-white/40">{activeRoomView.mode} · {prayerRoomCount} in room</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
