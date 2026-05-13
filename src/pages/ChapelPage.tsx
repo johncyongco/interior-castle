@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 import { supabase } from '../lib/supabase'
-import { isAgoraAvailable, startTalking, stopTalking } from '../lib/agora'
+import { isAgoraAvailable, startTalking, stopTalking, joinChannel as agoraJoin, leaveChannel } from '../lib/agora'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
@@ -66,6 +66,14 @@ export default function ChapelPage() {
     setShowPrompt(false)
   }, [username])
 
+  const joinAgoraChannel = useCallback(async (channel: PrayerChannel) => {
+    try {
+      await agoraJoin(channel.id, null, username, channel)
+    } catch (err) {
+      console.error('Failed to join Agora channel:', err)
+    }
+  }, [username])
+
   const createChannel = useCallback(() => {
     if (!newName.trim()) return
     const channel: PrayerChannel = {
@@ -84,7 +92,8 @@ export default function ChapelPage() {
     setMenuView('menu')
     setShowMenu(false)
     setActiveRoomView(channel)
-  }, [newName, newMode, newType, newPassword, username, channels, navigate])
+    joinAgoraChannel(channel)
+  }, [newName, newMode, newType, newPassword, username, channels, joinAgoraChannel])
 
   const joinChannel = useCallback((channel: PrayerChannel) => {
     if (channel.type === 'private') {
@@ -93,7 +102,8 @@ export default function ChapelPage() {
     }
     setShowMenu(false)
     setActiveRoomView(channel)
-  }, [username])
+    joinAgoraChannel(channel)
+  }, [username, joinAgoraChannel])
 
   const deleteChannel = useCallback((id: string) => {
     const updated = channels.filter(c => c.id !== id)
@@ -351,7 +361,7 @@ export default function ChapelPage() {
                 >
                   Push to Talk
                 </button>
-                <button type="button" onClick={() => setActiveRoomView(null)} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null) }} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
               </div>
             </div>
           </motion.div>
