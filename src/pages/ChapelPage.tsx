@@ -7,6 +7,20 @@ import { supabase } from '../lib/supabase'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
+function vector3ToSpherical(point: THREE.Vector3) {
+  const radius = point.length()
+  const lon = THREE.MathUtils.radToDeg(Math.atan2(point.z, point.x))
+  const lat = THREE.MathUtils.radToDeg(Math.asin(point.y / radius))
+  return { lon, lat }
+}
+
+type CoordinatePanel = {
+  label: string
+  source: string
+  lon: number | null
+  lat: number | null
+}
+
 type PrayerMode = {
   id: string
   name: string
@@ -23,6 +37,7 @@ export default function ChapelPage() {
   const [showCreate, setShowCreate] = useState(false)
   const [newModeName, setNewModeName] = useState('')
   const [newModeType, setNewModeType] = useState<'public' | 'private'>('public')
+  const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({ label: 'Chapel', source: 'Tap the panorama', lon: null, lat: null })
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -88,6 +103,8 @@ export default function ChapelPage() {
     let lat = 0
     let dragDistance = 0
     let lastDragTime = performance.now()
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
 
     try {
       const scene = new THREE.Scene()
@@ -155,11 +172,27 @@ export default function ChapelPage() {
 
       const onPointerUp = () => { isDragging = false }
 
+      const onCanvasClick = (event: MouseEvent) => {
+        if (dragDistance > 6) return
+        const rect = renderer?.domElement.getBoundingClientRect()
+        if (!renderer || !rect) return
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
+        raycaster.setFromCamera(pointer, camera)
+        const intersections = raycaster.intersectObject(mesh, false)
+        if (!intersections.length) return
+        const hit = intersections[0].point
+        const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
+        setCoordinatePanel({ label: 'Chapel', source: 'Wall click', lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
+        console.log('Chapel coordinate', { lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
+      }
+
       mount.addEventListener('pointerdown', onPointerDown)
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
       window.addEventListener('pointercancel', onPointerUp)
       window.addEventListener('resize', updateSize)
+      renderer.domElement.addEventListener('click', onCanvasClick)
 
       let frameCount = 0
       const animate = () => {
@@ -182,6 +215,7 @@ export default function ChapelPage() {
         window.removeEventListener('pointerup', onPointerUp)
         window.removeEventListener('pointercancel', onPointerUp)
         window.removeEventListener('resize', updateSize)
+        renderer?.domElement.removeEventListener('click', onCanvasClick)
         material.dispose()
         geometry.dispose()
         renderer?.dispose()
@@ -242,7 +276,26 @@ export default function ChapelPage() {
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Chapel</p>
       </div>
 
-
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
+        className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6"
+      >
+        <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
+          <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
+          <div className="mb-1 text-[11px] tracking-[0.2em] text-white/90">{coordinatePanel.label}</div>
+          <div className="mb-2 text-[9px] tracking-[0.22em] text-amber-100/70">{coordinatePanel.source}</div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-white/45">Lon</span>
+            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">{coordinatePanel.lon === null ? '--' : coordinatePanel.lon.toFixed(2)}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between gap-4">
+            <span className="text-white/45">Lat</span>
+            <span className="font-mono text-[11px] tracking-[0.12em] text-white/90">{coordinatePanel.lat === null ? '--' : coordinatePanel.lat.toFixed(2)}</span>
+          </div>
+        </div>
+      </motion.div>
     </ScreenContainer>
   )
 }
