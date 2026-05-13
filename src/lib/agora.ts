@@ -2,6 +2,7 @@ import AgoraRTC, { IAgoraRTCClient, IMicrophoneAudioTrack } from 'agora-rtc-sdk-
 import type { PrayerChannel } from '../pages/ChapelPage'
 
 const appId = import.meta.env.VITE_AGORA_APP_ID as string | undefined
+const tokenServerUrl = import.meta.env.VITE_AGORA_TOKEN_SERVER_URL as string | undefined
 
 let client: IAgoraRTCClient | null = null
 let localTrack: IMicrophoneAudioTrack | null = null
@@ -49,13 +50,22 @@ export async function joinChannel(
 
   if (!appId) return
 
+  let rtcToken = token
+  if (!rtcToken && tokenServerUrl) {
+    try {
+      const res = await fetch(`${tokenServerUrl}/api/token?channel=${channelId}&uid=${username}`)
+      const data = await res.json()
+      rtcToken = data.token || data.rtcToken || null
+    } catch {}
+  }
+
   client = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' })
   client.setClientRole('audience')
 
   client.on('user-joined', (user) => onUserJoin?.(String(user.uid)))
   client.on('user-left', (user) => onUserLeave?.(String(user.uid)))
 
-  await client.join(appId, channelId, token || null, username)
+  await client.join(appId, channelId, rtcToken || null, username)
 
   localTrack = await AgoraRTC.createMicrophoneAudioTrack()
   await client.setClientRole('host')
