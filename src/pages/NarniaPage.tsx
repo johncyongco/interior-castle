@@ -282,13 +282,23 @@ export default function NarniaPage() {
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
         <p className="narnia text-base tracking-wider text-[#d4e8f0] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-lg">Welcome</p>
       </div>
-      <div className="absolute bottom-24 left-0 right-0 z-10 flex flex-col items-center">
+      <div className="absolute bottom-24 left-0 right-0 z-10 flex items-end justify-center gap-3 px-6">
         <button
           type="button"
           onClick={() => navigate('/room')}
           className="rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
         >
           Back to Room
+        </button>
+        <button
+          type="button"
+          onClick={startAudio}
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] backdrop-blur-xl transition hover:bg-white/[0.1]"
+          aria-label="Play music"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-white/50" aria-hidden="true">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+          </svg>
         </button>
       </div>
 
