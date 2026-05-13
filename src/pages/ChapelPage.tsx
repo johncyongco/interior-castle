@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 import { supabase } from '../lib/supabase'
-import { isAgoraAvailable, startTalking, stopTalking } from '../lib/agora'
+import { isAgoraAvailable, startTalking, stopTalking, getJoinedChannel } from '../lib/agora'
 
 const USERNAME_KEY = 'spero-chapel-username'
 
@@ -318,7 +318,7 @@ export default function ChapelPage() {
               {joinPasswordId && (
                 <div className="mt-4 space-y-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl">
                   <p className="text-xs text-white/60">Enter room password</p>
-                  <input value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} type="password" placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none placeholder:text-white/30" autoFocus />
+                  <input value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} type="password" placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-base text-white outline-none placeholder:text-white/30" autoFocus />
                   <div className="flex gap-2">
                     <button type="button" onClick={confirmJoinPassword} className="rounded-2xl bg-white/10 px-4 py-2 text-xs text-white/70 transition hover:bg-white/20">Join</button>
                     <button type="button" onClick={() => { setJoinPasswordId(null); setJoinPassword('') }} className="rounded-2xl bg-white/5 px-4 py-2 text-xs text-white/40 transition hover:bg-white/10">Cancel</button>
