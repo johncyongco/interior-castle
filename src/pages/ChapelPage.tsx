@@ -350,7 +350,7 @@ export default function ChapelPage() {
                 <button type="button" onClick={async () => { await toggleMic(); setMicMuted(isMicMuted()) }} className={`flex-1 rounded-3xl border px-4 py-3 text-sm backdrop-blur-xl transition ${micMuted ? 'border-red-500/20 bg-red-500/10 text-red-400/70' : 'border-green-500/20 bg-green-500/10 text-green-400/70'}`}>
                   {micMuted ? 'Muted' : 'Live'}
                 </button>
-                <button type="button" onClick={() => setActiveRoomView(null)} className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Leave</button>
+                <button type="button" onClick={() => { setActiveRoomView(null); setShowMenu(true); setMenuView('browse') }} className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Leave</button>
               </div>
             </motion.div>
           </motion.div>
