@@ -161,7 +161,7 @@ export default function RoomPopups() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 px-4 pb-24 backdrop-blur-sm"
+            className="fixed bottom-24 left-4 right-4 z-50 mx-auto max-w-sm"
           >
             <motion.div
               initial={{ y: 40, opacity: 0 }}
