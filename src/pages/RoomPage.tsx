@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import ScreenContainer from '../components/ScreenContainer'
+import { openPopup } from '../components/RoomPopups'
 
 type Hotspot = {
   id: string
@@ -82,15 +83,27 @@ export default function RoomPage() {
   })
   const pictureFrame = {
     id: 'sample-frame',
-    label: 'Sample Frame',
+    label: 'St. Teresa',
     shortLabel: 'Frame',
     lon: 141.5,
     lat: 7.25,
-    radius: 468,
+    radius: 496.2,
     width: 42,
     height: 28,
     image: '/saint-teresa.png',
-    onClick: () => navigate('/saints'),
+    onClick: () => openPopup('st-teresa'),
+  }
+  const stThereseFrame = {
+    id: 'st-therese-frame',
+    label: 'St. Thérèse',
+    shortLabel: 'Thérèse',
+    lon: -69.13,
+    lat: 11,
+    radius: 496.2,
+    width: 36,
+    height: 46,
+    image: '/St. Therese.jpg',
+    onClick: () => openPopup('st-therese'),
   }
   const breakfastFrame = {
     id: 'breakfast-frame',
@@ -172,7 +185,7 @@ export default function RoomPage() {
       shortLabel: 'Bible',
       lon: -70.72,
       lat: -13.18,
-      onClick: () => navigate('/daily-gospel'),
+      onClick: () => openPopup('gospel'),
       point: sphericalToVector3(-70.72, -13.18),
     },
     {
@@ -225,6 +238,7 @@ export default function RoomPage() {
       const guardianInteractiveObjects: THREE.Object3D[] = []
       const breakfastInteractiveObjects: THREE.Object3D[] = []
       const narniaInteractiveObjects: THREE.Object3D[] = []
+      const stThereseInteractiveObjects: THREE.Object3D[] = []
 
     try {
       const scene = new THREE.Scene()
@@ -290,6 +304,44 @@ export default function RoomPage() {
         framedImageMaterial.needsUpdate = true
       })
 
+      const stThereseFrameGroup = new THREE.Group()
+      stThereseFrameGroup.position.copy(sphericalToVector3(stThereseFrame.lon, stThereseFrame.lat, stThereseFrame.radius))
+      stThereseFrameGroup.lookAt(0, 0, 0)
+      scene.add(stThereseFrameGroup)
+
+      const stThereseBorderGeometry = new THREE.PlaneGeometry(stThereseFrame.width, stThereseFrame.height)
+      const stThereseBorderMaterial = new THREE.MeshBasicMaterial({
+        color: 0x6a4b2f,
+        transparent: true,
+        opacity: 0.92,
+      })
+      const stThereseBorder = new THREE.Mesh(stThereseBorderGeometry, stThereseBorderMaterial)
+      stThereseFrameGroup.add(stThereseBorder)
+
+      const stThereseMattingGeometry = new THREE.PlaneGeometry(stThereseFrame.width - 3, stThereseFrame.height - 3)
+      const stThereseMattingMaterial = new THREE.MeshBasicMaterial({
+        color: 0x17120f,
+        transparent: true,
+        opacity: 0.92,
+      })
+      const stThereseMatting = new THREE.Mesh(stThereseMattingGeometry, stThereseMattingMaterial)
+      stThereseMatting.position.z = 0.12
+      stThereseFrameGroup.add(stThereseMatting)
+
+      const stThereseImageGeometry = new THREE.PlaneGeometry(stThereseFrame.width - 6, stThereseFrame.height - 6)
+      const stThereseImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+      const stThereseImage = new THREE.Mesh(stThereseImageGeometry, stThereseImageMaterial)
+      stThereseImage.position.z = 0.2
+      stThereseFrameGroup.add(stThereseImage)
+
+      stThereseInteractiveObjects.push(stThereseBorder, stThereseMatting, stThereseImage)
+
+      const stThereseImageTexture = loader.load(stThereseFrame.image, (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        stThereseImageMaterial.map = texture
+        stThereseImageMaterial.needsUpdate = true
+      })
+
       const guardianPlaneGeometry = new THREE.PlaneGeometry(guardianAngel.size, guardianAngel.size)
       const guardianPlaneMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -312,6 +364,8 @@ export default function RoomPage() {
         guardianPlaneMaterial.needsUpdate = true
       })
 
+      /*
+      // Old 3D St. Therese image (disabled — using framed image instead)
       const stThereseGroup = new THREE.Group()
       stThereseGroup.position.copy(sphericalToVector3(127, -13, 496.2))
       stThereseGroup.lookAt(0, 0, 0)
@@ -372,6 +426,7 @@ export default function RoomPage() {
         texture.wrapS = THREE.ClampToEdgeWrapping
         texture.wrapT = THREE.ClampToEdgeWrapping
       })
+      */
 
       const breakfastGroup = new THREE.Group()
       breakfastGroup.position.copy(sphericalToVector3(breakfastFrame.lon, breakfastFrame.lat, 496.2))
@@ -498,6 +553,13 @@ export default function RoomPage() {
           return
         }
 
+        const stThereseHits = raycaster.intersectObjects(stThereseInteractiveObjects, false)
+        if (stThereseHits.length) {
+          setPanelFromHit(stThereseFrame.label, stThereseFrame.lon, stThereseFrame.lat, 'St. Thérèse hotspot')
+          stThereseFrame.onClick()
+          return
+        }
+
         const breakfastHits = raycaster.intersectObjects(breakfastInteractiveObjects, false)
         if (breakfastHits.length) {
           setPanelFromHit(breakfastFrame.label, breakfastFrame.lon, breakfastFrame.lat, 'Breakfast hotspot')
@@ -608,11 +670,18 @@ export default function RoomPage() {
         guardianAngelTexture.dispose()
         guardianPlaneMaterial.dispose()
         guardianPlaneGeometry.dispose()
-        stThereseTexture.dispose()
-        stTheresePlaneMaterial.dispose()
-        stTheresePlaneGeometry.dispose()
-        stThereseShadowMaterial.dispose()
-        stThereseShadowGeometry.dispose()
+        // stThereseTexture.dispose()
+        // stTheresePlaneMaterial.dispose()
+        // stTheresePlaneGeometry.dispose()
+        // stThereseShadowMaterial.dispose()
+        // stThereseShadowGeometry.dispose()
+        stThereseImageTexture.dispose()
+        stThereseImageMaterial.dispose()
+        stThereseImageGeometry.dispose()
+        stThereseMattingMaterial.dispose()
+        stThereseMattingGeometry.dispose()
+        stThereseBorderMaterial.dispose()
+        stThereseBorderGeometry.dispose()
         breakfastTexture.dispose()
         breakfastImageMaterial.dispose()
         breakfastImageGeometry.dispose()

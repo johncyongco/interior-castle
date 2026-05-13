@@ -29,6 +29,7 @@ import BreakfastPage from './pages/BreakfastPage'
 import BreakfastMediaPage from './pages/BreakfastMediaPage'
 import BreakfastCalendarPage from './pages/BreakfastCalendarPage'
 import NarniaPage from './pages/NarniaPage'
+import RoomPopups from './components/RoomPopups'
 import { AmbientField } from './components/AmbientField'
 import { ensureSperoUser } from './lib/speroIdentity'
 import BottomNav from './components/BottomNav'
@@ -59,6 +60,7 @@ function AppShell() {
 
   return (
     <div className="relative min-h-[100dvh] overflow-hidden bg-castle text-white">
+      <RoomPopups />
       <AmbientField />
       {!hideVignette ? <div className="pointer-events-none absolute inset-0 vignette" /> : null}
       <div className="relative min-h-[100dvh] w-full overflow-hidden">
