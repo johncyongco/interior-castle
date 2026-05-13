@@ -102,7 +102,7 @@ export default function RoomPage() {
     radius: 496.2,
     width: 36,
     height: 46,
-    image: '/St. Therese.jpg',
+    image: '/St. Therese.png',
     onClick: () => openPopup('st-therese'),
   }
   const breakfastFrame = {
