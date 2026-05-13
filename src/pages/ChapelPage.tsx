@@ -57,8 +57,8 @@ export default function ChapelPage() {
 
   const chapelHotspots: HotspotPoint[] = [
     {
-      id: 'prayer-icon',
-      label: 'Prayer Icon',
+      id: 'heart-icon',
+      label: 'Heart Icon',
       lon: -155.94,
       lat: 7.94,
       onClick: () => console.log('Prayer room — coming soon'),
@@ -350,9 +350,9 @@ export default function ChapelPage() {
               type="button"
               onClick={hotspot.onClick}
               aria-label={hotspot.label}
-              className="pointer-events-auto absolute left-0 top-0 z-[60] flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] opacity-0 transition hover:bg-white/[0.1] hover:opacity-100"
+              className="pointer-events-auto absolute left-0 top-0 z-[60] flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
             >
-              <svg viewBox="0 0 24 24" className="h-6 w-6 fill-none stroke-[#e7cba9] stroke-[1.8]" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-7 w-7 fill-[#e7cba9]/20 stroke-[#e7cba9]/40 stroke-[1.5]" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </button>
@@ -368,7 +368,7 @@ export default function ChapelPage() {
       >
         <div className="-translate-x-1/2 -translate-y-1/2 text-center">
           <p className="serif text-[10px] leading-tight text-[#e7cba9]/70 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            Tap the prayer icon to join the prayer room
+            Navigate to Right Side of Chapel Altar and click the heart icon to join prayer room
           </p>
         </div>
       </div>
