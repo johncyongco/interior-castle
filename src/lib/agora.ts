@@ -72,6 +72,7 @@ export async function joinChannel(
   await client.join(appId, channelId, rtcToken || null, username)
 
   localTrack = await AgoraRTC.createMicrophoneAudioTrack()
+  await localTrack.setEnabled(false)
   await client.setClientRole('host')
   await client.publish(localTrack)
 
@@ -98,15 +99,12 @@ export function getJoinedChannel() {
   return joinedChannel
 }
 
-export function isMicMuted() {
-  return localTrack ? !localTrack.enabled : true
+export async function startTalking() {
+  if (!localTrack) return
+  await localTrack.setEnabled(true)
 }
 
-export async function toggleMic() {
+export async function stopTalking() {
   if (!localTrack) return
-  if (localTrack.enabled) {
-    await localTrack.setEnabled(false)
-  } else {
-    await localTrack.setEnabled(true)
-  }
+  await localTrack.setEnabled(false)
 }
