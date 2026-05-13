@@ -53,7 +53,11 @@ export async function joinChannel(
   let rtcToken = token
   if (!rtcToken && tokenServerUrl) {
     try {
-      const res = await fetch(`${tokenServerUrl}/api/token?channel=${channelId}&uid=${username}`)
+      const res = await fetch(`${tokenServerUrl}/rtc-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelName: channelId, uid: username }),
+      })
       const data = await res.json()
       rtcToken = data.token || data.rtcToken || null
     } catch {}
