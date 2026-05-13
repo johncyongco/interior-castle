@@ -161,7 +161,7 @@ export default function RoomPopups() {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-6 text-center backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
             >
-                <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">A Riddle</p>
+                <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">A Question</p>
               <p className="mt-3 text-sm leading-6 text-[#e7cba9]/80">&ldquo;Where did Reepicheep finally rest?&rdquo;</p>
               <input
                 value={narniaAnswer}
