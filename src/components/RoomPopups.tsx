@@ -1,8 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getActivePrayerRoom, leaveChannel, subscribeToJoinState } from '../lib/agora'
 
 type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel'
 
@@ -13,19 +11,11 @@ export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel') {
 }
 
 export default function RoomPopups() {
-  const navigate = useNavigate()
   const [active, setActive] = useState<PopupState>('none')
-  const [activeRoom, setActiveRoom] = useState(getActivePrayerRoom())
 
   useEffect(() => {
     setActiveGlobal = setActive
     return () => { setActiveGlobal = null }
-  }, [])
-
-  useEffect(() => {
-    return subscribeToJoinState(() => {
-      setActiveRoom(getActivePrayerRoom())
-    })
   }, [])
 
   const dateString = useMemo(() => {
@@ -153,43 +143,6 @@ export default function RoomPopups() {
         )}
       </AnimatePresence>
 
-      {/* Mini player for active prayer room — inside portal, overlay style */}
-      <AnimatePresence>
-        {activeRoom && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-24 left-4 right-4 z-50 mx-auto max-w-sm"
-          >
-            <motion.div
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
-            >
-              <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-white/90">{activeRoom.name}</p>
-                  <p className="text-[10px] text-white/40">{activeRoom.mode} · Live</p>
-                </div>
-              </div>
-              <p className="mt-3 text-center text-[11px] italic text-[#e7cba9]/50">"Where two or three are gathered in my name, there am I in the midst of them."</p>
-              <p className="text-center text-[9px] text-white/30">Matthew 18:20</p>
-              <button
-                type="button"
-                onClick={async () => { await leaveChannel() }}
-                className="mt-4 w-full rounded-2xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs text-red-400/70 transition hover:bg-red-500/20"
-              >
-                Leave Prayer Room
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>,
     document.body,
   )
