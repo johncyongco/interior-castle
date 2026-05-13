@@ -69,6 +69,8 @@ export default function ChapelPage() {
   }, [showPrompt, username])
 
   useEffect(() => {
+    if (showPrompt) return
+
     const previousBodyOverflow = document.body.style.overflow
     const previousBodyTouchAction = document.body.style.touchAction
     document.body.style.overflow = 'hidden'
@@ -191,7 +193,7 @@ export default function ChapelPage() {
       document.body.style.overflow = previousBodyOverflow
       document.body.style.touchAction = previousBodyTouchAction
     }
-  }, [])
+  }, [showPrompt])
 
   if (showPrompt) {
     return (
