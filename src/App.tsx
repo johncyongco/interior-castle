@@ -54,6 +54,7 @@ function CatechismRedirect() {
 function AppShell() {
   const location = useLocation()
   const hideVignette = location.pathname === '/developing-virtues'
+  const isAdoration = location.pathname === '/breakfast/media'
 
   useEffect(() => {
     void ensureSperoUser().catch(() => undefined)
@@ -66,24 +67,26 @@ function AppShell() {
       {!hideVignette ? <div className="pointer-events-none absolute inset-0 vignette" /> : null}
       <div className="relative min-h-[100dvh] w-full overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, filter: 'blur(8px)' }}
-             transition={{ duration: 0.5, ease: 'easeOut' }}
+            <motion.div
+                key={`${location.pathname}-page`}
+                initial={{ opacity: 0, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, filter: 'blur(8px)' }}
+                transition={{ duration: isAdoration ? 1.5 : 0.5, ease: 'easeOut' }}
               className="relative min-h-[100dvh]"
             >
-              <motion.div
-                key={`${location.pathname}-jesus-overlay`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 0.5, times: [0, 0.35, 1], ease: 'easeOut' }}
-              className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-[url('/Jesus.jpg')] bg-cover bg-center bg-no-repeat opacity-100" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.45),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.18),rgba(15,12,9,0.25))] opacity-50 mix-blend-screen" />
-            </motion.div>
+              {isAdoration && (
+                <motion.div
+                  key="jesus-overlay"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 1.5, times: [0, 0.35, 1], ease: 'easeOut' }}
+                  className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-[url('/Jesus.jpg')] bg-cover bg-center bg-no-repeat opacity-100" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.45),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.18),rgba(15,12,9,0.25))] opacity-50 mix-blend-screen" />
+                </motion.div>
+              )}
             <Routes location={location}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/gate" element={<HomePage />} />
