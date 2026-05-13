@@ -329,23 +329,30 @@ export default function ChapelPage() {
           </motion.div>
         )}
 
-        {/* Prayer Room mini bar */}
+        {/* Prayer Room bar */}
         {activeRoomView && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="absolute bottom-24 left-0 right-0 z-50 mx-auto flex max-w-sm items-center gap-3 rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
-            <span className="truncate text-xs text-white/80">{activeRoomView.name}</span>
-            <div className="ml-auto flex gap-2">
-              <button
-                type="button"
-                onMouseDown={async () => { await initMic(); startTalking() }}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="absolute bottom-24 left-4 right-4 z-50 mx-auto max-w-sm">
+            <div className="rounded-3xl border border-white/10 bg-[#0f0c09cc] p-5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]">
+              <div className="flex items-center gap-3">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm text-white/90">{activeRoomView.name}</p>
+                  <p className="text-[10px] text-white/40">{activeRoomView.mode} · Connected</p>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="button"
+                  onMouseDown={async () => { await initMic(); startTalking() }}
                   onMouseUp={stopTalking}
                   onTouchStart={async () => { await initMic(); startTalking() }}
                   onTouchEnd={stopTalking}
-                className="rounded-full border border-white/14 bg-white/[0.05] px-4 py-1.5 text-[10px] text-white/70 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400"
-              >
-                Push to Talk
-              </button>
-              <button type="button" onClick={() => { setActiveRoomView(null); setShowMenu(true); setMenuView('browse') }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                  className="flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400 active:border-green-500/30"
+                >
+                  Push to Talk
+                </button>
+                <button type="button" onClick={() => setActiveRoomView(null)} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+              </div>
             </div>
           </motion.div>
         )}
