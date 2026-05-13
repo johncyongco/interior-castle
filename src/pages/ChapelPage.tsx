@@ -237,15 +237,26 @@ export default function ChapelPage() {
   return (
     <ScreenContainer>
       <div className="absolute inset-0 bg-black" />
-      <div className="absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center" style={{ backgroundPosition: 'center center' }} />
-      <div ref={mountRef} className="absolute inset-0 hidden touch-none select-none" />
+      <div
+        className="absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center"
+        style={{ backgroundPosition: 'center center' }}
+      />
+      <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(255,236,199,0.12),transparent_24%),linear-gradient(180deg,rgba(15,12,9,0.08),rgba(15,12,9,0.45))]" />
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-white/70 backdrop-blur-xl sm:px-5 sm:py-3 sm:text-[10px]">
+          360
+        </div>
+      </div>
+
       <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
         <p className="serif text-xs text-[#e7cba9]/55 sm:text-sm">Chapel</p>
       </div>
 
+      {/* Back to Room — no button, handled by nav bar */}
+
       {/* Presence panel */}
-      <div className="absolute right-4 top-16 z-20 min-w-[10rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+      <div className="pointer-events-none absolute right-4 top-16 z-20 min-w-[10rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
         <div className="mb-1.5 text-[9px] tracking-[0.28em] text-white/45">Praying Together</div>
         {users.length === 0 ? (
           <div className="text-[10px] text-white/40">Loading...</div>
@@ -262,26 +273,14 @@ export default function ChapelPage() {
         )}
       </div>
 
-      <div className="absolute bottom-24 left-0 right-0 z-10 flex justify-center">
-        <button
-          type="button"
-          onClick={() => {
-            try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}
-            navigate('/room')
-          }}
-          className="rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
-        >
-          Back to Room
-        </button>
-      </div>
-
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
-        className="pointer-events-none absolute left-4 top-[max(1rem,env(safe-area-inset-top))] z-30"
+        className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6"
       >
-        <div className="min-w-[10rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+        <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
+          <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
           <div className="mb-1 text-[11px] tracking-[0.2em] text-white/90">{coordinatePanel.label}</div>
           <div className="mb-2 text-[9px] tracking-[0.22em] text-amber-100/70">{coordinatePanel.source}</div>
           <div className="flex items-center justify-between gap-4">
