@@ -78,13 +78,9 @@ export async function joinChannel(
     try {
       await client?.subscribe(remoteUser, mediaType)
       if (mediaType === 'audio' && remoteUser.audioTrack) {
-        const audioEl = new Audio()
-        audioEl.srcObject = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()])
-        await audioEl.play().catch(() => {})
-        console.log('Agora: remote audio playing for', String(remoteUser.uid))
+        remoteUser.audioTrack.play()
       }
       onUserJoin?.(String(remoteUser.uid))
-      console.log('Agora: onUserJoin called, new count triggered')
     } catch (e) {
       console.error('Agora: subscribe/play failed', e)
     }
