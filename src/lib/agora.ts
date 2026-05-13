@@ -4,6 +4,8 @@ import type { PrayerChannel } from '../pages/ChapelPage'
 const appId = import.meta.env.VITE_AGORA_APP_ID as string | undefined
 const tokenServerUrl = import.meta.env.VITE_AGORA_TOKEN_SERVER_URL as string | undefined
 
+console.log('Agora config:', { appId: appId?.slice(0, 8) + '...', tokenServerUrl })
+
 let client: IAgoraRTCClient | null = null
 let localTrack: IMicrophoneAudioTrack | null = null
 let joinedChannel = ''

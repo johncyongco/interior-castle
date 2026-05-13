@@ -27,12 +27,45 @@ type PrayerChannel = { id: string; name: string; mode: string; type: 'public' | 
 
 const STORAGE_KEY = 'spero-chapel-channels'
 
-function loadChannels(): PrayerChannel[] {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] }
+async function loadChannels(): Promise<PrayerChannel[]> {
+  if (!supabase) {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] }
+  }
+  const { data } = await supabase.from('prayer_rooms').select('*').order('created_at', { ascending: false })
+  return (data || []).map((r: any) => ({
+    id: r.id,
+    name: r.name,
+    mode: r.mode,
+    type: r.type,
+    creator: r.creator,
+    userCount: r.user_count,
+  }))
 }
 
-function saveChannels(channels: PrayerChannel[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(channels))
+async function saveChannel(channel: PrayerChannel) {
+  if (!supabase) {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    existing.push(channel)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing))
+    return
+  }
+  await supabase.from('prayer_rooms').insert({
+    id: channel.id,
+    name: channel.name,
+    mode: channel.mode,
+    type: channel.type,
+    creator: channel.creator,
+    user_count: channel.userCount,
+  })
+}
+
+async function deleteChannelFromDB(id: string) {
+  if (!supabase) {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.filter((c: any) => c.id !== id)))
+    return
+  }
+  await supabase.from('prayer_rooms').delete().eq('id', id)
 }
 
 export default function ChapelPage() {
@@ -45,7 +78,7 @@ export default function ChapelPage() {
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({ label: 'Chapel', source: 'Tap the panorama', lon: null, lat: null })
   const [showMenu, setShowMenu] = useState(false)
   const [menuView, setMenuView] = useState<'menu' | 'create' | 'browse'>('menu')
-  const [channels, setChannels] = useState<PrayerChannel[]>(loadChannels)
+  const [channels, setChannels] = useState<PrayerChannel[]>([])
   const [newName, setNewName] = useState('')
   const [newMode, setNewMode] = useState('Rosary')
   const [newType, setNewType] = useState<'public' | 'private'>('public')
@@ -57,6 +90,7 @@ export default function ChapelPage() {
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
+    loadChannels().then(setChannels)
   }, [])
 
   const handleJoin = useCallback(() => {
@@ -84,9 +118,8 @@ export default function ChapelPage() {
       creator: username,
       userCount: 1,
     }
-    const updated = [...channels, channel]
-    setChannels(updated)
-    saveChannels(updated)
+    setChannels((prev) => [channel, ...prev])
+    saveChannel(channel)
     setNewName('')
     setNewPassword('')
     setMenuView('menu')
@@ -106,10 +139,9 @@ export default function ChapelPage() {
   }, [username, joinAgoraChannel])
 
   const deleteChannel = useCallback((id: string) => {
-    const updated = channels.filter(c => c.id !== id)
-    setChannels(updated)
-    saveChannels(updated)
-  }, [channels])
+    setChannels((prev) => prev.filter(c => c.id !== id))
+    deleteChannelFromDB(id)
+  }, [])
 
   const confirmJoinPassword = useCallback(() => {
     const ch = channels.find(c => c.id === joinPasswordId)
