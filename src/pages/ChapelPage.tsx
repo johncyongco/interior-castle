@@ -93,6 +93,12 @@ export default function ChapelPage() {
     navigate(`/chapel/room/${channel.id}`, { state: { channel, username } })
   }, [navigate, username])
 
+  const deleteChannel = useCallback((id: string) => {
+    const updated = channels.filter(c => c.id !== id)
+    setChannels(updated)
+    saveChannels(updated)
+  }, [channels])
+
   const confirmJoinPassword = useCallback(() => {
     const ch = channels.find(c => c.id === joinPasswordId)
     if (!ch) return
@@ -296,7 +302,12 @@ export default function ChapelPage() {
                             <span>{ch.userCount} in room</span>
                           </div>
                         </div>
-                        <button type="button" onClick={() => joinChannel(ch)} className="shrink-0 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20">Join</button>
+                        <div className="flex shrink-0 items-center gap-1">
+                          {ch.creator === username && (
+                            <button type="button" onClick={() => deleteChannel(ch.id)} className="rounded-full border border-red-500/10 bg-red-500/5 px-2 py-1 text-[9px] text-red-400/50 transition hover:bg-red-500/15">Delete</button>
+                          )}
+                          <button type="button" onClick={() => joinChannel(ch)} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20">Join</button>
+                        </div>
                       </div>
                     ))
                   )}

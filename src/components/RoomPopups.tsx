@@ -153,46 +153,52 @@ export default function RoomPopups() {
         )}
       </AnimatePresence>
 
-      {/* Floating mini player for active prayer room */}
-      {activeRoom && (
-        <motion.div
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          className="fixed bottom-24 left-4 right-4 z-50 mx-auto max-w-sm"
-        >
-          <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-            <div className="flex items-center gap-2 overflow-hidden">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-green-400" />
-              <div className="min-w-0">
-                <p className="truncate text-xs text-white/80">{activeRoom.name}</p>
-                <p className="text-[9px] text-white/40">{activeRoom.mode} · Live</p>
+      {/* Mini player for active prayer room — inside portal, overlay style */}
+      <AnimatePresence>
+        {activeRoom && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 px-4 pb-24 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0f0c09cc] p-5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+            >
+              <div className="flex items-center gap-3">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm text-white/90">{activeRoom.name}</p>
+                  <p className="text-[10px] text-white/40">{activeRoom.mode} · Live</p>
+                </div>
               </div>
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const id = activeRoom.id
-                  window.location.href = `/chapel/room/${id}`
-                }}
-                className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] text-white/70 transition hover:bg-white/20"
-              >
-                Open
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  await leaveChannel()
-                }}
-                className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-[10px] text-red-400/70 transition hover:bg-red-500/20"
-              >
-                Leave
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      )}
+              <p className="mt-3 text-center text-[11px] italic text-[#e7cba9]/50">"Where two or three are gathered in my name, there am I in the midst of them."</p>
+              <p className="text-center text-[9px] text-white/30">Matthew 18:20</p>
+              <div className="mt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => window.location.href = `/chapel/room/${activeRoom.id}`}
+                  className="flex-1 rounded-2xl border border-white/14 bg-white/[0.05] py-2.5 text-xs text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]"
+                >
+                  Open Room
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => { await leaveChannel() }}
+                  className="flex-1 rounded-2xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs text-red-400/70 transition hover:bg-red-500/20"
+                >
+                  Leave
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>,
     document.body,
   )
