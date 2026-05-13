@@ -77,8 +77,8 @@ export default function BreakfastPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-    let lon = 0
-    let lat = 0
+    let lon = -5.97
+    let lat = 40.87
     let dragDistance = 0
     let lastDragTime = performance.now()
     const raycaster = new THREE.Raycaster()
