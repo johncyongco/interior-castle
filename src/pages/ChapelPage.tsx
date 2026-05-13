@@ -225,7 +225,7 @@ export default function ChapelPage() {
     <ScreenContainer>
       <div className="absolute inset-0 bg-black" />
       <div
-        className="absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center"
+        className="pointer-events-none absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center"
         style={{ backgroundPosition: 'center center' }}
       />
       <div ref={mountRef} className="absolute inset-0 touch-none select-none" />
