@@ -35,12 +35,19 @@ function NavIcon({
           <path d="M9 18v-4h6v4" />
         </svg>
       )
+    case 'chapel':
+      return (
+        <svg {...common}>
+          <path d="M4 20V8l8-5 8 5v12" />
+          <path d="M8 20v-8h8v8" />
+          <path d="M10 12h4" />
+        </svg>
+      )
     case 'prayer':
       return (
         <svg {...common}>
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
+          <path d="M12 5v14" />
+          <path d="M8 9h8" />
         </svg>
       )
     case 'reflect':
@@ -92,7 +99,7 @@ export default function BottomNav() {
         onClick={() => nav('/chapel')}
       >
         <span className="sm:hidden">
-          <NavIcon path="prayer" />
+          <NavIcon path="chapel" />
         </span>
         <span className="hidden sm:inline">Chapel</span>
       </button>
