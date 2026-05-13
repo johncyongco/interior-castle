@@ -1,4 +1,4 @@
-import AgoraRTC, { IAgoraRTCClient, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng'
+import type { IAgoraRTCClient, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng'
 import type { PrayerChannel } from '../pages/ChapelPage'
 
 const appId = import.meta.env.VITE_AGORA_APP_ID as string | undefined
@@ -52,17 +52,24 @@ export async function joinChannel(
 
   if (!appId) return
 
+  console.log('Agora: joining channel...', channelId)
+  const { default: AgoraRTC } = await import('agora-rtc-sdk-ng')
+  console.log('Agora: SDK loaded')
+
+  const uid = Number(username) || Math.floor(Math.random() * 100000) + 1
+
   let rtcToken = token
   if (!rtcToken && tokenServerUrl) {
     try {
       const res = await fetch(`${tokenServerUrl}/rtc-token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelName: channelId, uid: Number(username) || Math.floor(Math.random() * 100000) + 1 }),
+        body: JSON.stringify({ channelName: channelId, uid }),
       })
       const data = await res.json()
       rtcToken = data.token || data.rtcToken || null
-    } catch {}
+      console.log('Agora: token received:', !!rtcToken)
+    } catch (e) { console.error('Agora: token fetch failed', e) }
   }
 
   client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
@@ -79,10 +86,9 @@ export async function joinChannel(
     onUserLeave?.(String(remoteUser.uid))
   })
 
-  const uid = Number(username) || Math.floor(Math.random() * 100000) + 1
-
   try {
     await client.join(appId, channelId, rtcToken || null, uid)
+    console.log('Agora: joined channel')
   } catch (err) {
     console.error('Agora join failed:', err)
     throw err
@@ -91,6 +97,7 @@ export async function joinChannel(
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       localTrack = await AgoraRTC.createMicrophoneAudioTrack()
+      console.log('Agora: mic track created')
       break
     } catch (err) {
       console.error('Mic attempt failed:', err)
@@ -100,6 +107,7 @@ export async function joinChannel(
   }
   await localTrack!.setMuted(true)
   await client.publish([localTrack!])
+  console.log('Agora: published track')
 
   joinedChannel = channelId
 }
