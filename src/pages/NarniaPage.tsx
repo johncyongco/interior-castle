@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import ScreenContainer from '../components/ScreenContainer'
 
+const audio = new Audio('/music/Snowy Forest.mp3')
+audio.loop = true
+audio.volume = 0.6
+
 function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
   const lon = THREE.MathUtils.degToRad(lonDeg)
   const lat = THREE.MathUtils.degToRad(latDeg)
@@ -59,6 +63,11 @@ export default function NarniaPage() {
   const turkishDelightLat = -9.19
   const turkishDelightPoint = sphericalToVector3(turkishDelightLon, turkishDelightLat)
   const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
+
+  useEffect(() => {
+    audio.play().catch(() => {})
+    return () => { audio.pause(); audio.currentTime = 0 }
+  }, [])
 
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
