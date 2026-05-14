@@ -67,6 +67,11 @@ export default function NarniaPage() {
   const [showTurkishDelight, setShowTurkishDelight] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
 
+  const turkishDelightLon = -39.02
+  const turkishDelightLat = -9.19
+  const turkishDelightPoint = sphericalToVector3(turkishDelightLon, turkishDelightLat)
+  const turkishDelightRange = { lonMin: -39.52, lonMax: -38.52, latMin: -9.69, latMax: -8.69 }
+
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow
     const previousBodyTouchAction = document.body.style.touchAction
