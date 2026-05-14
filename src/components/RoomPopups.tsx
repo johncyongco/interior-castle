@@ -171,9 +171,7 @@ export default function RoomPopups() {
                   const a = e.target.value.trim().toLowerCase()
                   if (a.includes('aslan') && (a.includes('country') || a.includes('home'))) {
                     try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}
-                    setActive('none')
-                    setNarniaAnswer('')
-                    navigate('/narnia')
+                    setTimeout(() => { setActive('none'); setNarniaAnswer(''); navigate('/narnia') }, 100)
                   }
                 }}
                 placeholder="Your answer..."
