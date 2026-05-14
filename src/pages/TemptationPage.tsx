@@ -40,7 +40,7 @@ export default function TemptationPage() {
           <span>Temptation</span>
             <button
               type="button"
-              onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
+              onClick={() => navigate('/room')}
               className="transition hover:text-[#e7cba9]"
             >
               Skip
@@ -104,7 +104,7 @@ export default function TemptationPage() {
 
             <button
             type="button"
-            onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
+            onClick={() => navigate('/room')}
             className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/70 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
             >
             Skip
