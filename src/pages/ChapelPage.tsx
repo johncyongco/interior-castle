@@ -39,6 +39,7 @@ async function loadChannels(): Promise<PrayerChannel[]> {
     type: r.type,
     creator: r.creator,
     userCount: r.user_count,
+    password: r.password,
   }))
 }
 
