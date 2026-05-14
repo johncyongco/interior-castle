@@ -80,6 +80,7 @@ export default function ChapelPage() {
   const hotspotRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const instructionRef = useRef<HTMLDivElement | null>(null)
   const [username, setUsername] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [showPrompt, setShowPrompt] = useState(true)
   const [chapelPassword, setChapelPassword] = useState('')
   const [chapelPasswordError, setChapelPasswordError] = useState('')
@@ -100,6 +101,7 @@ export default function ChapelPage() {
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
+    setIsAdmin(!!localStorage.getItem('spero-admin-email'))
     loadChannels().then(setChannels)
     const interval = setInterval(() => loadChannels().then(setChannels), 5000)
     return () => clearInterval(interval)
@@ -379,7 +381,7 @@ export default function ChapelPage() {
                           </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-1">
-                          {ch.creator === username && (
+                          {(ch.creator === username || isAdmin) && (
                             <button type="button" onClick={() => deleteChannel(ch.id)} className="rounded-full border border-red-500/10 bg-red-500/5 px-2 py-1 text-[9px] text-red-400/50 transition hover:bg-red-500/15">Delete</button>
                           )}
                           <button type="button" onClick={() => joinChannel(ch)} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20">Join</button>
