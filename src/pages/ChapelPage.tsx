@@ -65,7 +65,8 @@ async function deleteChannelFromDB(id: string) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.filter((c: any) => c.id !== id)))
     return
   }
-  await supabase.from('prayer_rooms').delete().eq('id', id)
+  const { error } = await supabase.from('prayer_rooms').delete().eq('id', id)
+  if (error) console.error('Supabase delete error:', error)
 }
 
 export default function ChapelPage() {
