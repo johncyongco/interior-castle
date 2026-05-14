@@ -88,6 +88,7 @@ export default function ChapelPage() {
   const [joinPasswordId, setJoinPasswordId] = useState<string | null>(null)
   const [activeRoomView, setActiveRoomView] = useState<PrayerChannel | null>(null)
   const [prayerRoomCount, setPrayerRoomCount] = useState(1)
+  const [alwaysOn, setAlwaysOn] = useState(false)
 
   useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
@@ -391,15 +392,43 @@ export default function ChapelPage() {
               <div className="mt-4 flex gap-3">
                 <button
                   type="button"
-                  onMouseDown={startTalking}
-                  onMouseUp={stopTalking}
-                  onTouchStart={startTalking}
-                  onTouchEnd={stopTalking}
-                  className="touch-none select-none flex-1 rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition active:bg-green-500/20 active:text-green-400 active:border-green-500/30"
+                  onMouseDown={alwaysOn ? undefined : startTalking}
+                  onMouseUp={alwaysOn ? undefined : stopTalking}
+                  onTouchStart={alwaysOn ? undefined : startTalking}
+                  onTouchEnd={alwaysOn ? undefined : stopTalking}
+                  onClick={async () => {
+                    if (alwaysOn) {
+                      await stopTalking()
+                      setAlwaysOn(false)
+                    }
+                  }}
+                  className={`touch-none select-none flex-1 rounded-3xl border px-4 py-3 text-sm backdrop-blur-xl transition ${
+                    alwaysOn
+                      ? 'border-green-500/30 bg-green-500/10 text-green-400'
+                      : 'border-white/14 bg-white/[0.05] text-white/80 active:bg-green-500/20 active:text-green-400 active:border-green-500/30'
+                  }`}
                 >
-                  Push to Talk
+                  {alwaysOn ? 'On' : 'Push to Talk'}
                 </button>
-                <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null); setPrayerRoomCount(1) }} className="rounded-3xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const next = !alwaysOn
+                      setAlwaysOn(next)
+                      if (next) await startTalking()
+                      else await stopTalking()
+                    }}
+                    className={`rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${
+                      alwaysOn
+                        ? 'border-green-500/30 bg-green-500/10 text-green-400'
+                        : 'border-white/10 bg-white/5 text-white/40'
+                    }`}
+                  >
+                    Always On
+                  </button>
+                  <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null); setPrayerRoomCount(1); setAlwaysOn(false) }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                </div>
               </div>
             </div>
           </motion.div>
