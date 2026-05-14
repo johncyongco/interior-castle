@@ -106,8 +106,8 @@ export default function ChapelPage() {
     setPrayerRoomCount(1)
     try {
       await agoraJoin(channel.id, null, username, channel,
-        () => setPrayerRoomCount((c) => c + 1),
-        () => setPrayerRoomCount((c) => Math.max(1, c - 1)),
+        () => { setPrayerRoomCount((c) => { console.log('user joined, count:', c + 1); return c + 1 }) },
+        () => { setPrayerRoomCount((c) => { console.log('user left, count:', Math.max(1, c - 1)); return Math.max(1, c - 1) }) },
       )
     } catch (err) {
       console.error('Failed to join Agora channel:', err)
