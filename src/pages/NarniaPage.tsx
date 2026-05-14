@@ -86,8 +86,8 @@ export default function SnowyForestPage() {
     let isDragging = false
     let startX = 0
     let startY = 0
-    let lon = 0
-    let lat = 0
+    let lon = 84.28
+    let lat = 7.35
     let dragDistance = 0
     let lastDragTime = performance.now()
     const raycaster = new THREE.Raycaster()
