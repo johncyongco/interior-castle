@@ -229,28 +229,16 @@ export default function ChapelPage() {
       loader.load('/Chapel.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; material.map = texture; material.needsUpdate = true })
 
       const ourLadyGroup = new THREE.Group()
-      ourLadyGroup.position.copy(sphericalToVector3(153.61, 5.40, 496.2))
+      ourLadyGroup.position.copy(sphericalToVector3(153.61, 5.40, 498))
       ourLadyGroup.lookAt(0, 0, 0)
       scene.add(ourLadyGroup)
-
-      const ourLadyBorderGeometry = new THREE.PlaneGeometry(36, 46)
-      const ourLadyBorderMaterial = new THREE.MeshBasicMaterial({ color: 0x6a4b2f, transparent: true, opacity: 0.92 })
-      const ourLadyBorder = new THREE.Mesh(ourLadyBorderGeometry, ourLadyBorderMaterial)
-      ourLadyGroup.add(ourLadyBorder)
-
-      const ourLadyMattingGeometry = new THREE.PlaneGeometry(33, 43)
-      const ourLadyMattingMaterial = new THREE.MeshBasicMaterial({ color: 0x17120f, transparent: true, opacity: 0.92 })
-      const ourLadyMatting = new THREE.Mesh(ourLadyMattingGeometry, ourLadyMattingMaterial)
-      ourLadyMatting.position.z = 0.12
-      ourLadyGroup.add(ourLadyMatting)
 
       const ourLadyImageGeometry = new THREE.PlaneGeometry(30, 40)
       const ourLadyImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
       const ourLadyImage = new THREE.Mesh(ourLadyImageGeometry, ourLadyImageMaterial)
-      ourLadyImage.position.z = 0.2
       ourLadyGroup.add(ourLadyImage)
 
-      const ourLadyInteractiveObjects: THREE.Object3D[] = [ourLadyBorder, ourLadyMatting, ourLadyImage]
+      const ourLadyInteractiveObjects: THREE.Object3D[] = [ourLadyImage]
 
       const ourLadyImageTexture = loader.load('/Our%20Lady%20of%20Graces.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; ourLadyImageMaterial.map = texture; ourLadyImageMaterial.needsUpdate = true })
       const updateSize = () => { if (!renderer) return; camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)) }
@@ -311,7 +299,7 @@ export default function ChapelPage() {
       animate()
       return () => {
         window.cancelAnimationFrame(frameId); mount.removeEventListener('pointerdown', onPointerDown); window.removeEventListener('pointermove', onPointerMove); window.removeEventListener('pointerup', onPointerUp); window.removeEventListener('pointercancel', onPointerUp); window.removeEventListener('resize', updateSize); renderer?.domElement.removeEventListener('click', onCanvasClick)
-        material.dispose(); geometry.dispose(); ourLadyImageTexture.dispose(); ourLadyImageMaterial.dispose(); ourLadyImageGeometry.dispose(); ourLadyMattingMaterial.dispose(); ourLadyMattingGeometry.dispose(); ourLadyBorderMaterial.dispose(); ourLadyBorderGeometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
+        material.dispose(); geometry.dispose(); ourLadyImageTexture.dispose(); ourLadyImageMaterial.dispose(); ourLadyImageGeometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
         document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction
       }
     } catch { document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction }
@@ -517,7 +505,7 @@ export default function ChapelPage() {
           </motion.div>
         )}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }} className="pointer-events-none absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-30 sm:right-6">
-        <div className="min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
+        <div className="hidden min-w-[11rem] rounded-2xl border border-white/12 bg-[#120e0bcc] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-white/70 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:min-w-[14rem]">
           <div className="mb-2 text-[9px] tracking-[0.32em] text-white/45">Coordinate Panel</div>
           <div className="mb-1 text-[11px] tracking-[0.2em] text-white/90">{coordinatePanel.label}</div>
           <div className="mb-2 text-[9px] tracking-[0.22em] text-amber-100/70">{coordinatePanel.source}</div>
