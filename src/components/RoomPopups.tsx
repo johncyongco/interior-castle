@@ -3,11 +3,11 @@ import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
-type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration'
+type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration' | 'salve-regina'
 
 let setActiveGlobal: ((state: PopupState) => void) | null = null
 
-export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration') {
+export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration' | 'salve-regina') {
   setActiveGlobal?.(state)
 }
 
@@ -181,6 +181,40 @@ export default function RoomPopups() {
                 <p>St. Thérèse, my Carmelite Sister, I will fulfill your plea &ldquo;to be made known everywhere&rdquo; and I will continue to lead others to Jesus through you.</p>
                 <p className="pt-2 text-center text-[#e7cba9]">Amen.</p>
               </div>
+              <button
+                type="button"
+                onClick={() => setActive('none')}
+                className="mt-6 rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-2 text-xs text-white/70 backdrop-blur-xl transition hover:bg-white/[0.1]"
+              >
+                Dismiss
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {active === 'salve-regina' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-3xl border border-white/10 bg-[#0f0c09cc] p-6 text-center backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+            >
+              <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">Salve Regina</p>
+              <p className="mt-4 text-sm leading-6 text-[#e7cba9]/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                &ldquo;Hail, holy Queen, Mother of mercy, our life, our sweetness and our hope. To thee do we cry, poor banished children of Eve. To thee do we send up our sighs, mourning and weeping in this valley of tears. Turn, then, most gracious advocate, thine eyes of mercy toward us, and after this, our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.
+              </p>
+              <p className="mt-3 text-sm leading-6 text-[#e7cba9]/70 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                V. Pray for us, O holy Mother of God.<br />
+                R. That we may be made worthy of the promises of Christ.
+              </p>
               <button
                 type="button"
                 onClick={() => setActive('none')}

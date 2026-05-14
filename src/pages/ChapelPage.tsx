@@ -227,6 +227,32 @@ export default function ChapelPage() {
       scene.add(mesh)
       const loader = new THREE.TextureLoader()
       loader.load('/Chapel.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; material.map = texture; material.needsUpdate = true })
+
+      const ourLadyGroup = new THREE.Group()
+      ourLadyGroup.position.copy(sphericalToVector3(24, 7, 496.2))
+      ourLadyGroup.lookAt(0, 0, 0)
+      scene.add(ourLadyGroup)
+
+      const ourLadyBorderGeometry = new THREE.PlaneGeometry(36, 46)
+      const ourLadyBorderMaterial = new THREE.MeshBasicMaterial({ color: 0x6a4b2f, transparent: true, opacity: 0.92 })
+      const ourLadyBorder = new THREE.Mesh(ourLadyBorderGeometry, ourLadyBorderMaterial)
+      ourLadyGroup.add(ourLadyBorder)
+
+      const ourLadyMattingGeometry = new THREE.PlaneGeometry(33, 43)
+      const ourLadyMattingMaterial = new THREE.MeshBasicMaterial({ color: 0x17120f, transparent: true, opacity: 0.92 })
+      const ourLadyMatting = new THREE.Mesh(ourLadyMattingGeometry, ourLadyMattingMaterial)
+      ourLadyMatting.position.z = 0.12
+      ourLadyGroup.add(ourLadyMatting)
+
+      const ourLadyImageGeometry = new THREE.PlaneGeometry(30, 40)
+      const ourLadyImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
+      const ourLadyImage = new THREE.Mesh(ourLadyImageGeometry, ourLadyImageMaterial)
+      ourLadyImage.position.z = 0.2
+      ourLadyGroup.add(ourLadyImage)
+
+      const ourLadyInteractiveObjects: THREE.Object3D[] = [ourLadyBorder, ourLadyMatting, ourLadyImage]
+
+      const ourLadyImageTexture = loader.load('/Our%20Lady%20of%20Graces.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; ourLadyImageMaterial.map = texture; ourLadyImageMaterial.needsUpdate = true })
       const updateSize = () => { if (!renderer) return; camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)) }
       const getPoint = (event: PointerEvent | TouchEvent) => {
         if ('touches' in event) { const touch = event.touches[0] ?? event.changedTouches[0]; return { x: touch?.clientX ?? 0, y: touch?.clientY ?? 0 } }
@@ -244,6 +270,13 @@ export default function ChapelPage() {
         if (Math.abs(hitLon - (-179.70)) < 8.4 && Math.abs(hitLat - 6.7) < 8.4) {
           openPopup('adoration')
           setCoordinatePanel({ label: 'Adoration', source: 'Hidden hotspot', lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
+          return
+        }
+
+        const ourLadyFrameHits = raycaster.intersectObjects(ourLadyInteractiveObjects, false)
+        if (ourLadyFrameHits.length) {
+          openPopup('salve-regina')
+          setCoordinatePanel({ label: 'Our Lady', source: 'Frame hotspot', lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
           return
         }
 
@@ -278,7 +311,7 @@ export default function ChapelPage() {
       animate()
       return () => {
         window.cancelAnimationFrame(frameId); mount.removeEventListener('pointerdown', onPointerDown); window.removeEventListener('pointermove', onPointerMove); window.removeEventListener('pointerup', onPointerUp); window.removeEventListener('pointercancel', onPointerUp); window.removeEventListener('resize', updateSize); renderer?.domElement.removeEventListener('click', onCanvasClick)
-        material.dispose(); geometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
+        material.dispose(); geometry.dispose(); ourLadyImageTexture.dispose(); ourLadyImageMaterial.dispose(); ourLadyImageGeometry.dispose(); ourLadyMattingMaterial.dispose(); ourLadyMattingGeometry.dispose(); ourLadyBorderMaterial.dispose(); ourLadyBorderGeometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
         document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction
       }
     } catch { document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction }
