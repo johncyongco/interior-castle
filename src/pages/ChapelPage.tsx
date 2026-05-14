@@ -287,7 +287,7 @@ export default function ChapelPage() {
             value={chapelPassword}
             onChange={(e) => { setChapelPassword(e.target.value); setChapelPasswordError('') }}
             onKeyDown={(e) => { if (e.key === 'Enter') handleJoin() }}
-            type="password"
+            type="password" autoComplete="off"
             placeholder="Password"
             className="mt-6 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-center text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl transition focus:border-white/30"
             autoFocus
@@ -364,7 +364,7 @@ export default function ChapelPage() {
                     <button type="button" onClick={() => setNewType('public')} className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${newType === 'public' ? 'bg-green-500/20 text-green-300' : 'bg-white/5 text-white/40'}`}>Public</button>
                     <button type="button" onClick={() => setNewType('private')} className={`rounded-full px-4 py-1.5 text-[10px] uppercase tracking-[0.15em] transition ${newType === 'private' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-white/40'}`}>Private</button>
                   </div>
-                  {newType === 'private' && <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Room password" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />}
+                  {newType === 'private' && <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" autoComplete="off" placeholder="Room password" className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl" />}
                   <button type="button" onClick={createChannel} className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl transition hover:bg-white/[0.1]">Create & Join</button>
                   <button type="button" onClick={() => setMenuView('menu')} className="w-full text-xs text-white/40 transition hover:text-white/60">Back</button>
                 </div>
@@ -409,7 +409,7 @@ export default function ChapelPage() {
               {joinPasswordId && (
                 <div className="mt-4 space-y-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur-xl">
                   <p className="text-xs text-white/60">Enter room password</p>
-                  <input value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} type="password" placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-base text-white outline-none placeholder:text-white/30" autoFocus />
+                  <input value={joinPassword} onChange={(e) => setJoinPassword(e.target.value)} type="password" autoComplete="off" placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-base text-white outline-none placeholder:text-white/30" autoFocus />
                   <div className="flex gap-2">
                     <button type="button" onClick={confirmJoinPassword} className="rounded-2xl bg-white/10 px-4 py-2 text-xs text-white/70 transition hover:bg-white/20">Join</button>
                     <button type="button" onClick={() => { setJoinPasswordId(null); setJoinPassword('') }} className="rounded-2xl bg-white/5 px-4 py-2 text-xs text-white/40 transition hover:bg-white/10">Cancel</button>
