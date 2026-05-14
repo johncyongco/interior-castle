@@ -209,7 +209,7 @@ export default function RoomPopups() {
             >
               <p className="serif text-lg leading-relaxed text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">Salve Regina</p>
               <p className="mt-4 text-sm leading-6 text-[#e7cba9]/85 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
-                &ldquo;Hail, holy Queen, Mother of mercy, our life, our sweetness and our hope. To thee do we cry, poor banished children of Eve. To thee do we send up our sighs, mourning and weeping in this valley of tears. Turn, then, most gracious advocate, thine eyes of mercy toward us, and after this, our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.
+                Hail, holy Queen, Mother of mercy, our life, our sweetness and our hope. To thee do we cry, poor banished children of Eve. To thee do we send up our sighs, mourning and weeping in this valley of tears. Turn, then, most gracious advocate, thine eyes of mercy toward us, and after this, our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.
               </p>
               <p className="mt-3 text-sm leading-6 text-[#e7cba9]/70 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                 V. Pray for us, O holy Mother of God.<br />

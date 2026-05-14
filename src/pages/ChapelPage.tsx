@@ -229,7 +229,7 @@ export default function ChapelPage() {
       loader.load('/Chapel.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; material.map = texture; material.needsUpdate = true })
 
       const ourLadyGroup = new THREE.Group()
-      ourLadyGroup.position.copy(sphericalToVector3(24, 7, 496.2))
+      ourLadyGroup.position.copy(sphericalToVector3(153.61, 5.40, 496.2))
       ourLadyGroup.lookAt(0, 0, 0)
       scene.add(ourLadyGroup)
 
