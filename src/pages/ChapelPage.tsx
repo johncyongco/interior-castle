@@ -233,8 +233,8 @@ export default function ChapelPage() {
       ourLadyGroup.lookAt(0, 0, 0)
       scene.add(ourLadyGroup)
 
-      const ourLadyImageGeometry = new THREE.PlaneGeometry(33, 44)
-      const ourLadyBorderGeometry = new THREE.PlaneGeometry(39.6, 50.6)
+      const ourLadyImageGeometry = new THREE.PlaneGeometry(23, 31)
+      const ourLadyBorderGeometry = new THREE.PlaneGeometry(28, 35)
       const ourLadyBorderMaterial = new THREE.MeshBasicMaterial({ color: 0x120e0b, transparent: true, opacity: 0.8 })
       const ourLadyBorder = new THREE.Mesh(ourLadyBorderGeometry, ourLadyBorderMaterial)
       ourLadyBorder.position.z = -0.05
