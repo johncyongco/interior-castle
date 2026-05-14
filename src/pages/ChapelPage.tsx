@@ -120,7 +120,7 @@ export default function ChapelPage() {
     setPrayerRoomCount(1)
     try {
       const inc = () => setPrayerRoomCount((c) => { const n = c + 1; updateRoomCount(channel.id, n); return n })
-      const dec = () => setPrayerRoomCount((c) => { const n = Math.max(1, c - 1); updateRoomCount(channel.id, n); return n })
+      const dec = () => setPrayerRoomCount((c) => { const n = Math.max(0, c - 1); updateRoomCount(channel.id, n); return n })
       await agoraJoin(channel.id, null, username, channel, inc, dec)
     } catch (err) {
       console.error('Failed to join Agora channel:', err)
@@ -454,7 +454,7 @@ export default function ChapelPage() {
                   >
                     Always On
                   </button>
-                  <button type="button" onClick={async () => { await leaveChannel(); setActiveRoomView(null); setPrayerRoomCount(1); setAlwaysOn(false) }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                  <button type="button" onClick={async () => { await leaveChannel(); if (activeRoomView) updateRoomCount(activeRoomView.id, 0); setActiveRoomView(null); setPrayerRoomCount(0); setAlwaysOn(false) }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
                 </div>
               </div>
             </div>
