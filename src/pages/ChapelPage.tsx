@@ -76,6 +76,9 @@ export default function ChapelPage() {
   const instructionRef = useRef<HTMLDivElement | null>(null)
   const [username, setUsername] = useState('')
   const [showPrompt, setShowPrompt] = useState(true)
+  const [showPasswordGate, setShowPasswordGate] = useState(true)
+  const [chapelPassword, setChapelPassword] = useState('')
+  const [chapelPasswordError, setChapelPasswordError] = useState('')
   const [coordinatePanel, setCoordinatePanel] = useState<CoordinatePanel>({ label: 'Chapel', source: 'Tap the panorama', lon: null, lat: null })
   const [showMenu, setShowMenu] = useState(false)
   const [menuView, setMenuView] = useState<'menu' | 'create' | 'browse'>('menu')
@@ -248,6 +251,52 @@ export default function ChapelPage() {
       }
     } catch { document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction }
   }, [showPrompt])
+
+  if (showPasswordGate) {
+    return (
+      <ScreenContainer>
+        <div className="absolute inset-0 bg-black" />
+        <div className="absolute inset-0 bg-[url('/Chapel.png')] bg-cover bg-center opacity-30" />
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+          <p className="serif text-lg text-[#e7cba9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] sm:text-xl">Chapel Password</p>
+          <p className="mt-2 text-xs text-white/50">Enter the password to enter</p>
+          <input
+            value={chapelPassword}
+            onChange={(e) => { setChapelPassword(e.target.value); setChapelPasswordError('') }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (chapelPassword.trim().toLowerCase() === 'sursum corda') {
+                  setShowPasswordGate(false)
+                  setChapelPassword('')
+                } else {
+                  setChapelPasswordError('Incorrect password')
+                }
+              }
+            }}
+            type="password"
+            placeholder="Password"
+            className="mt-6 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-center text-base text-white outline-none placeholder:text-white/30 backdrop-blur-xl transition focus:border-white/30"
+            autoFocus
+          />
+          {chapelPasswordError && <p className="mt-2 text-xs text-red-400/70">{chapelPasswordError}</p>}
+          <button
+            type="button"
+            onClick={() => {
+              if (chapelPassword.trim().toLowerCase() === 'sursum corda') {
+                setShowPasswordGate(false)
+                setChapelPassword('')
+              } else {
+                setChapelPasswordError('Incorrect password')
+              }
+            }}
+            className="mt-4 w-full max-w-xs rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
+          >
+            Enter
+          </button>
+        </div>
+      </ScreenContainer>
+    )
+  }
 
   if (showPrompt) {
     return (
