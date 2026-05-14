@@ -46,7 +46,7 @@ export default function RoomPopups() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex h-[50vh] w-full max-w-md flex-col rounded-3xl border border-white/10 bg-[#0f0c09cc] p-4 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+              className="flex h-[35vh] w-full max-w-sm flex-col rounded-3xl border border-white/10 bg-[#0f0c09cc] p-3 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
             >
               <div className="flex items-center justify-between pb-2">
                 <p className="text-xs uppercase tracking-[0.28em] text-[#c6a47a]">Adoration</p>
