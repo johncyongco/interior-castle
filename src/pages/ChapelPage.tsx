@@ -99,7 +99,7 @@ export default function ChapelPage() {
   }, [])
 
   const handleJoin = useCallback(() => {
-    if (chapelPassword.trim().toLowerCase() !== 'sursum corda') {
+    if (chapelPassword.trim().toLowerCase() !== 'sursum_corda') {
       setChapelPasswordError('Incorrect password')
       return
     }
