@@ -350,7 +350,7 @@ export default function ChapelPage() {
                           </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-1">
-                          {ch.creator === username && (
+                          {ch.creator === username || username === 'John the Admin' && (
                             <button type="button" onClick={() => deleteChannel(ch.id)} className="rounded-full border border-red-500/10 bg-red-500/5 px-2 py-1 text-[9px] text-red-400/50 transition hover:bg-red-500/15">Delete</button>
                           )}
                           <button type="button" onClick={() => joinChannel(ch)} className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-white/60 transition hover:bg-white/20">Join</button>
