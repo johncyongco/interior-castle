@@ -1,13 +1,13 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
-type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel' | 'narnia'
+type PopupState = 'none' | 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration'
 
 let setActiveGlobal: ((state: PopupState) => void) | null = null
 
-export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel' | 'narnia') {
+export function openPopup(state: 'st-teresa' | 'st-therese' | 'gospel' | 'narnia' | 'adoration') {
   setActiveGlobal?.(state)
 }
 
@@ -34,6 +34,50 @@ export default function RoomPopups() {
     <>
       <AnimatePresence>
         {active === 'gospel' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 px-4 pt-6 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="flex h-[80vh] w-full max-w-lg flex-col rounded-3xl border border-white/10 bg-[#0f0c09cc] p-4 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+            >
+              <div className="flex items-center justify-between pb-2">
+                <p className="text-xs uppercase tracking-[0.28em] text-[#c6a47a]">{dateString}</p>
+                <button
+                  type="button"
+                  onClick={() => setActive('none')}
+                  className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] text-white/70 backdrop-blur-xl transition hover:shadow-glow"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="flex-1 rounded-2xl border border-white/10 bg-black p-2">
+                <iframe
+                  title="Daily Gospel Reading"
+                  src={`https://living-bread.com/?date=${dateString}`}
+                  className="h-full w-full rounded-xl border-0 bg-black"
+                />
+              </div>
+              <a
+                href={`https://living-bread.com/?date=${dateString}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 text-center text-[10px] text-[#c6a47a] underline decoration-white/20 underline-offset-4 transition hover:text-[#e7cba9]"
+              >
+                Open on living-bread.com
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {active === 'adoration' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
