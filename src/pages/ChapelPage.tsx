@@ -233,12 +233,18 @@ export default function ChapelPage() {
       ourLadyGroup.lookAt(0, 0, 0)
       scene.add(ourLadyGroup)
 
-      const ourLadyImageGeometry = new THREE.PlaneGeometry(30, 40)
+      const ourLadyImageGeometry = new THREE.PlaneGeometry(32, 42)
+      const ourLadyBorderGeometry = new THREE.PlaneGeometry(36, 46)
+      const ourLadyBorderMaterial = new THREE.MeshBasicMaterial({ color: 0x120e0b, transparent: true, opacity: 0.8 })
+      const ourLadyBorder = new THREE.Mesh(ourLadyBorderGeometry, ourLadyBorderMaterial)
+      ourLadyBorder.position.z = -0.05
+      ourLadyGroup.add(ourLadyBorder)
+
       const ourLadyImageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff })
       const ourLadyImage = new THREE.Mesh(ourLadyImageGeometry, ourLadyImageMaterial)
       ourLadyGroup.add(ourLadyImage)
 
-      const ourLadyInteractiveObjects: THREE.Object3D[] = [ourLadyImage]
+      const ourLadyInteractiveObjects: THREE.Object3D[] = [ourLadyBorder, ourLadyImage]
 
       const ourLadyImageTexture = loader.load('/Our%20Lady%20of%20Graces.png', (texture) => { texture.colorSpace = THREE.SRGBColorSpace; ourLadyImageMaterial.map = texture; ourLadyImageMaterial.needsUpdate = true })
       const updateSize = () => { if (!renderer) return; camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)) }
@@ -299,7 +305,7 @@ export default function ChapelPage() {
       animate()
       return () => {
         window.cancelAnimationFrame(frameId); mount.removeEventListener('pointerdown', onPointerDown); window.removeEventListener('pointermove', onPointerMove); window.removeEventListener('pointerup', onPointerUp); window.removeEventListener('pointercancel', onPointerUp); window.removeEventListener('resize', updateSize); renderer?.domElement.removeEventListener('click', onCanvasClick)
-        material.dispose(); geometry.dispose(); ourLadyImageTexture.dispose(); ourLadyImageMaterial.dispose(); ourLadyImageGeometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
+        material.dispose(); geometry.dispose(); ourLadyImageTexture.dispose(); ourLadyImageMaterial.dispose(); ourLadyImageGeometry.dispose(); ourLadyBorderMaterial.dispose(); ourLadyBorderGeometry.dispose(); renderer?.dispose(); if (renderer?.domElement.parentElement === mount) mount.removeChild(renderer.domElement)
         document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction
       }
     } catch { document.body.style.overflow = previousBodyOverflow; document.body.style.touchAction = previousBodyTouchAction }
