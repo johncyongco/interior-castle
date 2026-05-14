@@ -69,6 +69,11 @@ async function deleteChannelFromDB(id: string) {
   if (error) console.error('Supabase delete error:', error)
 }
 
+async function updateRoomCount(id: string, count: number) {
+  if (!supabase) return
+  await supabase.from('prayer_rooms').update({ user_count: count }).eq('id', id)
+}
+
 export default function ChapelPage() {
   const navigate = useNavigate()
   const mountRef = useRef<HTMLDivElement | null>(null)
@@ -96,6 +101,8 @@ export default function ChapelPage() {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
     loadChannels().then(setChannels)
+    const interval = setInterval(() => loadChannels().then(setChannels), 5000)
+    return () => clearInterval(interval)
   }, [])
 
   const handleJoin = useCallback(() => {
@@ -112,10 +119,9 @@ export default function ChapelPage() {
   const joinAgoraChannel = useCallback(async (channel: PrayerChannel) => {
     setPrayerRoomCount(1)
     try {
-      await agoraJoin(channel.id, null, username, channel,
-        () => { setPrayerRoomCount((c) => { console.log('user joined, count:', c + 1); return c + 1 }) },
-        () => { setPrayerRoomCount((c) => { console.log('user left, count:', Math.max(1, c - 1)); return Math.max(1, c - 1) }) },
-      )
+      const inc = () => setPrayerRoomCount((c) => { const n = c + 1; updateRoomCount(channel.id, n); return n })
+      const dec = () => setPrayerRoomCount((c) => { const n = Math.max(1, c - 1); updateRoomCount(channel.id, n); return n })
+      await agoraJoin(channel.id, null, username, channel, inc, dec)
     } catch (err) {
       console.error('Failed to join Agora channel:', err)
     }
