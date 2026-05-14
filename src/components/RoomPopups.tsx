@@ -49,7 +49,7 @@ export default function RoomPopups() {
               className="flex h-[80vh] w-full max-w-lg flex-col rounded-3xl border border-white/10 bg-[#0f0c09cc] p-4 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
             >
               <div className="flex items-center justify-between pb-2">
-                <p className="text-xs uppercase tracking-[0.28em] text-[#c6a47a]">{dateString}</p>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#c6a47a]">Adoration</p>
                 <button
                   type="button"
                   onClick={() => setActive('none')}
@@ -60,18 +60,20 @@ export default function RoomPopups() {
               </div>
               <div className="flex-1 rounded-2xl border border-white/10 bg-black p-2">
                 <iframe
-                  title="Daily Gospel Reading"
-                  src={`https://living-bread.com/?date=${dateString}`}
+                  title="Eucharistic Adoration"
+                  src="https://www.youtube.com/embed/mnOTH_3dprI?autoplay=1"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
                   className="h-full w-full rounded-xl border-0 bg-black"
                 />
               </div>
               <a
-                href={`https://living-bread.com/?date=${dateString}`}
+                href="https://www.youtube.com/watch?v=mnOTH_3dprI"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 text-center text-[10px] text-[#c6a47a] underline decoration-white/20 underline-offset-4 transition hover:text-[#e7cba9]"
               >
-                Open on living-bread.com
+                Open on YouTube
               </a>
             </motion.div>
           </motion.div>
