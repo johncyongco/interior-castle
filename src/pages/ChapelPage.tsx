@@ -241,7 +241,7 @@ export default function ChapelPage() {
         raycaster.setFromCamera(pointer, camera); const intersections = raycaster.intersectObject(mesh, false); if (!intersections.length) return
         const hit = intersections[0].point; const { lon: hitLon, lat: hitLat } = vector3ToSpherical(hit)
 
-        if (Math.abs(hitLon - (-179.70)) < 4.2 && Math.abs(hitLat - 6.7) < 4.2) {
+        if (Math.abs(hitLon - (-179.70)) < 8.4 && Math.abs(hitLat - 6.7) < 8.4) {
           openPopup('adoration')
           setCoordinatePanel({ label: 'Adoration', source: 'Hidden hotspot', lon: Number(hitLon.toFixed(2)), lat: Number(hitLat.toFixed(2)) })
           return
