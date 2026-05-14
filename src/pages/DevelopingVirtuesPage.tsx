@@ -182,7 +182,7 @@ export default function DevelopingVirtuesPage() {
           <div className="flex items-center justify-between">
             <button
               type="button"
-              onClick={() => navigate('/room')}
+              onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
               className="text-xs text-[#c6a47a] transition hover:text-[#e7cba9]"
             >
               Back to Room

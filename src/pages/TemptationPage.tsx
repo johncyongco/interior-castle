@@ -38,13 +38,13 @@ export default function TemptationPage() {
       >
         <div className="flex items-center justify-between text-xs text-white/45">
           <span>Temptation</span>
-          <button
-            type="button"
-            onClick={() => navigate('/room')}
-            className="transition hover:text-[#e7cba9]"
-          >
-            Skip
-          </button>
+            <button
+              type="button"
+              onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
+              className="transition hover:text-[#e7cba9]"
+            >
+              Skip
+            </button>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -102,13 +102,13 @@ export default function TemptationPage() {
             {isFinalStep ? 'Sursum Corda' : 'Next'}
           </button>
 
-          <button
+            <button
             type="button"
-            onClick={() => navigate('/room')}
+            onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
             className="w-full rounded-3xl border border-white/14 bg-white/[0.05] px-4 py-3 text-sm text-white/70 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
-          >
+            >
             Skip
-          </button>
+            </button>
         </div>
       </motion.div>
     </ScreenContainer>

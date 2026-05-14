@@ -283,7 +283,7 @@ export default function SnowyForestPage() {
       <div className="absolute bottom-24 left-0 right-0 z-10 flex justify-center px-6">
         <button
           type="button"
-          onClick={() => navigate('/room')}
+          onClick={() => { try { window.sessionStorage.setItem('spero-room-entry', 'door') } catch {}; navigate('/room') }}
           className="rounded-3xl border border-white/14 bg-white/[0.05] px-6 py-3 text-sm text-white/80 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.1)] transition hover:bg-white/[0.1]"
         >
           Back to Room
