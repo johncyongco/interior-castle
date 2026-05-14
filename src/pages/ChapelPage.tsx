@@ -138,6 +138,7 @@ export default function ChapelPage() {
       type: newType,
       creator: username,
       userCount: 1,
+      password: newType === 'private' ? newPassword : undefined,
     }
     setChannels((prev) => [channel, ...prev])
     saveChannel(channel)
@@ -167,10 +168,13 @@ export default function ChapelPage() {
   const confirmJoinPassword = useCallback(() => {
     const ch = channels.find(c => c.id === joinPasswordId)
     if (!ch) return
+    if (ch.password && joinPassword !== ch.password) return
+    setShowMenu(false)
     setActiveRoomView(ch)
+    joinAgoraChannel(ch)
     setJoinPasswordId(null)
     setJoinPassword('')
-  }, [joinPasswordId, channels, username])
+  }, [joinPasswordId, channels, username, joinAgoraChannel, joinPassword])
 
   useEffect(() => {
     if (showPrompt || !username) return
