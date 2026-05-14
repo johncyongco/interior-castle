@@ -133,6 +133,13 @@ export default function ChapelPage() {
 
   const createChannel = useCallback(() => {
     if (!newName.trim()) return
+
+    const now = Date.now()
+    const timestamps = JSON.parse(localStorage.getItem('spero-room-timestamps') || '[]').filter((t: number) => now - t < 60000)
+    if (timestamps.length >= 5) return
+    timestamps.push(now)
+    localStorage.setItem('spero-room-timestamps', JSON.stringify(timestamps))
+
     const channel: PrayerChannel = {
       id: crypto.randomUUID(),
       name: newName.trim(),
