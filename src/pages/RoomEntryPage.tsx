@@ -36,7 +36,7 @@ export default function RoomEntryPage() {
               I am the gate. Whoever enters through me will be saved.
             </p>
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[9px] uppercase tracking-[0.26em] text-white/70 backdrop-blur-sm">
               Enter
             </span>

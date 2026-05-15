@@ -24,7 +24,11 @@ function sphericalToVector3(lonDeg: number, latDeg: number, radius = 499) {
 
 type CoordinatePanel = { label: string; source: string; lon: number | null; lat: number | null }
 type HotspotPoint = { id: string; label: string; lon: number; lat: number; onClick: () => void }
-type PrayerChannel = { id: string; name: string; mode: string; type: 'public' | 'private'; creator: string; userCount: number }
+type PrayerChannel = { id: string; name: string; mode: string; type: 'public' | 'private'; creator: string; userCount: number; createdAt: number; duration: number }
+
+function getDuration(mode: string): number {
+  return mode === 'Free Prayer' ? 60 : 20
+}
 
 const STORAGE_KEY = 'spero-chapel-channels'
 
@@ -41,6 +45,8 @@ async function loadChannels(): Promise<PrayerChannel[]> {
     creator: r.creator,
     userCount: r.user_count,
     password: r.password,
+    createdAt: r.created_at ? new Date(r.created_at).getTime() : Date.now(),
+    duration: r.duration ?? getDuration(r.mode),
   }))
 }
 
@@ -59,6 +65,8 @@ async function saveChannel(channel: PrayerChannel) {
     creator: channel.creator,
     user_count: channel.userCount,
     password: channel.password || null,
+    created_at: new Date(channel.createdAt).toISOString(),
+    duration: channel.duration,
   })
 }
 
@@ -100,6 +108,23 @@ export default function ChapelPage() {
   const [activeRoomView, setActiveRoomView] = useState<PrayerChannel | null>(null)
   const [prayerRoomCount, setPrayerRoomCount] = useState(1)
   const [alwaysOn, setAlwaysOn] = useState(false)
+  const [timeLeft, setTimeLeft] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!activeRoomView || timeLeft === null) return
+    if (timeLeft <= 0) {
+      deleteChannelFromDB(activeRoomView.id)
+      setChannels(prev => prev.filter(c => c.id !== activeRoomView.id))
+      leaveChannel()
+      setActiveRoomView(null)
+      setPrayerRoomCount(0)
+      setAlwaysOn(false)
+      setTimeLeft(null)
+      return
+    }
+    const timer = setTimeout(() => setTimeLeft(t => (t ?? 1) - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [activeRoomView, timeLeft])
 
   useEffect(() => {
     if (!activeRoomView) return
@@ -109,6 +134,7 @@ export default function ChapelPage() {
       setActiveRoomView(null)
       setPrayerRoomCount(0)
       setAlwaysOn(false)
+      setTimeLeft(null)
     }
   }, [channels, activeRoomView])
 
@@ -126,6 +152,7 @@ export default function ChapelPage() {
         setActiveRoomView(null)
         setPrayerRoomCount(0)
         setAlwaysOn(false)
+        setTimeLeft(null)
       })
       .subscribe()
     return () => { sub.unsubscribe() }
@@ -166,11 +193,12 @@ export default function ChapelPage() {
     if (!newName.trim()) return
 
     const now = Date.now()
-    const timestamps = JSON.parse(localStorage.getItem('spero-room-timestamps') || '[]').filter((t: number) => now - t < 60000)
-    if (timestamps.length >= 5) return
+    const timestamps = JSON.parse(localStorage.getItem('spero-room-timestamps') || '[]').filter((t: number) => now - t < 600000)
+    if (timestamps.length >= 3) return
     timestamps.push(now)
     localStorage.setItem('spero-room-timestamps', JSON.stringify(timestamps))
 
+    const duration = getDuration(newMode)
     const channel: PrayerChannel = {
       id: crypto.randomUUID(),
       name: newName.trim(),
@@ -179,6 +207,8 @@ export default function ChapelPage() {
       creator: username,
       userCount: 1,
       password: newType === 'private' ? newPassword : undefined,
+      createdAt: now,
+      duration,
     }
     setChannels((prev) => [channel, ...prev])
     saveChannel(channel)
@@ -187,6 +217,7 @@ export default function ChapelPage() {
     setMenuView('menu')
     setShowMenu(false)
     setActiveRoomView(channel)
+    setTimeLeft(duration * 60)
     joinAgoraChannel(channel)
   }, [newName, newMode, newType, newPassword, username, channels, joinAgoraChannel])
 
@@ -197,6 +228,8 @@ export default function ChapelPage() {
     }
     setShowMenu(false)
     setActiveRoomView(channel)
+    const elapsed = Math.floor((Date.now() - channel.createdAt) / 1000)
+    setTimeLeft(Math.max(0, channel.duration * 60 - elapsed))
     joinAgoraChannel(channel)
   }, [username, joinAgoraChannel])
 
@@ -208,6 +241,7 @@ export default function ChapelPage() {
       setActiveRoomView(null)
       setPrayerRoomCount(0)
       setAlwaysOn(false)
+      setTimeLeft(null)
       setShowMenu(false)
     }
   }, [activeRoomView])
@@ -218,6 +252,8 @@ export default function ChapelPage() {
     if (ch.password && joinPassword !== ch.password) return
     setShowMenu(false)
     setActiveRoomView(ch)
+    const elapsed = Math.floor((Date.now() - ch.createdAt) / 1000)
+    setTimeLeft(Math.max(0, ch.duration * 60 - elapsed))
     joinAgoraChannel(ch)
     setJoinPasswordId(null)
     setJoinPassword('')
@@ -501,6 +537,11 @@ export default function ChapelPage() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-white/90">{activeRoomView.name}</p>
                   <p className="text-[10px] text-white/40">{activeRoomView.mode} · {prayerRoomCount} in room</p>
+                  {timeLeft !== null && (
+                    <p className="mt-1 text-[10px] tracking-wider text-amber-300/70">
+                      {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="mt-4 flex gap-3">
@@ -541,7 +582,7 @@ export default function ChapelPage() {
                   >
                     Always On
                   </button>
-                  <button type="button" onClick={async () => { await leaveChannel(); if (activeRoomView) updateRoomCount(activeRoomView.id, 0); setActiveRoomView(null); setPrayerRoomCount(0); setAlwaysOn(false) }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
+                  <button type="button" onClick={async () => { await leaveChannel(); if (activeRoomView) updateRoomCount(activeRoomView.id, 0); setActiveRoomView(null); setPrayerRoomCount(0); setAlwaysOn(false); setTimeLeft(null) }} className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[10px] text-red-400/70 transition hover:bg-red-500/20">Leave</button>
                 </div>
               </div>
             </div>
