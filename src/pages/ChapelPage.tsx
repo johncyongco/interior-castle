@@ -109,7 +109,6 @@ export default function ChapelPage() {
   const [prayerRoomCount, setPrayerRoomCount] = useState(1)
   const [alwaysOn, setAlwaysOn] = useState(false)
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
-  const activeRoomRef = useRef<PrayerChannel | null>(null)
 
   useEffect(() => {
     if (!activeRoomView || timeLeft === null) return
@@ -160,33 +159,21 @@ export default function ChapelPage() {
   }, [activeRoomView])
 
   useEffect(() => {
-    activeRoomRef.current = activeRoomView
-  }, [activeRoomView])
-
-  useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
     setIsAdmin(!!localStorage.getItem('spero-admin-email'))
-    loadChannels().then(data => {
-      setChannels(prev => {
-        const active = activeRoomRef.current
-        if (active && !data.some(c => c.id === active.id)) {
-          return [active, ...data]
-        }
-        return data
-      })
-    })
-    const interval = setInterval(() => {
-      loadChannels().then(data => {
+    const fetchAndMerge = async () => {
+      try {
+        const data = await loadChannels()
         setChannels(prev => {
-          const active = activeRoomRef.current
-          if (active && !data.some(c => c.id === active.id)) {
-            return [active, ...data]
-          }
-          return data
+          const dataIds = new Set(data.map(c => c.id))
+          const preserved = prev.filter(c => !dataIds.has(c.id))
+          return [...preserved, ...data]
         })
-      })
-    }, 5000)
+      } catch {}
+    }
+    fetchAndMerge()
+    const interval = setInterval(fetchAndMerge, 5000)
     return () => clearInterval(interval)
   }, [])
 
