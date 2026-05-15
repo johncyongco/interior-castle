@@ -102,6 +102,36 @@ export default function ChapelPage() {
   const [alwaysOn, setAlwaysOn] = useState(false)
 
   useEffect(() => {
+    if (!activeRoomView) return
+    const exists = channels.some(c => c.id === activeRoomView.id)
+    if (!exists) {
+      leaveChannel()
+      setActiveRoomView(null)
+      setPrayerRoomCount(0)
+      setAlwaysOn(false)
+    }
+  }, [channels, activeRoomView])
+
+  useEffect(() => {
+    if (!supabase || !activeRoomView) return
+    const sub = supabase
+      .channel('room-deleted-signal')
+      .on('postgres_changes', {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'prayer_rooms',
+        filter: `id=eq.${activeRoomView.id}`,
+      }, () => {
+        leaveChannel()
+        setActiveRoomView(null)
+        setPrayerRoomCount(0)
+        setAlwaysOn(false)
+      })
+      .subscribe()
+    return () => { sub.unsubscribe() }
+  }, [activeRoomView])
+
+  useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
     setIsAdmin(!!localStorage.getItem('spero-admin-email'))
@@ -173,7 +203,14 @@ export default function ChapelPage() {
   const deleteChannel = useCallback((id: string) => {
     setChannels((prev) => prev.filter(c => c.id !== id))
     deleteChannelFromDB(id)
-  }, [])
+    if (activeRoomView?.id === id) {
+      leaveChannel()
+      setActiveRoomView(null)
+      setPrayerRoomCount(0)
+      setAlwaysOn(false)
+      setShowMenu(false)
+    }
+  }, [activeRoomView])
 
   const confirmJoinPassword = useCallback(() => {
     const ch = channels.find(c => c.id === joinPasswordId)
