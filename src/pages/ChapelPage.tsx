@@ -212,11 +212,11 @@ export default function ChapelPage() {
     }
   }, [username])
 
-  const createChannel = useCallback(() => {
+  const createChannel = useCallback(async () => {
     if (!newName.trim()) return
 
     const now = Date.now()
-    const timestamps = JSON.parse(localStorage.getItem('spero-room-timestamps') || '[]').filter((t: number) => now - t < 600000)
+    const timestamps = JSON.parse(localStorage.getItem('spero-room-timestamps') || '[]').filter((t: number) => now - t < 60000)
     if (timestamps.length >= 3) return
     timestamps.push(now)
     localStorage.setItem('spero-room-timestamps', JSON.stringify(timestamps))
@@ -234,7 +234,7 @@ export default function ChapelPage() {
       duration,
     }
     setChannels((prev) => [channel, ...prev])
-    saveChannel(channel)
+    await saveChannel(channel)
     setNewName('')
     setNewPassword('')
     setMenuView('menu')
@@ -242,7 +242,7 @@ export default function ChapelPage() {
     setActiveRoomView(channel)
     setTimeLeft(duration * 60)
     joinAgoraChannel(channel)
-  }, [newName, newMode, newType, newPassword, username, channels, joinAgoraChannel])
+  }, [newName, newMode, newType, newPassword, username, joinAgoraChannel])
 
   const joinChannel = useCallback((channel: PrayerChannel) => {
     if (channel.type === 'private') {
