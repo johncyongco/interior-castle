@@ -65,8 +65,6 @@ async function saveChannel(channel: PrayerChannel) {
     creator: channel.creator,
     user_count: channel.userCount,
     password: channel.password || null,
-    created_at: new Date(channel.createdAt).toISOString(),
-    duration: channel.duration,
   })
 }
 
