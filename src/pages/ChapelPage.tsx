@@ -107,6 +107,8 @@ export default function ChapelPage() {
   const [prayerRoomCount, setPrayerRoomCount] = useState(1)
   const [alwaysOn, setAlwaysOn] = useState(false)
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
+  const activeRoomRef = useRef<PrayerChannel | null>(null)
+  const confirmedRoomIds = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     if (!activeRoomView || timeLeft === null) return
@@ -157,6 +159,10 @@ export default function ChapelPage() {
   }, [activeRoomView])
 
   useEffect(() => {
+    activeRoomRef.current = activeRoomView
+  }, [activeRoomView])
+
+  useEffect(() => {
     const saved = localStorage.getItem(USERNAME_KEY)
     if (saved) { setUsername(saved); setShowPrompt(false) }
     setIsAdmin(!!localStorage.getItem('spero-admin-email'))
@@ -165,7 +171,11 @@ export default function ChapelPage() {
         const data = await loadChannels()
         setChannels(prev => {
           const dataIds = new Set(data.map(c => c.id))
-          const preserved = prev.filter(c => !dataIds.has(c.id))
+          for (const id of dataIds) confirmedRoomIds.current.add(id)
+          const active = activeRoomRef.current
+          const preserved = active && !dataIds.has(active.id) && !confirmedRoomIds.current.has(active.id)
+            ? [active]
+            : []
           return [...preserved, ...data]
         })
       } catch {}
