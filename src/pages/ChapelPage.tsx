@@ -555,17 +555,17 @@ export default function ChapelPage() {
         {activeRoomView && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="absolute bottom-24 left-4 right-4 z-50 mx-auto max-w-sm">
             <div className="rounded-3xl border border-white/10 bg-[#0f0c09cc] p-5 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-white/90">{activeRoomView.name}</p>
                   <p className="text-[10px] text-white/40">{activeRoomView.mode} · {prayerRoomCount} in room</p>
-                  {timeLeft !== null && (
-                    <p className="mt-1 text-[10px] tracking-wider text-amber-300/70">
-                      {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
-                    </p>
-                  )}
                 </div>
+                {timeLeft !== null && (
+                  <p className="shrink-0 text-[10px] tracking-wider text-amber-300/70">
+                    {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+                  </p>
+                )}
               </div>
               <div className="mt-4 flex gap-3">
                 <button
