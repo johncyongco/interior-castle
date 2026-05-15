@@ -139,20 +139,23 @@ export default function ChapelPage() {
   }, [channels, activeRoomView])
 
   useEffect(() => {
-    if (!supabase || !activeRoomView) return
+    if (!supabase) return
     const sub = supabase
-      .channel('room-deleted-signal')
+      .channel('room-deletes-broadcast')
       .on('postgres_changes', {
         event: 'DELETE',
         schema: 'public',
         table: 'prayer_rooms',
-        filter: `id=eq.${activeRoomView.id}`,
-      }, () => {
-        leaveChannel()
-        setActiveRoomView(null)
-        setPrayerRoomCount(0)
-        setAlwaysOn(false)
-        setTimeLeft(null)
+      }, (payload: any) => {
+        const deletedId = payload.old.id
+        setChannels(prev => prev.filter(c => c.id !== deletedId))
+        if (activeRoomView?.id === deletedId) {
+          leaveChannel()
+          setActiveRoomView(null)
+          setPrayerRoomCount(0)
+          setAlwaysOn(false)
+          setTimeLeft(null)
+        }
       })
       .subscribe()
     return () => { sub.unsubscribe() }
